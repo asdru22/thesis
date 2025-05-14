@@ -18,7 +18,7 @@
   abstract: [
     #lorem(100)
   ],
-  dedication: [ 
+  dedication: [
     A quella puntata della Melevisione interrotta a metà.
   ],
   final: true,
@@ -43,3 +43,4 @@ if x == 1 {
   print("Hello, world!")
 }
 ```
+= Impostor amongus
