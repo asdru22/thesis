@@ -207,7 +207,6 @@
       bibliography_file,
       title: i18n.at(locale).bibliography,
       style: "institute-of-electrical-and-electronics-engineers",
-      // style: "association-for-computing-machinery",
     )
   }
 }

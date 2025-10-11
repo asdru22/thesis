@@ -1,47 +1,33 @@
 #import "template.typ": *
-#import "@preview/codly:1.0.0": *
 
 #show: project.with(
   title: [
     #lorem(5)
   ],
-  author: "Pippo Baudo",
+  author: "Alessandro Nanni",
   professors: (
-    "Prof. Lupo Lucio",
-    "Prof. Gatto Silvestro",
-    "Dott. Paperino"
+    "Prof. Luca Padovani",
   ),
-  department: "Dipartimento della Televisione dei Ragazzi",
-  course: "Corso di Laurea in Scienze dell'Albero Azzurro",
-  session: "Luglio",
-  academic_year: "2000/2001",
+  department: "dipartimento di scienza e ingegneria",
+  course: "Corso di Laurea in Informatica per il Management",
+  session: "Dicembre",
+  academic_year: "2024/2025",
+  dedication: [],
   abstract: [
-    #lorem(100)
+    In questo documento tratterò del mio lavoro svolto sotto la supervisione del prof. Padovani nello sviluppare un sistema software che agevola l'utilizzo della _Domain Specific Language_ del videogioco Minecraft.\
+    Verranno inizialmente illustrati i problemi sintattici e strutturali di questo ampio ecosistema di file e sintassi verbosa.\
+    Successivamente mostrerò come ho provato ad ovviarli, o almeno ridurli, tramite una libreria che si occupa di svolgere le operazioni più tediose e ripetitive.
+    Tramite un _working example_ esporrò in che modo ho semplificato lo sviluppo di punti critici, affiancato dall'approccio abituale.
+    Infine, mostrerò la differenza in termini di righe di codice e file creati tra i due sistemi, con l'intento di affermare l'efficienza della mia libreria.
   ],
-  dedication: [
-    A quella puntata della Melevisione interrotta a metà.
-  ],
-  final: true,
-  // locale: "en",
-  // bibliography_file: "./bib.yml",
+  final: false,
+  locale: "it",
+  bibliography_file: "bibliography.bib",
 )
+#include "chapters/intro.typ"
 
-= Introduzione
+#include "chapters/agevolare_sviluppo.typ"
 
-#lorem(100)
+#include "chapters/mia_implementazione.typ"
 
-== Sotto-paragrafo 1
-
-#lorem(100) @miur
-
-=== Sotto-sotto-paragrafo 1
-
-```swift
-let x = 1
-
-if x == 1 {
-  print("Hello, world!")
-}
-```
-= Impostor amongus
-== prova 2
+#include "chapters/conclusione.typ"
