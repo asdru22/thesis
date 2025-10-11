@@ -24,7 +24,7 @@
   locale: "it",
   bibliography_file: "bibliography.bib",
 )
-#include "chapters/intro.typ"
+#include "chapters/introduzione.typ"
 
 #include "chapters/agevolare_sviluppo.typ"
 
