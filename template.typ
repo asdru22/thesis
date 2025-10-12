@@ -136,7 +136,7 @@
     inset: (x: .5em),
     radius: .2em,
   )
-  
+
   counter(page).update(1) // reset page counter
 
   set par(spacing: 1.6em)
