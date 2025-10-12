@@ -17,7 +17,7 @@
     In questo documento tratterò del mio lavoro svolto sotto la supervisione del prof. Padovani nello sviluppare un sistema software che agevola l'utilizzo della _Domain Specific Language_ del videogioco Minecraft.\
     Verranno inizialmente illustrati i problemi sintattici e strutturali di questo ampio ecosistema di file.\
     Successivamente mostrerò come ho provato ad ovviarli, o almeno ridurli, tramite una libreria che si occupa di svolgere le operazioni più tediose e ripetitive.
-    Tramite un _working example_ esporrò in che modo ho semplificato lo sviluppo di punti critici, affiancato dall'approccio abituale.
+    Tramite un _working example_ esporrò in che modo ho semplificato lo sviluppo di punti critici, facendo confronti con l'approccio abituale.\
     Infine, mostrerò la differenza in termini di righe di codice e file creati tra i due sistemi, con l'intento di affermare l'efficienza della mia libreria.
   ],
   final: false,

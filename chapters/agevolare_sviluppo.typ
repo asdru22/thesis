@@ -1,1 +1,1 @@
-= Agevolare Lo Sviluppo
+= Come agevolare lo sviluppo
