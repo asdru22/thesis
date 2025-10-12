@@ -13,7 +13,7 @@ I file #glos.json e #glos.mcf devono trovarsi in specifiche cartelle per poter e
 Un #glos.dp può essere visto come la cartella #r("java") di un progetto Java: contiene la parte che detta i comportamenti dell'applicazione.
 
 Come i progetti Java hanno la cartella #r("resources"), anche #glos.mc dispone di una cartella in cui inserire le risorse. Questa si chiama #glos.rp, e contiene principalmente font, modelli 3D, #glos.tex, traduzioni e suoni#footnote[Con l'eccezione di #glos.tex e suoni, tutti gli altri file sono in formato #glos.json.].\
-Le #glos.rp sono state concepite prima dei #glos.dp, per permettere ai giocatori sovrascrivere le texture e altri asset del videogioco. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzarle per definire nuove risorse, inerenti al progetto che stanno sviluppando.
+Le #glos.rp sono state concepite prima dei #glos.dp, e permettevano ai giocatori sovrascrivere le texture e altri asset del videogioco. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzarle per definire nuove risorse, inerenti al progetto che stanno sviluppando.
 
 _Datapack_ e #glos.rp formano il #glos.pack che, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java. Questa sarà poi la cartella che verrà pubblicata.
 
@@ -68,4 +68,4 @@ All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera
 In #r("function") si trovano file e sottodirectory con testo in formato #glos.mcf. Questi si occupano di far comunicare tutte le parti di un #glos.pack tra loro tramite una serie di comandi.
 
 == Comandi e Funzioni
-L'estensione #glos.mcf deriva dal termine #r("Function"), che in #glos.mc rappresenta un insieme di comandi.
+Il nome dell'estensione #glos.mcf deriva dal termine #r("Function"), che in #glos.mc rappresenta un insieme di comandi.
