@@ -11,3 +11,7 @@
 )
 
 #let r(content) = raw(content)
+
+#let todo(content)= block(inset:1em,stroke:blue,text(fill:blue,[TODO: ])+content)
+
+#let note(content)= block(inset:1em,stroke:green,text(fill:green,[NOTA: ])+content)

@@ -68,4 +68,21 @@ All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera
 In #r("function") si trovano file e sottodirectory con testo in formato #glos.mcf. Questi si occupano di far comunicare tutte le parti di un #glos.pack tra loro tramite una serie di comandi.
 
 == Comandi e Funzioni
-Il nome dell'estensione #glos.mcf deriva dal termine #r("Function"), che in #glos.mc rappresenta un insieme di comandi.
+
+Prima di spiegare cosa fanno i comandi, bisogna definire gli elementi basi su cui essi agiscono.\
+In #glos.mc, si possono creare ed esplorare mondi generati in base a un _seed_ casuale. Ogni mondo è composto da _chunk_, colonne dalla base di 16x16 cubi, e altezza di 320.\
+L'unità più piccola in questa griglia è il blocco, la cui forma coincide con quella di un cubo di lato unitario. Ogni blocco in un mondo è dotato di collisione ed individuabile tramite coordinate dello spazio tridimensionale.
+Si definiscono entità invece tutti gli oggetti dinamici che si spostano in un mondo: sono dotate di una posizione, rotazione e velocità.
+
+I dati persistenti di blocchi ed entità sono memorizzati in una struttura dati ad albero chiamata _Named Binary Tags_ (#r("NBT")). Il formato "stringificato", #r("SNBT") è accessibile agli utenti e si presenta come una struttura molto simile a #glos.json, formata da coppie di chiave e valori#footnote[Esempio: `{name1:123,name2:"sometext1",name3:{subname1:456,subname2:"sometext2"}}`.].
+
+Un comando è un'istruzione testuale che Minecraft interpreta per eseguire una specifica azione, come assegnare oggetti al giocatore, modificare l'ora del giorno o creare entità. Sebbene non disponga delle funzionalità tipiche dei linguaggi di programmazione di alto livello — come cicli for e while, strutture dati complesse o variabili generiche — il sistema dei comandi fornisce comunque strumenti che consentono di riprodurre alcuni di questi comportamenti in forma limitata.
+
+I comandi che più si avvicinano ai concetti tipici della programmazione sono
+#note[Forse da entrare più in dettaglio]
+- #r("scoreboard"): definisce delle variabili di tipo intero globali, sulle quali possono essere semplici operazioni di somma, sottrazione, moltiplicazione e divisione;
+- #r("execute"): permette di eseguire comandi solo sotto certe condizioni;
+- #r("data"): consente di accedere e modificare dati;
+- #r("function"): esegue una funzione.
+
+#todo[Cos è una funzione, contesto di esecuzione, command stack]
