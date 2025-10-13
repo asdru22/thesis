@@ -30,11 +30,11 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
         columns: 2,
         gutter: 10em,
         align(left, tree-list[
-            - datapack
+            - #glos.dp
                 - pack.mcmeta
                 - pack.png
                 - data
-                    - namespaces...
+                    - _namespace_
                         - advancement
                         - function
                         - loot_table
@@ -43,11 +43,11 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
                         - ...
         ]),
         align(left, tree-list[
-            - resourcepack
+            - #glos.rp
                 - pack.mcmeta
                 - pack.png
                 - assets
-                    - namespaces...
+                    - _namespace_
                         - font
                         - lang
                         - models
@@ -172,3 +172,58 @@ Questo comando sta definendo una serie di passi da fare;
 Al termine dell'esecuzione, il valore `on_stone` di ogni entità sarà 1 se si trovava su un blocco di pietra, 0 altrimenti.
 
 == Funzioni
+Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf. A differenza di quanto il nome possa suggerire, non prevedono parametri di input o di output, ma contengono contengono uno o più comandi che vengono eseguiti in ordine.\
+Le funzioni possono essere invocate in vari modi da altri file di un datapack:
+
+- tramite comandi: `function namespace:function_name` esegue la funzione subito, mentre `schedule namespace:function_name <delay>` la esegue dopo un certo tempo specificato.
+- da _function tag_: una _function tag_ è una lista in formato #glos.json di funzioni. #glos.mc ne fornisce due nelle quali inserire le funzioni da eseguire ogni game loop (`tick.json`)#footnote[Il game loop di #glos.mc viene eseguito 20 volte al secondo; di conseguenza, anche le funzioni incluse nel tag `tick.json` vengono eseguite con la stessa frequenza.], e ogni volta che si ricarica da disco il datapack (`load.json`). Queste due _function tag_ sono riconosciute dal compilatore di #glos.mc solo se nel namespace `minecraft`.
+- Altri oggetti di un #glos.dp quali `Advancement` (obiettivi) e `Enchantment` (condizioni).
+
+Le funzioni vengono eseguite durante un game loop, completando tutti i comandi che contengono, inclusi quelli invocati altre funzioni. Le funzioni usano il contesto di esecuzione dell'entità che sta invocando la funzione. un comando `execute` può cambiare il contesto, ma non si applicherà a tutti i comandi a seguirlo.
+
+Le funzioni possono includere linee _macro_, ovvero comandi che preceduti dal simbolo `$`, hanno parte o l'intero corpo sostituito al momento dell'invocazione da un termine #glos.nbt indicato dal comando invocante.
+
+#figure(
+    {
+        codly(
+            header: [main.mcfunction],
+        )
+        [```mcfunction
+        function foo:macro_test {value:"bar"}
+        function foo:macro_test {value:"123"}
+        ```]
+        v(10pt)
+        codly(
+            header: [macro_test.mcfunction],
+        )
+        [```mcfunction
+        $say my value is $(value)
+
+        ```]
+    },
+    caption: [Esempio di chiamata di funzione con _macro_.],
+)
+Il primo comando di `main.mcfunction` stamperà `my value is bar`, il secondo `my value is 123`.
+
+L'esecuzione dei comandi di una funzione può essere interrotta dal comando `return`. Funzioni che non contengono questo comando possono essere considerate di tipo `void`. Tuttavia il comando return può solamente restituire `fail` o un intero predeterminato, a meno che non si usi una _macro_.
+
+Una funzione può essere richiamata ricorsivamente, anche modificando il contesto in cui viene eseguita. Questo comporta il rischio di creare chiamate senza fine, qualora la funzione si invochi senza alcuna condizione di arresto. È quindi responsabilità del programmatore definire i vincoli alla chiamata ricorsiva.
+
+#codly(
+    header: [iterate.mcfunction],
+)
+#figure(
+    ```mcfunction
+    particle flame ~ ~ ~
+    execute if entity @p[distance=..10] positioned ^ ^ ^0.1 run function foo:iterate
+    ```,
+    caption: [Esempio di comando #r("execute").],
+)
+
+Questa funzione ogni volta che viene chiamata creerà una piccola texture intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if`fallisce, la funzione non sarà più eseguita.
+
+Un linguaggio di programmazione si definisce Turing completo se:
+- dispone di rami condizionali;
+- è possibile ripetere la stessa azione più volte;
+- può memorizzare una quantità arbitraria di dati.
+`
