@@ -226,4 +226,3 @@ Un linguaggio di programmazione si definisce Turing completo se:
 - dispone di rami condizionali;
 - è possibile ripetere la stessa azione più volte;
 - può memorizzare una quantità arbitraria di dati.
-`
