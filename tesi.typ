@@ -1,5 +1,4 @@
 #import "template.typ": *
-
 #show: project.with(
   title: [
     #lorem(5)
@@ -24,6 +23,7 @@
   locale: "it",
   bibliography_file: "bibliography.bib",
 )
+
 
 #include "chapters/introduzione.typ"
 
