@@ -143,9 +143,6 @@ Come menzionato in precedenza, il formato #glos.nbt — una volta compresso — 
 )
 Questi comandi definiscono la stringa `My Chicken` nello #glos.str, successivamente combinano il valore dallo #glos.str al campo nome della gallina più vicina, e infine cancellano i dati impostati.
 
-=== Contesto di Esecuzione e Command Stack
-Prima di parlare dei prossimi comandi, bisogna spiegare in che modo #glos.mc esegue gruppi di comandi.
-
 === Execute
 #r("execute") consente di eseguire un altro comando cambiando valori quali l'entità esecutrice e la posizione. Questi elementi definiscono il contesto di esecuzione, ossia l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito.\
 Tramite #r("execute") è anche possibile specificare condizioni preliminari e salvare il risultato dell'esecuzione. Dispone inoltre di 14 sottocomandi, o istruzioni, che posso essere raggruppate in 4 categorie:
@@ -217,12 +214,83 @@ Una funzione può essere richiamata ricorsivamente, anche modificando il contest
     particle flame ~ ~ ~
     execute if entity @p[distance=..10] positioned ^ ^ ^0.1 run function foo:iterate
     ```,
-    caption: [Esempio di comando #r("execute").],
+    caption: [Esempio di funzione ricorsiva.],
 )
 
-Questa funzione ogni volta che viene chiamata creerà una piccola texture intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if`fallisce, la funzione non sarà più eseguita.
+Questa funzione ogni volta che viene chiamata creerà una piccola texture intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
 
-Un linguaggio di programmazione si definisce Turing completo se:
-- dispone di rami condizionali;
-- è possibile ripetere la stessa azione più volte;
-- può memorizzare una quantità arbitraria di dati.
+Un linguaggio di programmazione si definisce Turing completo se soddisfa tre condizioni fondamentali:
+- Rami condizionali: deve poter eseguire istruzioni diverse in base a una condizione logica. Nel caso di #glos.mcf, ciò è realizzabile tramite il sotto-comando `if`.
+- Iterazione o ricorsione: deve consentire la ripetizione di operazioni. In questo linguaggio, tale comportamento è ottenuto attraverso la ricorsione delle funzioni.
+- Memorizzazione di dati: deve poter gestire una quantità arbitraria di informazioni. In #glos.mcf, ciò avviene tramite la manipolazione dei dati all'interno dei #glos.str.
+
+Pertanto, #glos.mcf può essere considerato a tutti gli effetti un linguaggio Turing completo. Tuttavia, come verrà illustrato nella sezione successiva, sia il linguaggio stesso sia il sistema di file su cui si basa presentano diverse limitazioni e inefficienze. In particolare, l'esecuzione di operazioni relativamente semplici richiede un numero considerevole di righe di codice e di file, che in un linguaggio di più alto livello potrebbero essere realizzate in modo molto più conciso.
+
+== Problemi e Limitazioni
+
+Il linguaggio Mcfunction non è stato originariamente concepito come un linguaggio di programmazione Turing completo. Nel 2012, prima dell'introduzione dei #glos.dp, il comando #r("scoreboard") veniva utilizzato unicamente per monitorare statistiche dei giocatori, come il tempo di gioco o il numero di blocchi scavati. In seguito, osservando come questo e altri comandi venissero impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, gli sviluppatori di #glos.mc iniziarono ampliare progressivamente il sistema, fino ad arrivare, nel 2017, alla nascita dei #glos.dp.
+
+Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono periodicamente nuove funzionalità o ne modificano di già esistenti. Tuttavia, il sistema presenta ancora diverse limitazioni di natura tecnica, dovute al fatto che non era stato originariamente progettato per supportare logiche di programmazione complesse o essere utilizzato in progetti di grandi dimensioni.
+
+=== Limiti di #r("scoreboard")
+Come è stato precedentemente citato, #r("scoreboard") è usato per eseguire operazioni su interi. Operare con questo comando tuttavia presenta numerosi problemi.
+
+Innanzitutto, oltre a dover creare un _objective_ prima di poter eseguire operazioni su di esso, è necessario assegnare le costanti che si utilizzeranno, qualora si volessero eseguire operazioni di moltiplicazione e divisione. Inoltre, un singolo comando #r("scoreboard") prevede una sola operazione.
+
+Di seguito viene mostrato come l'espressione #r("int x = (y*2)/4-2") si calcola in #glos.mcf. Le variabili saranno prefissate da `$`, e le costanti da `#`.
+#codly(
+    annotations: (
+        (
+            start: 4,
+            end: 7,
+            content: block(
+                width: 2em,
+                rotate(-90deg, reflow: true, align(center)[Operazioni su #r("$y")]),
+            ),
+        ),
+    ),
+)
+#figure(
+    ```mcfunction
+    scoreboard objectives add math dummy
+    scoreboard players set $y math 10
+    scoreboard players set #2 math 2
+    scoreboard players set #4 math 4
+    scoreboard players operation $y math *= #2 math
+    scoreboard players operation $y math /= #4 math
+    scoreboard players remove $y math 2
+    scoreboard players operation $x math = $y math
+    ```,
+    caption: [Esempio con $y=10$],
+)
+Qualora non fossero stati impostati i valori di `#2` e `#4`, il compilatore li avrebbe valutati con valore 0 e l'espressione non sarebbe stata corretta.
+
+Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore viene poi assegnato a $x$. Di conseguenza, sia `#x` math che `#y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ dovrebbe rimanere invariato.
+Per evitare questo effetto collaterale, è necessario eseguire l'assegnazione $x = y$ prima delle altre operazioni aritmetiche.
+#codly(
+    annotations: (
+        (
+            start: 4,
+            end: 8,
+            content: block(
+                width: 2em,
+                rotate(-90deg, reflow: true, align(center)[Operazioni su #r("$x")]),
+            ),
+        ),
+    ),
+)
+#figure(
+    ```mcfunction
+    scoreboard objectives add math dummy
+    scoreboard players set $y math <some value>
+    scoreboard players set #2 math 2
+    scoreboard players set #4 math 4
+    scoreboard players operation $x math = $y math
+    scoreboard players operation $x math *= #2 math
+    scoreboard players operation $x math /= #4 math
+    scoreboard players remove $x math 2
+    ```,
+    caption: [Esempio di espressione con #r("scoreboard")],
+)
+
+La soluzione è quindi semplice, ma mette in evidenza come in questo contesto non sia possibile scrivere le istruzioni nello stesso ordine in cui verrebbero elaborate da un compilatore tradizionale.
