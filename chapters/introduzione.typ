@@ -512,7 +512,7 @@ say I'm a cat
 say meow
 ```
 
-Considerando che i #glos.dp si basano sull'esecuzione di funzioni *in base a eventi già esistenti*, sono numerosi i casi in cui ci si trova a creare più file contenenti un numero ridotto, purché significativo, di comandi.
+Considerando che i #glos.dp si basano sull'esecuzione di funzioni *in base a eventi già esistenti*, sono numerosi i casi in cui ci si trova a creare più file che contengono un numero ridotto, purché significativo, di comandi.
 
 Per quanto riguarda i cicli, come mostrato in @funzione_ricorsiva, l'unico modo per ripetere gli stessi comandi più volte è attraverso la ricorsione. Di conseguenza, ogni volta che è necessario implementare un ciclo, è indispensabile creare almeno una funzione dedicata.
 
@@ -523,7 +523,7 @@ Dunque, programmando in #glos.mcf è necessario creare una funzione, ovvero un f
 - un ciclo;
 - utilizzare una _macro_.
 
-Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di codice. Tuttavia, ci sono altre problematiche alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
+Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di codice. Tuttavia, ci sono altre problematiche relative alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
 
 === Struttura file complessa
 I problemi mostrati fin'ora sono prettamente legati alla sintassi dei comandi e ai limiti delle funzioni, tuttavia non sono da trascurare le dimensioni in termini di file di un progetto.
