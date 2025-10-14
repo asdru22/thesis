@@ -13,6 +13,7 @@
   academic_year: "2024/2025",
   dedication: [],
   abstract: [
+    #todo[sistemare]
     In questo documento tratterò del mio lavoro svolto sotto la supervisione del prof. Padovani nello sviluppare un sistema software che agevola l'utilizzo della _Domain Specific Language_ del videogioco Minecraft.\
     Verranno inizialmente illustrati i problemi sintattici e strutturali di questo ampio ecosistema di file.\
     Successivamente mostrerò come ho provato ad ovviarli, o almeno ridurli, tramite una libreria che si occupa di svolgere le operazioni più tediose e ripetitive.

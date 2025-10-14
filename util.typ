@@ -12,10 +12,6 @@
     "ns": [_namespace_],
     "score":[_scoreboard_],
     "nbt": [NBT],
-    "str": [_storage_]
+    "str": [_storage_],
+    "tag": [_tag_]
 )
-
-
-#let todo(content)= block(inset:1em,stroke:blue,text(fill:blue,[TODO: ])+content)
-
-#let note(content)= block(inset:1em,stroke:green,text(fill:green,[NOTA: ])+content)

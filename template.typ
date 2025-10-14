@@ -170,7 +170,7 @@
             v(8cm)
             set par(justify: false, spacing: 0cm)
             let c = counter(heading).display("1")
-            text(size: 40pt, c)
+            //text(size: 40pt, c)
             v(1cm)
             text(size: 40pt, it.body, hyphenate: false)
             v(1cm)
@@ -193,7 +193,7 @@
 
         show: codly-init.with()
 
-        codly(languages: codly-languages)
+        codly(languages: codly-languages,annotation-format: none)
 
         codly(
             zebra-fill: rgb("#F0F0F0"),

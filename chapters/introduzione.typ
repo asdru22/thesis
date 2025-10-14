@@ -63,8 +63,15 @@ Anche se l'estensione non lo indica, il file è in realtà scritto in formato #g
 Ad esempio, per la versione 1.21.10 del gioco, il #r("pack_format") dei #glos.dp è 88 e quello delle #glos.rp è 69. Queste possono cambiare anche settimanalmente, se si stanno venendo rilasciati degli _snapshot_#footnote[Con il termine snapshot si indicano le versioni di sviluppo intermedie del gioco, rilasciate periodicamente per testare le modifiche in arrivo nei futuri aggiornamenti.].
 
 Ancora più rilevanti sono le cartelle al di sotto di #r("data") e #r("assets"), chiamate #glos.ns. Se i progetti Java seguono la seguente struttura #r("com.package.author"), allora i #glos.ns possono essere visti come la sezione #r("package").\
+
+#quote(
+    block: true,
+    attribution: [Nathan Adams#footnote[Sviluppatore di #glos.mc parte del team che sviluppa feature inerenti a #glos.dp.]],
+    [This isn't a new concept, but I thought I should reiterate what a "namespace" is. Most things in the game has a namespace, so that if we add `something` and a mod (or map, or whatever) adds `something`, they're both different `something`s. Whenever you're asked to name something, for example a loot table, you're expected to also provide what namespace that thing comes from. If you don't specify the namespace, we default to `minecraft`. This means that `something` and `minecraft:something` are the same thing.],
+)
+
 I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro. Per questo, in genere i #glos.ns o sono abbreviazioni o coincidono con il nome stesso progetto che si sta sviluppando, e si usa lo stesso per #glos.dp e #glos.rp.\
-Tuttavia, in seguito si mostrerà come operare in namespace diversi non è sufficiente l'assenza di conflitti tra i #glos.pack, che spesso vengono utilizzati in gruppo.
+Tuttavia, in seguito si mostrerà come operare in #glos.ns diversi non è sufficiente l'assenza di conflitti tra i #glos.pack, che spesso vengono utilizzati in gruppo.
 
 All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno: se metto un file #glos.json che il compilatore riconosce come #r("loot_table") nella cartella #r("recipe"), il questo segnalerà un errore e il file non sarà disponibile nella sessione di gioco.
 
@@ -110,6 +117,7 @@ Un comando è un'istruzione testuale che Minecraft interpreta per eseguire una s
     ```,
     caption: [Esempio di comando che tra tutte le entità, stampa quelle di tipo giocatore.],
 )
+
 Sebbene non disponga delle funzionalità tipiche dei linguaggi di programmazione di alto livello — come cicli for e while, strutture dati complesse o variabili generiche — il sistema dei comandi fornisce comunque strumenti che consentono di riprodurre alcuni di questi comportamenti in forma limitata.
 
 I comandi che più si avvicinano ai concetti tipici della programmazione sono:
@@ -135,16 +143,16 @@ Come menzionato in precedenza, il formato #glos.nbt — una volta compresso — 
 
 #figure(
     ```mcfunction
-    data modify storage my_namespace:storage name set value "My Chicken"
-    data merge entity @n[type=chicken] CustomName from storage my_namespace:storage name
+    data modify storage my_namespace:storage name set value "My Cat"
+    data merge entity @n[type=cat] CustomName from storage my_namespace:storage name
     data remove storage my_namespace:storage name
     ```,
     caption: [Esempio di operazioni su dati #glos.nbt],
 )
-Questi comandi definiscono la stringa `My Chicken` nello #glos.str, successivamente combinano il valore dallo #glos.str al campo nome della gallina più vicina, e infine cancellano i dati impostati.
+Questi comandi definiscono la stringa `My Cat` nello #glos.str, successivamente combinano il valore dallo #glos.str al campo nome della gallina più vicina, e infine cancellano i dati impostati.
 
 === Execute
-#r("execute") consente di eseguire un altro comando cambiando valori quali l'entità esecutrice e la posizione. Questi elementi definiscono il contesto di esecuzione, ossia l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito.\
+#r("execute") consente di eseguire un altro comando cambiando valori quali l'entità esecutrice e la posizione. Questi elementi definiscono il contesto di esecuzione, ossia l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito. Si usa il selettore `@s` per fare riferimento all'entità del contesto di esecuzione corrente.\
 Tramite #r("execute") è anche possibile specificare condizioni preliminari e salvare il risultato dell'esecuzione. Dispone inoltre di 14 sottocomandi, o istruzioni, che posso essere raggruppate in 4 categorie:
 - modificatori: cambiano il contesto di esecuzione;
 - condizionali: controllano se certe condizioni sono rispettate;
@@ -169,7 +177,7 @@ Questo comando sta definendo una serie di passi da fare;
 Al termine dell'esecuzione, il valore `on_stone` di ogni entità sarà 1 se si trovava su un blocco di pietra, 0 altrimenti.
 
 == Funzioni
-Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf. A differenza di quanto il nome possa suggerire, non prevedono parametri di input o di output, ma contengono contengono uno o più comandi che vengono eseguiti in ordine.\
+Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf, una funzione non può esistere se non in un file `.mcfunction`. A differenza di quanto il nome possa suggerire, non prevedono parametri di input o di output, ma contengono contengono uno o più comandi che vengono eseguiti in ordine.\
 Le funzioni possono essere invocate in vari modi da altri file di un datapack:
 
 - tramite comandi: `function namespace:function_name` esegue la funzione subito, mentre `schedule namespace:function_name <delay>` la esegue dopo un certo tempo specificato.
@@ -177,6 +185,8 @@ Le funzioni possono essere invocate in vari modi da altri file di un datapack:
 - Altri oggetti di un #glos.dp quali `Advancement` (obiettivi) e `Enchantment` (condizioni).
 
 Le funzioni vengono eseguite durante un game loop, completando tutti i comandi che contengono, inclusi quelli invocati altre funzioni. Le funzioni usano il contesto di esecuzione dell'entità che sta invocando la funzione. un comando `execute` può cambiare il contesto, ma non si applicherà a tutti i comandi a seguirlo.
+
+In base alla complessità del branching e alle operazioni eseguite dalle funzioni, il compilatore (o più precisamente, il motore di esecuzione dei comandi) deve allocare una certa quantità di risorse per completarle all'interno di un singolo tick. Il tempo di elaborazione aggiuntivo richiesto per l'esecuzione di un comando o di una funzione è definito _overhead_.
 
 Le funzioni possono includere linee _macro_, ovvero comandi che preceduti dal simbolo `$`, hanno parte o l'intero corpo sostituito al momento dell'invocazione da un termine #glos.nbt indicato dal comando invocante.
 
@@ -199,7 +209,7 @@ Le funzioni possono includere linee _macro_, ovvero comandi che preceduti dal si
         ```]
     },
     caption: [Esempio di chiamata di funzione con _macro_.],
-)
+) <esempio_macro>
 Il primo comando di `main.mcfunction` stamperà `my value is bar`, il secondo `my value is 123`.
 
 L'esecuzione dei comandi di una funzione può essere interrotta dal comando `return`. Funzioni che non contengono questo comando possono essere considerate di tipo `void`. Tuttavia il comando return può solamente restituire `fail` o un intero predeterminato, a meno che non si usi una _macro_.
@@ -215,7 +225,7 @@ Una funzione può essere richiamata ricorsivamente, anche modificando il contest
     execute if entity @p[distance=..10] positioned ^ ^ ^0.1 run function foo:iterate
     ```,
     caption: [Esempio di funzione ricorsiva.],
-)
+) <funzione_ricorsiva>
 
 Questa funzione ogni volta che viene chiamata creerà una piccola texture intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
 
@@ -294,3 +304,226 @@ Per evitare questo effetto collaterale, è necessario eseguire l'assegnazione $x
 )
 
 La soluzione è quindi semplice, ma mette in evidenza come in questo contesto non sia possibile scrivere le istruzioni nello stesso ordine in cui verrebbero elaborate da un compilatore tradizionale.
+
+Un ulteriore caso in cui l'ordine di esecuzione delle operazioni e il dominio ristretto agli interi assumono particolare rilevanza riguarda il rischio di errori di arrotondamento nelle operazioni che coinvolgono valori prossimi allo zero.
+
+Si supponga si voglia calcolare il $5%$ di 40. Con un linguaggio di programmazione di alto livello si ottiene 2 sia con `40/100*5`, che con `40*5/100`. Scomponendo queste operazioni in comandi #r("scoreboard") si ottiene rispettivamente:
+
+#figure(
+    [```mcfunction
+        scoreboard players operation set $val math 40
+        scoreboard players operation $val math /= #100 math
+        scoreboard players operation $val math *= #5 math
+        ```
+        #v(5pt)
+        ```mcfunction
+        scoreboard players operation set $val math 40
+        scoreboard players operation $val math *= #5 math
+        scoreboard players operation $val math /= #100 math
+        ```
+    ],
+    caption: [Calcolo della percentuale con ordine di operazioni invertito],
+)
+
+Nel primo caso, poiché $40 / 100 = 0$ nel dominio degli interi, il risultato finale sarà 0: nella riga 3, infatti, viene eseguita l'operazione $0 times 5$.\
+Nel secondo caso, invece, si ottiene il risultato corretto pari a 2, poiché le operazioni vengono eseguite nell'ordine $40 times 5 = 200$ e successivamente $200 / 100 = 2$.
+
+=== Assenza di funzioni matematiche
+
+Poiché tramite #glos.score è possibile eseguire esclusivamente le quattro operazioni aritmetiche di base, il calcolo di funzioni più complesse — come logaritmi, esponenziali, radici quadrate o funzioni trigonometriche — risulta particolarmente difficile da implementare.
+
+Bisogna inoltre considerare il fatto che queste operazioni saranno ristrette al dominio dei numeri naturali.\
+Si può dunque cercare un algoritmo che approssimi queste funzioni, oppure creare una _lookup table_.
+
+#figure(
+    [```mcfunction
+        scoreboard players set #sign math -400
+        scoreboard players operation .in math %= #3600 const
+        execute if score .in math matches 1800.. run scoreboard players set #sign math 400
+        execute store result score #temp math run scoreboard players operation .in math %= #1800 const
+        scoreboard players remove #temp math 1800
+        execute store result score .out math run scoreboard players operation #temp math *= .in math
+        scoreboard players operation .out math *= #sign math
+        scoreboard players add #temp math 4050000
+        scoreboard players operation .out math /= #temp math
+        execute if score #sign math matches 400 run scoreboard players add .out math 1
+        ```
+    ],
+    caption: [Algoritmo che approssima la funzione $sin(x)$.],
+)
+
+La scrittura di algoritmi di questo tipo è impegnativa, e spesso richiede di gestire un input moltiplicato per $10^n$ il cui output è un intero dove sia assume che le ultime $n$ cifre siano decimali#footnote[Solitamente $n=3$.]. Inoltre, questo approccio può facilmente provocare problemi di _integer overflow_.
+
+Dunque, in seguito all'introduzione delle _macro_, si sono iniziate ad utilizzare delle _lookup table_. Queste sono _array_ salvati in #glos.str che contengono tutti gli output di una certa funzione in un intervallo prefissato.
+
+Ipotizziamo mi serva la radice quadrata con precisione decimale di tutti gli interi tra 0 e 100.
+#codly(
+    skips: ((7, 95),),
+)
+#figure(
+    [```mcfunction
+        data modify storage my_storage sqrt set value [
+          0,
+          1.0,
+          1.4142135623730951,
+          1.7320508075688772,
+          2.0,
+          10.0
+        ]
+        ```
+    ],
+    caption: [_Lookup table_ per $sqrt(x), "con" 0<=x<=100$.],
+)
+Dunque, data `get storage my_storage sqrt[4]` restituirà il quinto elemento dell'array, ovvero $2.0$, l'equivalente di $sqrt(4)$.
+
+Dato che sono richiesti gli output di decine, se non centinaia di queste funzioni, i comandi per creare le _lookup table_ vengono generati con script Python, ed eseguiti da #glos.mc solamente quando si ricarica il #glos.dp, dato che queste strutture non sono soggette ad operazioni di scrittura, solo di lettura.
+
+=== Alto rischio di conflitti
+
+Nella sezione precedente è stato modificato lo #glos.str `my_storage per` inserirvi un array. Si noti che non è stato specificato alcun #glos.ns, per cui il sistema ha assegnato implicitamente quello predefinito, `minecraft:`.
+
+Qualora un mondo contenesse due #glos.dp sviluppati da autori diversi, ed entrambi modificassero `my_storage` senza indicare esplicitamente un #glos.ns, potrebbero verificarsi conflitti.\
+
+Un'altra situazione che può portare a conflitti è quando due #glos.dp sovrascrivono la stessa risorsa nel #glos.ns `minecraft`. Se entrambi modificano `minecraft/loot_table/blocks/stone.json`, che determina gli oggetti si possono ottenere da un blocco di pietra, il compilatore utilizzerà il file del #glos.dp che è stato caricato per ultimo.
+
+Il rischio di sovrascrivere o utilizzare in modo improprio risorse appartenenti ad altri #glos.dp non riguarda solo gli elementi che prevedono un #glos.ns, ma si estende anche a componenti come #glos.score e #glos.tag.
+
+In questo esempio sono presenti due #glos.dp, sviluppati da autori diversi, con lo stesso obiettivo: eseguire una funzione relativa all'entità chiamante (`@s`) al termine di un determinato intervallo di tempo. In entrambi i casi, le funzioni incaricate dell'aggiornamento del timer vengono eseguite ogni _tick_, ovvero venti volte al secondo.
+
+#figure(
+    {
+        codly(
+            header: [timer\_a.mcfunction],
+        )
+        [```mcfunction
+        scoreboard players add @s timer 1
+        execute if score @s timer matches 20 run function some_function
+        ```]
+        v(10pt)
+        codly(
+            header: [timer\_b.mcfunction],
+        )
+        [```mcfunction
+        scoreboard players remove @s timer 1
+        execute if score @s timer matches 0 run function some_function
+        ```]
+    },
+    caption: [Due funzioni che aggiornano un timer.],
+)
+
+Le due funzioni modificano lo stesso _fakeplayer_ all'interno dello stesso #glos.score. Poiché `timer_a` incrementa `timer` e `timer_b` lo decrementa, al termine di un _tick_ il valore rimane invariato. Se invece entrambe variassero `timer` nello stesso verso, ad esempio incrementandolo, la durata effettiva del timer risulterebbe dimezzata. Questo è uno dei motivi per cui il nome di una _scoreboard_ deve essere prefissato con un #glos.ns, ad esempio `a.timer`#footnote[Come separatore si usa `.` e non `:` in quanto quest'ultimo è un carattere supportato nel nome di una #glos.score.].
+
+Tra le varie condizioni per cui i selettori possono filtrare entità, ci sono i _tag_, ovvero stringhe memorizzate in un array nell'#glos.nbt di un entità.
+
+Di conseguenza, se nell'esempio precedente gli sviluppatori intendono che la funzione `timer` venga eseguita esclusivamente dalle entità contrassegnate da un determinato _tag_ — ad esempio `has_timer` — i comandi per invocare `timer_a` e `timer_b` risulteranno i seguenti:
+
+#figure({
+    codly(
+        header: [tick\_a.mcfunction],
+    )
+    [```mcfunction
+    execute as @e[tag=has_timer] run function a:timer_a
+    ```]
+    v(10pt)
+    codly(
+        header: [tick\_b.mcfunction],
+    )
+    [```mcfunction
+    execute as @e[tag=has_timer] run function b:timer_b
+    ```]
+})
+
+In entrambi i casi, `@e[tag=has_timer]` seleziona lo stesso insieme di entità. Ciò può risultare problematico se, allo scadere del timer di $b$, vengono eseguiti comandi che determinano comportamenti inaspettati o erronei per le entità del #glos.dp di $a$ (o viceversa).
+
+Dunque, come per i nomi delle #glos.score è buona norma prefissare il tag con il #glos.ns del proprio progetto.
+
+In conclusione, è buona pratica utilizzare prefissi per i nomi di #glos.str, #glos.score e _tag_, nonostante i #glos.dp compilano correttamente anche senza di essi.
+
+=== Assenza di _code blocks_
+
+Nei linguaggi come C o Java, i blocchi di codice che devono essere eseguiti condizionalmente o all'interno di un ciclo vengono racchiusi tra parentesi graffe. In Python, invece, la stessa funzione è ottenuta tramite l'indentazione del codice.
+
+In una funzione #glos.mcf, questo non si può fare. Se si vuole eseguire una serie di comandi condizionalmente, è necessario creare un altro file che li contenga, oppure ripetere la stessa condizione su più righe. Quest'ultima opzione comporta maggiore _overhead_, specialmente quando il comando viene eseguito in più _tick_.
+
+Di seguito viene riportato un esempio di come si può scrivere un blocco `if-else`, o `switch`, sfruttando il comando `return` per interrompere il flusso di esecuzione del codice nella funzione corrente.
+
+#figure(
+    [```mcfunction
+        execute if entity @s[type=cow] run return run say I'm a cow
+        execute if entity @s[type=cat] run return run say I'm a cat
+        say I'm neither a cow or a cat
+        ```
+    ],
+    caption: [Funzione che in base all'entità esecutrice, stampa un messaggio diverso.],
+)
+In questa funzione, i comandi dalla riga 2 in poi non verranno mai eseguiti se il tipo dell'entità è cow. Se la condizione alla riga 1 risulta falsa, l'esecuzione procede alla riga successiva, dove viene effettuato un nuovo controllo sul tipo dell'entità; anche in questo caso, se la condizione è soddisfatta, l'esecuzione si interrompe.
+#figure(
+    [```
+        switch(entity){
+          case "cow" -> print("I'm a cow")
+          case "cat" -> print("I'm a cat")
+          default -> print("I'm neither a cow or a cat")
+        }
+        ```
+    ],
+    caption: [Pseudocodice equivalente alla funzione precedente.],
+)
+
+La funzione è abbastanza intuitiva, e corrisponde a qualcosa che si vedrebbe in un linguaggio di programmazione di alto livello. Ipotizziamo ora che si vogliano eseguire due o più comandi in base all'entità.
+
+#figure(
+    [```mcfunction
+        execute if entity @s[type=cow] run return run say I'm a cow
+        execute if entity @s[type=cow] run return run say moo
+
+        execute if entity @s[type=cat] run return run say I'm a cat
+        execute if entity @s[type=cat] run return run say meow
+
+        say I'm neither a cow or a cat
+        ```
+    ],
+    caption: [Funzione errata per eseguire più comandi data una certa condizione.],
+)
+
+Ora, se l'entità è di tipo `cow`, il comando alla riga 2 non verrà mai eseguito, anche se la condizione sarebbe soddisfatta. Dunque, è necessario creare una funzione che contenga quei due comandi.
+
+#codly(
+    header: [main.mcfunction],
+)
+```mcfunction
+execute if entity @s[type=cow] run return run function is_cow
+execute if entity @s[type=cat] run return run function is_cat
+
+say I'm neither a cow or a cat
+```
+
+#codly(
+    header: [is_cow.mcfunction],
+)
+```mcfunction
+say I'm a cow
+say moo
+```
+#codly(
+    header: [is_cat.mcfunction],
+)
+```mcfunction
+say I'm a cat
+say meow
+```
+
+Considerando che i #glos.dp si basano sull'esecuzione di funzioni *in base a eventi già esistenti*, sono numerosi i casi in cui ci si trova a creare più file contenenti un numero ridotto, purché significativo, di comandi.
+
+Per quanto riguarda i cicli, come mostrato in @funzione_ricorsiva, l'unico modo per ripetere gli stessi comandi più volte è attraverso la ricorsione. Di conseguenza, ogni volta che è necessario implementare un ciclo, è indispensabile creare almeno una funzione dedicata.
+
+Infine, @esempio_macro dimostra che, per utilizzare una _macro_, è sempre necessario creare una funzione capace di ricevere i parametri di un'altra funzione e applicarli a uno o più comandi indicati con `$`. Questa è probabilmente una delle ragioni più valide per cui scrivere una nuova funzione; tuttavia, va comunque considerata nel conteggio complessivo dei file la cui creazione non è necessaria in un linguaggio di programmazione ad alto livello.
+
+Dunque, programmando in #glos.mcf è necessario creare una funzione, ovvero un file, ogniqualvolta si necessiti di:
+- un blocco `if-else` che esegua più comandi;
+- un ciclo;
+- utilizzare una _macro_.
+
+Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di codice. Tuttavia, ci sono altre problematiche alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
+
+=== Struttura file complessa
+I problemi mostrati fin'ora sono prettamente legati alla sintassi dei comandi e ai limiti delle funzioni, tuttavia non sono da trascurare le dimensioni in termini di file di un progetto.
