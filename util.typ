@@ -15,3 +15,5 @@
     "str": [_storage_],
     "tag": [_tag_]
 )
+
+#let e = [È]
