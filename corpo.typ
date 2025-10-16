@@ -60,7 +60,7 @@ Ancora più rilevanti sono le cartelle al di sotto di #r("data") e #r("assets"),
 
 #quote(
     block: true,
-    attribution: [Nathan Adams#footnote[Sviluppatore di #glos.mc parte del team che sviluppa feature inerenti a #glos.dp.]],
+    attribution: [Nathan Adams#footnote[Sviluppatore di #glos.mc parte del team che implementa feature inerenti a #glos.dp.]],
     [This isn't a new concept, but I thought I should reiterate what a "namespace" is. Most things in the game has a namespace, so that if we add `something` and a mod (or map, or whatever) adds `something`, they're both different `something`s. Whenever you're asked to name something, for example a loot table, you're expected to also provide what namespace that thing comes from. If you don't specify the namespace, we default to `minecraft`. This means that `something` and `minecraft:something` are the same thing.],
 )
 
