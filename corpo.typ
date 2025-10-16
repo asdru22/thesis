@@ -5,7 +5,7 @@
 
 = Struttura e Funzionalità di un Pack
 
-== Cos'è un #glos.pack
+== Cos'è un Pack
 I file #glos.json e #glos.mcf devono trovarsi in specifiche cartelle per poter essere riconosciuti dal compilatore di #glos.mc ed essere integrati nel videogioco. La cartella radice che contiene questi file si chiama #glos.dp.\
 Un #glos.dp può essere visto come la cartella #r("java") di un progetto Java: contiene la parte che detta i comportamenti dell'applicazione.
 
@@ -15,7 +15,7 @@ Le #glos.rp sono state concepite prima dei #glos.dp, e permettevano ai giocatori
 
 _Datapack_ e #glos.rp formano il #glos.pack che, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java. Questa sarà poi la cartella che verrà pubblicata.
 
-== Struttura di #glos.dp e #glos.rp
+== Struttura e Componenti di Datapack e Resourcepack
 
 All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simile.
 
@@ -632,4 +632,4 @@ Altri precompilatori forniscono un'interfaccia più intuitiva e un utilizzo più
         ```
     ],
 )
-#e più articolato rispetto alla sintassi tradizionale `execute as @a at @s if entity @s[tag=my_entity] run say hello`.
+Questo è più articolato rispetto alla sintassi tradizionale `execute as @a at @s if entity @s[tag=my_entity] run say hello`.
