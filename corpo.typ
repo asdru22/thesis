@@ -1,13 +1,9 @@
 #import "/util.typ": *
 #import "@preview/codly:1.3.0": *
+#import "@preview/treet:1.0.0": *
+#import "@preview/big-todo:0.2.0": *
 
-= Introduzione
-Se non fosse per il videogioco #glos.mc, non sarei qui ora. Quello che per me inizialmente era un modo di esprimere la mia creatività piazzando cubi in un mondo tridimensionale, si è rivelato presto essere il luogo dove per anni ho scritto ed eseguito i miei primi frammenti di codice.\
-Motivato dalla mia abilità nel saper programmare in questo linguaggio non banale, ho perseguito una carriera di studio in informatica.
-
-Il sistema che inizialmente era stato pensato dagli sviluppatori della piattaforma come un modo di "barare" tramite comandi per ottenere oggetti istantaneamente e senza il minimo sforzo, si è col tempo evoluto in un ecosistema di file e codice che permette agli sviluppatori che decidono di usare questa _Domain Specific Language_ per modificare moltissimi comportamenti dell'ambiente videoludico.
-
-#glos.mc è scritto in Java, ma questa DSL chiamata #glos.mcf è un linguaggio completamente diverso. Non fornisce agli sviluppatori il modo di aggiungere comportamenti nuovi, modificando il codice sorgente. Permette piuttosto di aggiungere _feature_ aggiungendo frammenti di codice che vengono eseguiti solo sotto certe condizioni, dando ad un utilizzatore l'illusione che queste facciano parte dei contenuti classici del videogioco. Negli ultimi anni, in seguito ad aggiornamenti, tramite una serie di file #glos.json sta gradualmente diventando possibile creare esperienze del tutto nuove. Tuttavia questo sistema è ancora limitato, e gran parte della logica è comunque dettata dai file #glos.mcf.
+= Struttura e Funzionalità di un Pack
 
 == Cos'è un #glos.pack
 I file #glos.json e #glos.mcf devono trovarsi in specifiche cartelle per poter essere riconosciuti dal compilatore di #glos.mc ed essere integrati nel videogioco. La cartella radice che contiene questi file si chiama #glos.dp.\
@@ -22,8 +18,6 @@ _Datapack_ e #glos.rp formano il #glos.pack che, riprendendo il parallelismo pre
 == Struttura di #glos.dp e #glos.rp
 
 All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simile.
-
-#import "@preview/treet:1.0.0": *
 
 #figure(
     grid(
@@ -72,6 +66,9 @@ Ancora più rilevanti sono le cartelle al di sotto di #r("data") e #r("assets"),
 
 I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro. Per questo, in genere i #glos.ns o sono abbreviazioni o coincidono con il nome stesso progetto che si sta sviluppando, e si usa lo stesso per #glos.dp e #glos.rp.\
 Tuttavia, in seguito si mostrerà come operare in #glos.ns diversi non è sufficiente l'assenza di conflitti tra i #glos.pack, che spesso vengono utilizzati in gruppo.
+
+Il namespace `minecraft` è riservato alle risorse native del gioco: sovrascriverle comporta il rischio di rimuovere funzionalità originali o di alterare il comportamento previsto del gioco. È interessante notare che anche gli sviluppatori di #glos.mc stessi fanno uso dei #glos.dp per definire e organizzare molti comportamenti del gioco, come definire le risorse che si possono ottenere da un baule, o gli ingredienti necessari per creare un certo oggetto. In altre parole, i #glos.dp non sono solo uno strumento a disposizione dei giocatori per personalizzare l'esperienza, ma costituiscono anche il *meccanismo interno attraverso cui il gioco stesso struttura e gestisce alcune delle sue funzionalità principali*.\
+Bisogna specificare che i domandi e file #r(".mcfunction") non sono utilizzati in alcun modo dagli sviluppatori della Mojang per implementare funzionalità del videogioco. Come precedentemente citato, tutta la logica è dettata da codice Java.
 
 All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno: se metto un file #glos.json che il compilatore riconosce come #r("loot_table") nella cartella #r("recipe"), il questo segnalerà un errore e il file non sarà disponibile nella sessione di gioco.
 
@@ -227,7 +224,7 @@ Una funzione può essere richiamata ricorsivamente, anche modificando il contest
     caption: [Esempio di funzione ricorsiva.],
 ) <funzione_ricorsiva>
 
-Questa funzione ogni volta che viene chiamata creerà una piccola texture intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
+Questa funzione ogni volta che viene chiamata creerà una piccola #glos.txt intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
 
 Un linguaggio di programmazione si definisce Turing completo se soddisfa tre condizioni fondamentali:
 - Rami condizionali: deve poter eseguire istruzioni diverse in base a una condizione logica. Nel caso di #glos.mcf, ciò è realizzabile tramite il sotto-comando `if`.
@@ -236,13 +233,13 @@ Un linguaggio di programmazione si definisce Turing completo se soddisfa tre con
 
 Pertanto, #glos.mcf può essere considerato a tutti gli effetti un linguaggio Turing completo. Tuttavia, come verrà illustrato nella sezione successiva, sia il linguaggio stesso sia il sistema di file su cui si basa presentano diverse limitazioni e inefficienze. In particolare, l'esecuzione di operazioni relativamente semplici richiede un numero considerevole di righe di codice e di file, che in un linguaggio di più alto livello potrebbero essere realizzate in modo molto più conciso.
 
-== Problemi e Limitazioni
+= Problemi pratici e limiti tecnici di Datapack e Resource Pack
 
 Il linguaggio Mcfunction non è stato originariamente concepito come un linguaggio di programmazione Turing completo. Nel 2012, prima dell'introduzione dei #glos.dp, il comando #r("scoreboard") veniva utilizzato unicamente per monitorare statistiche dei giocatori, come il tempo di gioco o il numero di blocchi scavati. In seguito, osservando come questo e altri comandi venissero impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, gli sviluppatori di #glos.mc iniziarono ampliare progressivamente il sistema, fino ad arrivare, nel 2017, alla nascita dei #glos.dp.
 
 Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono periodicamente nuove funzionalità o ne modificano di già esistenti. Tuttavia, il sistema presenta ancora diverse limitazioni di natura tecnica, dovute al fatto che non era stato originariamente progettato per supportare logiche di programmazione complesse o essere utilizzato in progetti di grandi dimensioni.
 
-=== Limiti di #r("scoreboard")
+== Limitazioni di Scoreboard
 Come è stato precedentemente citato, #r("scoreboard") è usato per eseguire operazioni su interi. Operare con questo comando tuttavia presenta numerosi problemi.
 
 Innanzitutto, oltre a dover creare un _objective_ prima di poter eseguire operazioni su di esso, è necessario assegnare le costanti che si utilizzeranno, qualora si volessero eseguire operazioni di moltiplicazione e divisione. Inoltre, un singolo comando #r("scoreboard") prevede una sola operazione.
@@ -328,7 +325,7 @@ Si supponga si voglia calcolare il $5%$ di 40. Con un linguaggio di programmazio
 Nel primo caso, poiché $40 / 100 = 0$ nel dominio degli interi, il risultato finale sarà 0: nella riga 3, infatti, viene eseguita l'operazione $0 times 5$.\
 Nel secondo caso, invece, si ottiene il risultato corretto pari a 2, poiché le operazioni vengono eseguite nell'ordine $40 times 5 = 200$ e successivamente $200 / 100 = 2$.
 
-=== Assenza di funzioni matematiche
+== Assenza di Funzioni Matematiche
 
 Poiché tramite #glos.score è possibile eseguire esclusivamente le quattro operazioni aritmetiche di base, il calcolo di funzioni più complesse — come logaritmi, esponenziali, radici quadrate o funzioni trigonometriche — risulta particolarmente difficile da implementare.
 
@@ -378,7 +375,7 @@ Dunque, data `get storage my_storage sqrt[4]` restituirà il quinto elemento del
 
 Dato che sono richiesti gli output di decine, se non centinaia di queste funzioni, i comandi per creare le _lookup table_ vengono generati con script Python, ed eseguiti da #glos.mc solamente quando si ricarica il #glos.dp, dato che queste strutture non sono soggette ad operazioni di scrittura, solo di lettura.
 
-=== Alto rischio di conflitti
+== Alto Rischio di Conflitti
 
 Nella sezione precedente è stato modificato lo #glos.str `my_storage per` inserirvi un array. Si noti che non è stato specificato alcun #glos.ns, per cui il sistema ha assegnato implicitamente quello predefinito, `minecraft:`.
 
@@ -439,7 +436,7 @@ Dunque, come per i nomi delle #glos.score è buona norma prefissare il tag con i
 
 In conclusione, è buona pratica utilizzare prefissi per i nomi di #glos.str, #glos.score e _tag_, nonostante i #glos.dp compilano correttamente anche senza di essi.
 
-=== Assenza di _code blocks_
+== Assenza di Code Blocks
 
 Nei linguaggi come C o Java, i blocchi di codice che devono essere eseguiti condizionalmente o all'interno di un ciclo vengono racchiusi tra parentesi graffe. In Python, invece, la stessa funzione è ottenuta tramite l'indentazione del codice.
 
@@ -525,7 +522,7 @@ Dunque, programmando in #glos.mcf è necessario creare una funzione, ovvero un f
 
 Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di codice. Tuttavia, ci sono altre problematiche relative alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
 
-=== Struttura file complessa
+== Organizzazione e Complessità della Struttura dei File
 I problemi mostrati fin'ora sono prettamente legati alla sintassi dei comandi e ai limiti delle funzioni, tuttavia non sono da trascurare il quantitativo di file di un progetto.
 
 Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`. Tuttavia, operare su queste due cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra i due sistemi. Lavorare direttamente dalla directory radice `.minecraft/` invece inoltre poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
@@ -580,10 +577,13 @@ Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrat
 Nella sezione _data_, che determina la logica e i contenuti, _loot\_table_ e _recipe_ definiscono rispettivamente le proprietà dell'oggetto, e come questo può essere creato. L'_advancement_ `use_my_item` serve a rilevare quando un giocatore usa l'oggetto, e chiama la funzione `on_item_use` che produrrà un suono.
 
 I suoni devono essere collocati all'interno degli _assets_. Per poter essere riprodotti, ciascun suono deve avere un file audio in formato `.ogg` ed essere registrato nel file `sounds.json`. Nella cartella _lang_ sono invece presenti i file responsabili della gestione delle traduzioni, organizzate come insiemi di coppie chiave-valore.\
-Per definire l'aspetto visivo dell'oggetto, si parte dalla sua _item model definition_, situata nella cartella `item`. Questa specifica il modello che l'_item_ utilizzerà. Il modello 3D, collocato in `models/item`, ne definisce la forma geometrica, mentre la _texture_ associata al modello è contenuta nella directory `textures/item`.
+Per definire l'aspetto visivo dell'oggetto, si parte dalla sua _item model definition_, situata nella cartella `item`. Questa specifica il modello che l'_item_ utilizzerà. Il modello 3D, collocato in `models/item`, ne definisce la forma geometrica, mentre la #glos.tex associata al modello è contenuta nella directory `textures/item`.
 
 Si osserva quindi che, per implementare anche la feature più semplice, è necessario creare sette file e modificarne due. Pur riconoscendo che ciascun file svolge una funzione distinta e che la loro presenza è giustificata, risulterebbe certamente più comodo poter definire questo tipo di risorse _inline_.
 
-Con il termine _inline_ si intende la definizione e utilizzo una o più risorse direttamente all'interno dello stesso file in cui vengono impiegate. Questa modalità risulterebbe particolarmente vantaggiosa quando un file gestisce contenuti specifici e indipendenti. Ad esempio, nell'aggiunta di un nuovo item, il relativo modello e la texture non verrebbero mai condivisi con altri oggetti, rendendo superfluo separarli in file distinti.
+Con il termine _inline_ si intende la definizione e utilizzo una o più risorse direttamente all'interno dello stesso file in cui vengono impiegate. Questa modalità risulterebbe particolarmente vantaggiosa quando un file gestisce contenuti specifici e indipendenti. Ad esempio, nell'aggiunta di un nuovo item, il relativo modello e la #glos.tex non verrebbero mai condivisi con altri oggetti, rendendo superfluo separarli in file distinti.
 
 Infine, l'elevato numero di file rende l'ambiente di lavoro complesso da navigare. In progetti di grossa portata questo implica, nel lungo periodo, una significativa quantità di tempo dedicata alla ricerca dei singoli file.
+
+== Stato dell'Arte delle Ottimizzazioni del Sistema
+#todo[Dire che anche gli sviluppatori  usano data gen per generare in automatico i file json]

@@ -1,1 +1,0 @@
-= Come agevolare lo sviluppo
