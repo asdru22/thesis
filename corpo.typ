@@ -512,6 +512,25 @@ say meow
 Considerando che i #glos.dp si basano sull'esecuzione di funzioni *in base a eventi già esistenti*, sono numerosi i casi in cui ci si trova a creare più file che contengono un numero ridotto, purché significativo, di comandi.
 
 Per quanto riguarda i cicli, come mostrato in @funzione_ricorsiva, l'unico modo per ripetere gli stessi comandi più volte è attraverso la ricorsione. Di conseguenza, ogni volta che è necessario implementare un ciclo, è indispensabile creare almeno una funzione dedicata.
+Se è invece necessario un contatore per tenere traccia dell'iterazione corrente (il classico `i` dei cicli `for`), è possibile utilizzare funzioni ricorsive che si richiamano passando come parametro una _macro_, il cui valore viene aggiornato all'interno del corpo della funzione. In alternativa, si possono scrivere esplicitamente i comandi necessari a gestire ciascun valore possibile, in modo analogo a quanto avviene con le _lookup table_.
+
+Ipotizziamo si voglia determinare in quale _slot_ dell'inventario del giocatore si trovi l'oggetto `diamond`. Una possibile soluzione è utilizzare una funzione che iteri da 0 a 35 (un giocatore può tenere fino a 36 oggetti diversi), dove il parametro della _macro_ indica lo _slot_ che si vuole controllare, ma questo approccio comporta un overhead maggiore rispetto alla verifica diretta, caso per caso, dei valori da 0 a 35.
+
+#codly(
+    header: [find_diamond.mcfunction],
+    skips: ((3, 33),),
+)
+#figure(
+    [```mcfunction
+        execute if items entity @s container.0 diamond run return run say slot 0
+        execute if items entity @s container.1 diamond run return run say slot 1
+        execute if items entity @s container.35 diamond run return run say slot 35
+        ```
+    ],
+)
+
+In questa funzione, la ricerca viene interrotta da `return` appena si trova un diamante, ed è stato provato che abbia un _overhead_ minore della ricorsione. Come nel caso delle _lookup table_, i file che fanno controlli di questo genere vengono creati script Python.
+
 
 Infine, @esempio_macro dimostra che, per utilizzare una _macro_, è sempre necessario creare una funzione capace di ricevere i parametri di un'altra funzione e applicarli a uno o più comandi indicati con `$`. Questa è probabilmente una delle ragioni più valide per cui scrivere una nuova funzione; tuttavia, va comunque considerata nel conteggio complessivo dei file la cui creazione non è necessaria in un linguaggio di programmazione ad alto livello.
 
@@ -547,9 +566,9 @@ Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrat
                         - loot_table
                             - my_item.json
                         - advancement
-                          - use_my_item.json
+                            - use_my_item.json
                         - function
-                          - on_item_use.mcfunction
+                            - on_item_use.mcfunction
         ]),
         align(left, tree-list[
             - resourcepack
@@ -566,8 +585,8 @@ Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrat
                         - lang
                             - en_us.json
                         - sounds
-                          - item
-                            - my_item.ogg
+                            - item
+                                - my_item.ogg
                         - sounds.json
         ]),
     ),
@@ -586,4 +605,31 @@ Con il termine _inline_ si intende la definizione e utilizzo una o più risorse 
 Infine, l'elevato numero di file rende l'ambiente di lavoro complesso da navigare. In progetti di grossa portata questo implica, nel lungo periodo, una significativa quantità di tempo dedicata alla ricerca dei singoli file.
 
 == Stato dell'Arte delle Ottimizzazioni del Sistema
-#todo[Dire che anche gli sviluppatori  usano data gen per generare in automatico i file json]
+
+Alla luce delle numerose limitazioni di questo sistema, sono state rapidamente sviluppate soluzioni volte a rendere il processo di sviluppo più efficiente e accessibile.
+
+In primo luogo, gli stessi sviluppatori di #glos.mc dispongono di strumenti interni che automatizzano la generazione dei file #glos.json necessari al corretto funzionamento di determinate _feature_. Durante lo sviluppo, tali file vengono creati automaticamente tramite codice Java eseguito in parallelo alla scrittura del codice sorgente, evitando così la necessità di definirli manualmente.
+
+Un esempio lampante è il file `sounds.json`, che definisce gli id dei suoni e a quali file `.ogg` corrispondono. Questo contiene quasi 25.000 righe di codice, creato tramite software che viene eseguito ogni volta che viene inserita una nuova feature che richiede un nuovo suono.
+
+Tuttavia, questo software non è disponibile al pubblico, e anche se lo fosse, semplificherebbe la creazione solo dei file #glos.json, non #glos.mcf. Dunque, sviluppatori indipendenti hanno realizzato propri precompilatori, progettati per generare automaticamente #glos.dp e #glos.rp a partire da linguaggi o formati più intuitivi.
+
+Un precompilatore è uno strumento che consente di scrivere le risorse e la logica di gioco in un linguaggio o formato più semplice, astratto o strutturato, e di tradurle automaticamente nei numerosi file #glos.json, #glos.mcf e cartelle richieste dal gioco.\
+Il precompilatore al momento più completo e potente si chiama _beet_, e si basa sulla sintassi di Python, integrata con comandi di #glos.mc.\
+Questo precompilatore, come molti altri, presenta due criticità principali:
+- Elevata barriera d'ingresso: solo gli sviluppatori con una buona padronanza di Python sono in grado di sfruttarne appieno le potenzialità;
+- Assenza di documentazione: la mancanza di una guida ufficiale rende il suo utilizzo accessibile quasi esclusivamente a chi è in grado di interpretare direttamente il codice sorgente di _beet_.
+
+Altri precompilatori forniscono un'interfaccia più intuitiva e un utilizzo più immediato al costo di  completezza delle funzionalità, limitandosi a supportare solo una parte delle componenti che costituiscono l'ecosistema dei #glos.pack. Spesso, inoltre, la sintassi di questi linguaggi risulta più verbosa rispetto a quella dei comandi originali, poiché essi offrono esclusivamente un approccio programmatico alla composizione dei comandi senza portare ad alcun incremento nella loro velocità di scrittura.
+
+#figure(
+    [```java
+        Execute myExecuteCommand = new Execute()
+          .as("@a")
+          .at("@s")
+          .if("entity @s[tag=my_entity]")
+          .run("say hello")
+        ```
+    ],
+)
+#e più articolato rispetto alla sintassi tradizionale `execute as @a at @s if entity @s[tag=my_entity] run say hello`.

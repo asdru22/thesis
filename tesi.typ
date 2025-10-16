@@ -39,4 +39,11 @@ Con il tempo, tale meccanismo è diventato un articolato linguaggio di configura
 #glos.mc è sviluppato in Java, ma la sua DSL, chiamata #glos.mcf, adotta un paradigma completamente diverso. Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente: le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi, interpretati dal motore interno di #glos.mc (e non dal compilatore Java), ed eseguiti solo al verificarsi di determinate condizioni. In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
 Negli ultimi anni, grazie all'introduzione e all'evoluzione di una serie di file in formato #glos.json, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché gran parte della logica continua a essere definita e gestita attraverso i file #glos.mcf.
 
+Il tirocinio ha avuto come obiettivo la progettazione e realizzazione di un sistema che semplificasse la creazione, sviluppo e distribuzione di questi file, creando un ambiente di sviluppo unificato.
+Esso consiste in una libreria Java che consente di definire la gerarchia dei file in un sistema ad albero tramite oggetti. Una volta definite tutte le feature, esegue il programma per ottenere un progetto pronto per l'uso.
+
+Il risultato è un ambiente di sviluppo più coerente e accessibile, che permette di integrare feature di Java in questa DSL, per facilitare la scrittura e gestione dei file.
+
+Nel Capitolo 1 verrà presentata la struttura generale del sistema, descrivendone gli elementi principali e il loro funzionamento. Il Capitolo 2 sarà invece dedicato all'analisi delle principali problematiche e limitazioni del sistema, insieme a una rassegna delle soluzioni proposte nello stato dell'arte. Nel Capitolo 3 verrà illustrata la struttura e implementazione della mia libreria, accompagnata da un _working example_ volto a mostrare in modo concreto il funzionamento del progetto. L'ultimo capitolo sarà dedicato all'analisi dei risultati ottenuti e delle possibili evoluzioni future.
+
 #include "corpo.typ"
