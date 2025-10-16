@@ -224,7 +224,7 @@ Una funzione può essere richiamata ricorsivamente, anche modificando il contest
     caption: [Esempio di funzione ricorsiva.],
 ) <funzione_ricorsiva>
 
-Questa funzione ogni volta che viene chiamata creerà una piccola #glos.txt intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
+Questa funzione ogni volta che viene chiamata creerà una piccola #glos.tex intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
 
 Un linguaggio di programmazione si definisce Turing completo se soddisfa tre condizioni fondamentali:
 - Rami condizionali: deve poter eseguire istruzioni diverse in base a una condizione logica. Nel caso di #glos.mcf, ciò è realizzabile tramite il sotto-comando `if`.
