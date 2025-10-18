@@ -633,3 +633,100 @@ Altri precompilatori forniscono un'interfaccia più intuitiva e un utilizzo più
     ],
 )
 Questo è più articolato rispetto alla sintassi tradizionale `execute as @a at @s if entity @s[tag=my_entity] run say hello`.
+
+= La mia Implementazione
+
+#todo[Sistemare]
+
+== Come approcciare il problema e linguaggio scelto
+
+Dato il contesto descritto e le limitazioni degli strumenti esistenti, ho voluto cercare un approccio al problema con l'obiettivo di ridurre la complessità d'uso senza sacrificare la completezza delle funzionalità.
+Di seguito verranno illustrate le principali decisioni progettuali e le ragioni che hanno portato alla scelta del linguaggio di sviluppo.
+
+Inizialmente su consiglio del prof. Padovani ho provato a formulare un _superset_ di #glos.mcf. Questo linguaggio averebbe permesso di scrivere più elementi (sia #glos.mcf, che #glos.json) all'interno dello stesso file, arricchendo anche la sintassi dei comandi con zucchero sintattico che averebbe semplificato la scrittura delle parti più verbose.
+
+#figure(
+    [```mcf
+        package foo
+        scoreboard players operation @s var *= 4
+        if score @s var matches 10.. run function {
+          say hello
+          say something else
+        }
+        ```
+    ],
+    caption: [Esempio di questo _superset_, caratterizzato da file con l'estensione `.mcf`],
+)
+Eseguendo questo codice, si sarebbe non solo creata la funzione dichiarata all'interno delle parentesi graffe, ma inserito il namespace prima di `var`, e creato il comando che impostava il valore della costante `#4` a 4, in quanto come è stato mostrato precedentemente, per eseguire divisioni e moltiplicazioni per valori costanti, è prima necessario definirli in uno _score_.
+Compilando il frammento di codice dell'esempio, si sarebbero ottenuti i seguenti file:
+#figure({
+    codly(
+        header: [load.mcfunction],
+    )
+    [```mcfunction
+    scoreboard players set #4 foo.var 4
+    ```]
+    v(10pt)
+    codly(
+        header: [main.mcfunction],
+    )
+    [```mcfunction
+    scoreboard players operation @s foo.var *= #4 foo.var
+    execute if score @s foo.var matches 10.. run function foo:5a3c50
+    ```]
+    v(10pt)
+    codly(
+        header: [5a3c50.mcfunction],
+    )
+    [```mcfunction
+    say hello
+    say something else
+    ```]
+})
+
+Ho inizialmente scelto di utilizzare la versione Java della libreria ANTLR per definire la grammatica del linguaggio. Tuttavia, mi sono presto reso conto che realizzare una grammatica in grado di cogliere tutte le sfumature della sintassi di #glos.mcf, integrandovi al contempo le mie estensioni, avrebbe richiesto un impegno di sviluppo superiore a quello compatibile con un progetto di tirocinio.
+
+Ho quindi pensato di sviluppare una libreria che consentisse di definire la struttura di un #glos.pack — dalla radice del progetto fino ai singoli file — sotto forma di oggetti. In questo modo sarebbe stato possibile rappresentare l'intero insieme delle risorse come una struttura dati ad albero n-ario. Questa, al momento dell'esecuzione, sarebbe stata attraversata per generare automaticamente i file e le cartelle corrispondenti ai nodi, all'interno delle directory di #glos.dp e #glos.rp.
+
+Il principale vantaggio di questo approccio consiste nella possibilità di definire più nodi all'interno dello stesso file, evitando così la frammentazione del codice e semplificando la gestione della struttura complessiva del #glos.pack. Inoltre, l'impiego di un linguaggio ad alto livello consente di sfruttare costrutti quali cicli e funzioni per automatizzare la generazione di comandi ripetitivi (ad esempio le già citate lookup table). Infine, la rappresentazione a oggetti della struttura consente di definire metodi di utilità per accedere e modificare i nodi da qualsiasi punto del progetto. Ad esempio, si può implementare un metodo `addTranslation(key, value)` che permette di aggiungere, indipendentemente dal contesto in cui viene invocato, una nuova voce nel file delle traduzioni.
+
+Dunque ho pensato a quale linguaggio di programmazione si potesse usare per realizzare questa libreria. Le mie opzioni erano Python e Java, e dopo aver valutato i loro punti di forza e debolezza, ho deciso di usare Java.
+
+#figure(
+    table(
+        align: horizon+left,
+        columns: 3,
+        [], [Vantaggi], [Svantaggi],
+        [Python],
+        [
+            - Gestione semplice di stringhe (`f-strings`) e file JSON;
+            - Sintassi concisa;
+            - Facilmente distribuibile.
+        ],
+        [
+            - Non nativamente orientato agli oggetti;
+            - Tipizzazione dinamica che può causare errori a runtime;
+            - Prestazioni inferiori in fase di esecuzione.
+        ],
+
+        [Java],
+        [
+            - Maggiore familiarità con progetti di grandi dimensioni;
+            - Completamente orientato agli oggetti;
+            - Compilazione ed esecuzione più efficienti.
+        ],
+        [
+            - Assenza di `f-strings` e manipolazione delle stringhe più complessa;
+            - Gestione dei file JSON più verbosa;
+            - Sintassi più prolissa, che rallenta la scrittura del codice.
+        ],
+    ),
+    caption: [Java e Python a confronto.],
+)
+
+Dopo un'attenta analisi, ho scelto di utilizzare Java per lo sviluppo del progetto, poiché secondo me è il mezzo ideale per l'applicazione di _design pattern_ in grado di semplificare e rendere più robusta la fase di sviluppo, anche a costo di sacrificare parzialmente la comodità d'uso per l'utente finale.\
+Inoltre, il tipaggio statico di Java permette di identificare in fase di sviluppo eventuali utilizzi impropri di oggetti o metodi della libreria, consentendo anche agli utenti meno esperti di comprendere più facilmente il funzionamento del sistema.
+
+== Spiegazione basso livello?
+
+== Spiegazione alto livello + working example?
