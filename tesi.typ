@@ -3,7 +3,7 @@
 
 #show: project.with(
     title: [
-        #lorem(5)
+        Framework per la Metaprogrammazione di Minecraft
     ],
     author: "Alessandro Nanni",
     professors: (

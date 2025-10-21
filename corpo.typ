@@ -115,7 +115,7 @@ Un comando è un'istruzione testuale che Minecraft interpreta per eseguire una s
     caption: [Esempio di comando che tra tutte le entità, stampa quelle di tipo giocatore.],
 )
 
-Sebbene non disponga delle funzionalità tipiche dei linguaggi di programmazione di alto livello — come cicli for e while, strutture dati complesse o variabili generiche — il sistema dei comandi fornisce comunque strumenti che consentono di riprodurre alcuni di questi comportamenti in forma limitata.
+Sebbene non disponga delle funzionalità tipiche dei linguaggi di programmazione di alto livello come cicli for e while, strutture dati complesse o variabili generiche, il sistema dei comandi fornisce comunque strumenti che consentono di riprodurre alcuni di questi comportamenti in forma limitata.
 
 I comandi che più si avvicinano ai concetti tipici della programmazione sono:
 === Scoreboard
@@ -136,7 +136,7 @@ Dunque, il sistema delle #glos.score permette di creare ed eseguire operazioni s
 
 === Data
 #r("data") consente di ottenere, modificare e combinare i #glos.nbt associati a entità, blocchi e #glos.str.
-Come menzionato in precedenza, il formato #glos.nbt — una volta compresso — viene utilizzato per la persistenza dei dati di gioco. Oltre alle informazioni relative a entità e blocchi, in questo formato vengono salvati anche gli #glos.str. Questi sono un modo efficiente di immagazzinare dati arbitrari senza dover dipendere dall'esistenza di un certo blocco o entità. Per prevenire i conflitti, ogni #glos.str dispone di una _resource location_, che convenzionalmente coincide con il #glos.ns. Vengono dunque salvati come `command_storage_<namespace>.dat`.
+Come menzionato in precedenza, il formato #glos.nbt, una volta compresso, viene utilizzato per la persistenza dei dati di gioco. Oltre alle informazioni relative a entità e blocchi, in questo formato vengono salvati anche gli #glos.str. Questi sono un modo efficiente di immagazzinare dati arbitrari senza dover dipendere dall'esistenza di un certo blocco o entità. Per prevenire i conflitti, ogni #glos.str dispone di una _resource location_, che convenzionalmente coincide con il #glos.ns. Vengono dunque salvati come `command_storage_<namespace>.dat`.
 
 #figure(
     ```mcfunction
@@ -269,7 +269,7 @@ Di seguito viene mostrato come l'espressione #r("int x = (y*2)/4-2") si calcola 
     scoreboard players operation $x math = $y math
     ```,
     caption: [Esempio con $y=10$],
-)
+)<scoreboard_set_const>
 Qualora non fossero stati impostati i valori di `#2` e `#4`, il compilatore li avrebbe valutati con valore 0 e l'espressione non sarebbe stata corretta.
 
 Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore viene poi assegnato a $x$. Di conseguenza, sia `#x` math che `#y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ dovrebbe rimanere invariato.
@@ -327,7 +327,7 @@ Nel secondo caso, invece, si ottiene il risultato corretto pari a 2, poiché le 
 
 == Assenza di Funzioni Matematiche
 
-Poiché tramite #glos.score è possibile eseguire esclusivamente le quattro operazioni aritmetiche di base, il calcolo di funzioni più complesse — come logaritmi, esponenziali, radici quadrate o funzioni trigonometriche — risulta particolarmente difficile da implementare.
+Poiché tramite #glos.score è possibile eseguire esclusivamente le quattro operazioni aritmetiche di base, il calcolo di funzioni più complesse quali logaritmi, esponenziali, radici quadrate o funzioni trigonometriche risulta particolarmente difficile da implementare.
 
 Bisogna inoltre considerare il fatto che queste operazioni saranno ristrette al dominio dei numeri naturali.\
 Si può dunque cercare un algoritmo che approssimi queste funzioni, oppure creare una _lookup table_.
@@ -412,7 +412,7 @@ Le due funzioni modificano lo stesso _fakeplayer_ all'interno dello stesso #glos
 
 Tra le varie condizioni per cui i selettori possono filtrare entità, ci sono i _tag_, ovvero stringhe memorizzate in un array nell'#glos.nbt di un entità.
 
-Di conseguenza, se nell'esempio precedente gli sviluppatori intendono che la funzione `timer` venga eseguita esclusivamente dalle entità contrassegnate da un determinato _tag_ — ad esempio `has_timer` — i comandi per invocare `timer_a` e `timer_b` risulteranno i seguenti:
+Di conseguenza, se nell'esempio precedente gli sviluppatori intendono che la funzione `timer` venga eseguita esclusivamente dalle entità contrassegnate da un determinato _tag_, ad esempio `has_timer`, i comandi per invocare `timer_a` e `timer_b` risulteranno i seguenti:
 
 #figure({
     codly(
@@ -643,7 +643,7 @@ Questo è più articolato rispetto alla sintassi tradizionale `execute as @a at 
 Dato il contesto descritto e le limitazioni degli strumenti esistenti, ho voluto cercare un approccio al problema con l'obiettivo di ridurre la complessità d'uso senza sacrificare la completezza delle funzionalità.
 Di seguito verranno illustrate le principali decisioni progettuali e le ragioni che hanno portato alla scelta del linguaggio di sviluppo.
 
-Inizialmente su consiglio del prof. Padovani ho provato a formulare un _superset_ di #glos.mcf. Questo linguaggio averebbe permesso di scrivere più elementi (sia #glos.mcf, che #glos.json) all'interno dello stesso file, arricchendo anche la sintassi dei comandi con zucchero sintattico che averebbe semplificato la scrittura delle parti più verbose.
+Inizialmente su consiglio del prof. Padovani ho provato a formulare un _superset_ di #glos.mcf. Questo linguaggio averebbe permesso di dichiarare e utilizzare più elementi (sia #glos.mcf, che #glos.json) all'interno dello stesso file. Questo linguaggio avrebbe anche arricchito la sintassi dei comandi con zucchero sintattico per semplificare la scrittura delle componenti più verbose.
 
 #figure(
     [```mcf
@@ -657,7 +657,7 @@ Inizialmente su consiglio del prof. Padovani ho provato a formulare un _superset
     ],
     caption: [Esempio di questo _superset_, caratterizzato da file con l'estensione `.mcf`],
 )
-Eseguendo questo codice, si sarebbe non solo creata la funzione dichiarata all'interno delle parentesi graffe, ma inserito il namespace prima di `var`, e creato il comando che impostava il valore della costante `#4` a 4, in quanto come è stato mostrato precedentemente, per eseguire divisioni e moltiplicazioni per valori costanti, è prima necessario definirli in uno _score_.
+Eseguendo questo codice, non solo si sarebbe creata la funzione dichiarata all'interno delle parentesi graffe, ma inserito il namespace prima di `var`, e creato il comando che assegna alla costante `#4` i valore 4. Come è stato mostrato nel @scoreboard_set_const, per eseguire divisioni e moltiplicazioni per valori costanti, è prima necessario definirli in uno _score_.
 Compilando il frammento di codice dell'esempio, si sarebbero ottenuti i seguenti file:
 #figure({
     codly(
@@ -686,7 +686,7 @@ Compilando il frammento di codice dell'esempio, si sarebbero ottenuti i seguenti
 
 Ho inizialmente scelto di utilizzare la versione Java della libreria ANTLR per definire la grammatica del linguaggio. Tuttavia, mi sono presto reso conto che realizzare una grammatica in grado di cogliere tutte le sfumature della sintassi di #glos.mcf, integrandovi al contempo le mie estensioni, avrebbe richiesto un impegno di sviluppo superiore a quello compatibile con un progetto di tirocinio.
 
-Ho quindi pensato di sviluppare una libreria che consentisse di definire la struttura di un #glos.pack — dalla radice del progetto fino ai singoli file — sotto forma di oggetti. In questo modo sarebbe stato possibile rappresentare l'intero insieme delle risorse come una struttura dati ad albero n-ario. Questa, al momento dell'esecuzione, sarebbe stata attraversata per generare automaticamente i file e le cartelle corrispondenti ai nodi, all'interno delle directory di #glos.dp e #glos.rp.
+Ho quindi pensato di sviluppare una libreria che consentisse di definire la struttura di un #glos.pack, dalla radice del progetto fino ai singoli file, sotto forma di oggetti. In questo modo sarebbe stato possibile rappresentare l'intero insieme delle risorse come una struttura dati ad albero n-ario. Questa, al momento dell'esecuzione, sarebbe stata attraversata per generare automaticamente i file e le cartelle corrispondenti ai nodi, all'interno delle directory di #glos.dp e #glos.rp.
 
 Il principale vantaggio di questo approccio consiste nella possibilità di definire più nodi all'interno dello stesso file, evitando così la frammentazione del codice e semplificando la gestione della struttura complessiva del #glos.pack. Inoltre, l'impiego di un linguaggio ad alto livello consente di sfruttare costrutti quali cicli e funzioni per automatizzare la generazione di comandi ripetitivi (ad esempio le già citate lookup table). Infine, la rappresentazione a oggetti della struttura consente di definire metodi di utilità per accedere e modificare i nodi da qualsiasi punto del progetto. Ad esempio, si può implementare un metodo `addTranslation(key, value)` che permette di aggiungere, indipendentemente dal contesto in cui viene invocato, una nuova voce nel file delle traduzioni.
 
