@@ -796,6 +796,12 @@ Dunque ho pensato a quale linguaggio di programmazione si potesse usare per real
 Dopo un'attenta analisi, ho scelto di utilizzare Java per lo sviluppo del progetto, poiché secondo me è il mezzo ideale per l'applicazione di _design pattern_ in grado di semplificare e rendere più robusta la fase di sviluppo, anche a costo di sacrificare parzialmente la comodità d'uso per l'utente finale.\
 Inoltre, il tipaggio statico di Java permette di identificare in fase di sviluppo eventuali utilizzi impropri di oggetti o metodi della libreria, consentendo anche agli utenti meno esperti di comprendere più facilmente il funzionamento del sistema.
 
+Il progetto, denominato _Object Oriented Pack_ (OOPACK), è organizzato in 4 sezioni principali.
+/ `internal`: Contiene classi astratte e interfacce che riproducono la struttura di un generico _filesystem_. Classi e metodi di questo _package_@package non saranno mai utilizzate dal programmatore.
+/ `objects`: Contiene le classi che rappresentano gli oggetti utilizzati nei #glos.dp e #glos.rp.
+/ `util`: Raccoglie metodi di utilità impiegati sia per il funzionamento del progetto, sia a supporto del programmatore (ponendo attenzione alla visibilità dei singoli metodi).
+/ Radice del progetto: Contiene gli oggetti principali che descrivono struttura di un #glos.pack (`Datapack`,`Resourcepack`,`Namespace`,`Project`).
+
 == Spiegazione basso livello
 
 == Spiegazione alto livello

@@ -172,3 +172,9 @@ antlr:
     type: web
     title: ANTLR
     url: https://www.antlr.org/about.html
+
+
+package:
+    type: web
+    title: Java Package
+    url: https://www.w3schools.com/java/java_packages.asp
