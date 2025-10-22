@@ -16,5 +16,12 @@
     "tag": [_tag_]
 )
 
+#let c = (
+  "fso": `FileSystemObject`,
+  "af": `AbstractFile`,
+  "b": `Buildable`,
+  "afo": `AbstractFolder`
+)
+
 #let e = [È]
 #let ex = $triangle$

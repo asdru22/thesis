@@ -40,7 +40,10 @@ Proprio a causa dell'assenza di regole predefinite, fin dal suo rilascio #glos.m
 Con il tempo, tale meccanismo è diventato un articolato linguaggio di configurazione e scripting, basato su file testuali, che costituisce una _Domain Specific Language_@dsl (DSL) attraverso la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
 
 Con _Domain Specific Language_ si intende un linguaggio di programmazione meno complesso e più astratto di uno _general purpose_, specializzato in uno specifico compito. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
-#quote(attribution: [JetBrains#footnote[JetBrains è un'azienda specializzata nello sviluppo di ambienti di sviluppo integrati (IDE).]],block: true)[ In many cases, DSLs are intended to be used not by software people, but instead by non-programmers who are fluent in the domain the DSL addresses.]
+#quote(
+    attribution: [JetBrains#footnote[JetBrains è un'azienda specializzata nello sviluppo di ambienti di sviluppo integrati (IDE).]],
+    block: true,
+)[ In many cases, DSLs are intended to be used not by software people, but instead by non-programmers who are fluent in the domain the DSL addresses.]
 
 #glos.mc è sviluppato in Java@java-book, ma questa DSL, chiamata #glos.mcf@mc-function, adotta un paradigma completamente diverso. Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente: le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi, interpretati dal motore interno di #glos.mc (e non dal compilatore Java), ed eseguiti solo al verificarsi di determinate condizioni. In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
 Negli ultimi anni, grazie all'introduzione e all'evoluzione di una serie di file in formato #glos.json@json, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché gran parte della logica continua a essere definita e gestita attraverso i file #glos.mcf.
@@ -803,7 +806,84 @@ Il progetto, denominato _Object Oriented Pack_ (OOPACK), è organizzato in 4 sez
 / Radice del progetto: Contiene gli oggetti principali che descrivono struttura di un #glos.pack (`Datapack`,`Resourcepack`,`Namespace`,`Project`).
 
 == Spiegazione basso livello
+=== Buildable
+L'obiettivo di questa libreria è delegare la creazione file che compongono un #glos.pack, tramite il metodo build() definito nella classe di più alto livello, `Project`.
+Di conseguenza, ogni oggetto appartenente al progetto deve essere _buildable_, ovvero "costruibile" in modo da poter generare il corrispondente file.
+L'interfaccia #c.b definisce il contratto che stabilisce quali oggetti possono essere costruiti attraverso il metodo `build()`.
+```java
+public interface Buildable {
+    void build(Path parent);
+}
+```
+Il parametro `parent` rappresenta un oggetto di tipo `Path` che indica la directory di destinazione nella memoria locale in cui verrà scritto il file.
+Durante il processo di costruzione del progetto, questo percorso viene progressivamente esteso aggiungendo sottocartelle, fino a individuare la posizione finale del file generato.
 
+L'interfaccia #c.fso estende #c.b con lo scopo di rappresentare file e cartelle del _file system_.
+Definisce il contratto `getContent()`, che specifica il contenuto associato all'oggetto. In base al tipo di classe che lo implementa, potrà restituire un qualche tipo di dato (file) o una lista di #c.fso (cartella).
+
+Questa interfaccia definisce il metodo statico `find()` usato per trovare un `file` all'interno di un #c.fso che soddisfa una certa condizione.
+```java
+static <T extends FileSystemObject> Optional<T> find(
+            FileSystemObject root,
+            Class<T> clazz,
+            Predicate<T> condition
+    ) {
+        if (clazz.isInstance(root)) {
+            T casted = clazz.cast(root);
+            if (condition.test(casted)) {
+                return Optional.of(casted);
+            }
+        }
+        Object content = root.getContent();
+        if (content instanceof Set<?> children) {
+            for (Object child : children) {
+                Optional<T> found = find((FileSystemObject) child, clazz, condition);
+                if (found.isPresent()) {
+                        return found;
+                }
+            }
+        }
+        return Optional.empty();
+    }
+```
+Questo metodo generico prende in input un #c.fso (non sa se si tratta di una cartella o file), la classe del tipo ricercato (`clazz`), e una condizione da soddisfare affinché l'oggetto risulti trovato. Esegue i seguenti passi:
++ controlla se il nodo attuale è un istanza del tipo cercato;
++ in caso positivo:
+  + applica la condizione passata come `Predicate`;
+  + se è soddisfatta, l'oggetto è trovato e viene restituito un `Optional` contenente l'oggetto.
++ in caso negativo, continua la ricerca nei figli;
++ ottiene il contenuto del nodo corrente;
++ se il contenuto è un `Set` (dunque il nodo è una cartella):
+  + richiama `find(...)` su ciascun elemento figlio;
+  + se uno dei figli contiene l'oggetto cercato, interrompe la ricerca.
++ altrimenti restituisce un `Optional` vuoto, indicando che l'elemento non è stato trovato.
+
+#c.fso definisce anche il contratto `collectByType(Namespace data, Namespace assets)`. Questo sarà sovrascritto per indicare se l'oggetto appartiene alla categoria _data_ dei #glos.dp o _assets_ dei #glos.rp.
+
+=== AbstractFile e AbstractFolder
+
+Tutti gli oggetti rappresentati file nel progetto, che saranno successivamente scritti in memoria, sono un estensione della classe #c.af.\
+`AbstractFile<T>` è una classe astratta parametrizzata con un tipo generico `T`, che rappresenta il contenuto del file, memorizzato nell'attributo `content`.
+La classe dispone dell'attributo `name`, che specifica il nome del file da creare, privo di estensione. Possiede inoltre un riferimento al `parent`, ovvero alla sottocartella o cartella delle risorse in cui il file si troverà.
+L'oggetto dispone infine di un riferimento al #glos.ns in cui si trova.\
+`namespace` è formattato per comporre assieme `name` la stringa che corrisponde alla _resource location_ dell'oggetto corrente. Questa logica è implementata nel metodo `toString()`, così che l'istanza possa essere inserita direttamente in altre stringhe restituendo automaticamente il riferimento completo alla risorsa.
+```java
+@Override
+    public String toString() {
+        return String.format("%s:%s", getNamespaceId(), getName());
+    }
+```
+#c.af, oltre ad implementare #c.fso, implementa `PackFolder` ed `Extension`.\
+`PackFolder` fornisce un solo contratto, `getFolderName();` che definisce il nome della cartella in cui sarà collocato. Ad esempio l'oggetto `Function` farà _override_ di questo metodo per restituire `"function"`, dal momento che tutte le funzioni devono essere nella cartella `function`.\
+Similmente, l'interfaccia `Extension`, tramite il contratto `getExtension()` permetterà agli oggetti che estendono #c.af di indicare la propria estensione.
+
+L'altra classe astratta che implementa #c.fso è #c.afo. Questa classe astratta parametrizzata con `<T extends FileSystemObject>` dispone di un attributo `children` di tipo `Set<T>`, usato per mantenere riferimenti a nodi che estendono esclusivamente #c.fso, evitando duplicati. Il suo metodo `build()` invoca a sua volta `build()` per ogni figlio.
+Il metodo `collectByType(...)` esegue invece una chiamata polimorfica a `collectByType` su ogni nodo figlio, propagando la divisione di oggetti attraverso l'intera struttura ad albero.
+
+=== Folder e ContextItem
+
+
+== Spiegazione livello intermedio?
 == Spiegazione alto livello
 
 == Uso working example
