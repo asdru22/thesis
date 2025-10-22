@@ -17,3 +17,4 @@
 )
 
 #let e = [È]
+#let ex = $triangle$

@@ -193,7 +193,7 @@
 
         show: codly-init.with()
 
-        codly(languages: codly-languages,annotation-format: none)
+        codly(languages: codly-languages, annotation-format: none)
 
         codly(
             zebra-fill: rgb("#F0F0F0"),

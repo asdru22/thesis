@@ -1,6 +1,174 @@
-electronic:
-    type: Web
-    title: Ishkur's Guide to Electronic Music
-    serial-number: v2.5
-    author: Ishkur
-    url: http://www.techno.org/electronic-music-guide/
+minecraft:
+    type: web
+    title: Minecraft Wiki
+    url: https://minecraft.wiki/w/Minecraft
+
+mojang:
+    type: web
+    title: Mojang AB
+    url: https://minecraft.wiki/w/Minecraft
+
+sandbox:
+    type: web
+    title: Sandbox Game
+    url: https://en.wikipedia.org/wiki/Sandbox_game
+
+command:
+    type: web
+    title: Minecraft Command
+    url: https://minecraft.wiki/w/Commands
+
+dsl:
+    type: web
+    title: Domain Specific Language
+    url: https://apice.unibo.it/xwiki/bin/view/TheFridge/DomainSpecificLanguage
+
+java-book:
+    type: book
+    author: [Ken Arnold, James Gosling, David Holmes]
+    title: THE Java™ Programming Language
+    edition: Fourth Edition
+    url: https://www.acs.ase.ro/Media/Default/documents/java/ClaudiuVinte/books/ArnoldGoslingHolmes06.pdf
+
+mc-function:
+    type: web
+    title: Minecraft Function
+    url: https://minecraft.wiki/w/Function_(Java_Edition)
+
+json:
+    type: web
+    title: JSON
+    url: https://www.json.org/json-en.html
+
+datapack:
+    type: web
+    title: Datapack
+    url: https://minecraft.wiki/w/Data_pack
+
+java-resource:
+    type: web
+    title: Java Resource
+    url: https://docs.oracle.com/javase/8/docs/technotes/guides/lang/resources.html
+
+resourcepack:
+    type: web
+    title: Resourcepack
+    url: https://minecraft.wiki/w/Resource_pack
+
+game-texture:
+    type: web
+    title: Texture
+    url: https://invogames.com/blog/3-d-texturing-in-video-games-a-complete-guide/#what-is-3d-texturing-in-video-games
+
+png:
+    type: chapter
+    title: Portable Network Graphics
+    url: https://www.libpng.org/pub/png/book/chapter01.html
+
+ogg:
+    type: web
+    title: OGG Vorbis
+    url: https://it.wikipedia.org/wiki/Ogg
+
+assets:
+    type: web
+    title: Game Assets
+    url: https://www.autodesk.com/uk/solutions/game-assets
+
+snapshot:
+    type: web
+    title: Snapshot
+    url: https://minecraft.wiki/w/Snapshot
+
+namespace:
+    type: web
+    title: Namespace/Resource Location
+    url: https://minecraft.wiki/w/Resource_location
+
+seed:
+    type: web
+    title: World Seed
+    url: https://minecraft.wiki/w/World_seed
+
+chunk:
+    type: web
+    title: Chunk
+    url: https://minecraft.wiki/w/Chunk
+
+nbt:
+    type: web
+    title: NBT Format
+    url: https://minecraft.wiki/w/NBT_format
+
+scope:
+    type: web
+    title: Scope
+    url: https://www.w3schools.com/programming/prog_scope.php
+
+tick:
+    type: web
+    title: Tick/Game Loop
+    url: https://minecraft.wiki/w/Tick
+
+particle:
+    type: web
+    title: Particle
+    url: https://minecraft.wiki/w/Particles_(Java_Edition)
+
+turing-complete:
+    type: web
+    title: Turing completezza
+    url: https://www.cyfrin.io/glossary/turing-complete
+
+lookup-table:
+    type: web
+    title: Lookup Table
+    url: https://en.wikipedia.org/wiki/Lookup_table
+
+python-book:
+    type: book
+    author: Guido van Rossum
+    title: An Introduction to Python
+    edition: Release 2.2.2
+    url: https://scispace.com/pdf/an-introduction-to-python-1uphd66ueo.pdf
+
+symlink:
+    type: web
+    title: Symbolic Link e Junction
+    url: https://www.komprise.com/glossary_terms/symbolic-link/
+
+git:
+    type: web
+    title: Git
+    url: https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F
+
+github:
+    type: web
+    title: GitHub
+    url: https://docs.github.com/en/get-started/start-your-journey/about-github-and-git#about-github
+
+item:
+    type: web
+    title: Minecraft Item
+    url: https://minecraft.wiki/w/Item
+
+
+inline:
+    type: web
+    title: Inline Code
+    url: https://www.lenovo.com/us/en/glossary/inline/
+
+beet:
+    type: web
+    title: Beet
+    url: https://github.com/mcbeet/beet
+
+superset:
+    type: web
+    title: Superset
+    url: https://www.epicweb.dev/what-is-a-superset-in-programming
+
+antlr:
+    type: web
+    title: ANTLR
+    url: https://www.antlr.org/about.html

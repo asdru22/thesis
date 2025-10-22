@@ -30,17 +30,20 @@
 )
 
 = Introduzione
-Se non fosse per il videogioco #glos.mc, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo con cubi in un mondo tridimensionale, si è rivelato presto essere il luogo dove per anni ho scritto ed eseguito i miei primi frammenti di codice.\
+Se non fosse per il videogioco #glos.mc@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo con cubi in un mondo tridimensionale, si è rivelato presto essere il luogo dove per anni ho scritto ed eseguito i miei primi frammenti di codice.\
 Motivato dalla mia abilità nel saper programmare in questo linguaggio non banale, ho perseguito una carriera di studio in informatica.
 
-Pubblicato nel 2012 dall'azienda svedese Mojang, #glos.mc è un videogioco appartenente al genere _sandbox_, famoso per l'assenza di una trama predefinita, in cui è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
+Pubblicato nel 2012 dall'azienda svedese Mojang@mojang, #glos.mc è un videogioco appartenente al genere _sandbox_@sandbox, famoso per l'assenza di una trama predefinita, in cui è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
 Come suggerisce il nome, le attività principali consistono nello scavare per ottenere risorse e utilizzarle per creare nuovi oggetti o strutture. Il tutto avviene all'interno di un ambiente tridimensionale virtualmente infinito.
 
-Proprio a causa dell'assenza di regole predefinite, fin dal suo rilascio #glos.mc era dotato di un insieme rudimentale di comandi che consentiva ai giocatori di aggirare le normali meccaniche di gioco, ad esempio ottenendo risorse istantaneamente o spostandosi liberamente nel mondo.\
-Con il tempo, tale meccanismo è diventato un articolato linguaggio di configurazione e scripting, basato su file testuali, che costituisce una _Domain Specific Language_ (DSL) attraverso la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
+Proprio a causa dell'assenza di regole predefinite, fin dal suo rilascio #glos.mc era dotato di un insieme rudimentale di comandi@command che consentiva ai giocatori di aggirare le normali meccaniche di gioco, ad esempio ottenendo risorse istantaneamente o spostandosi liberamente nel mondo.\
+Con il tempo, tale meccanismo è diventato un articolato linguaggio di configurazione e scripting, basato su file testuali, che costituisce una _Domain Specific Language_@dsl (DSL) attraverso la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
 
-#glos.mc è sviluppato in Java, ma questa DSL, chiamata #glos.mcf, adotta un paradigma completamente diverso. Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente: le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi, interpretati dal motore interno di #glos.mc (e non dal compilatore Java), ed eseguiti solo al verificarsi di determinate condizioni. In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
-Negli ultimi anni, grazie all'introduzione e all'evoluzione di una serie di file in formato #glos.json, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché gran parte della logica continua a essere definita e gestita attraverso i file #glos.mcf.
+Con _Domain Specific Language_ si intende un linguaggio di programmazione meno complesso e più astratto di uno _general purpose_, specializzato in uno specifico compito. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
+#quote(attribution: [JetBrains#footnote[JetBrains è un'azienda specializzata nello sviluppo di ambienti di sviluppo integrati (IDE).]],block: true)[ In many cases, DSLs are intended to be used not by software people, but instead by non-programmers who are fluent in the domain the DSL addresses.]
+
+#glos.mc è sviluppato in Java@java-book, ma questa DSL, chiamata #glos.mcf@mc-function, adotta un paradigma completamente diverso. Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente: le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi, interpretati dal motore interno di #glos.mc (e non dal compilatore Java), ed eseguiti solo al verificarsi di determinate condizioni. In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
+Negli ultimi anni, grazie all'introduzione e all'evoluzione di una serie di file in formato #glos.json@json, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché gran parte della logica continua a essere definita e gestita attraverso i file #glos.mcf.
 
 Il tirocinio ha avuto come obiettivo la progettazione e realizzazione di un sistema che semplifica la creazione, sviluppo e distribuzione di questi file, creando un ambiente di sviluppo unificato.
 Esso consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti. Una volta definite tutte le _feature_, esegue il programma per ottenere un progetto pronto per l'uso.
@@ -52,12 +55,12 @@ Nel prossimo capitolo verrà presentata la struttura generale del sistema, descr
 = Struttura e Funzionalità di un Pack
 
 == Cos'è un Pack
-I file #glos.json e #glos.mcf devono trovarsi in specifiche cartelle per poter essere riconosciuti dal compilatore di #glos.mc ed essere integrati nel videogioco. La cartella radice che contiene questi file si chiama #glos.dp.\
+I file #glos.json e #glos.mcf devono trovarsi in specifiche cartelle per poter essere riconosciuti dal compilatore di #glos.mc ed essere integrati nel videogioco. La cartella radice che contiene questi file si chiama #glos.dp@datapack.\
 Un #glos.dp può essere visto come la cartella `java` di un progetto Java: contiene la parte che detta i comportamenti dell'applicazione.
 
-Come i progetti Java hanno la cartella `resources`, anche #glos.mc dispone di una cartella in cui inserire le risorse. Questa si chiama #glos.rp, e contiene principalmente font, modelli 3D, #glos.tex, traduzioni e suoni.\
-Con l'eccezione di #glos.tex e suoni, i quali permettono l'estensione `png` e `ogg` rispettivamente, tutti gli altri file sono in formato #glos.json.\
-Le #glos.rp sono state concepite e rilasciate prima dei #glos.dp, con lo scopo di dare ai giocatori un modo di sovrascrivere le #glos.tex e altri _asset_ del videogioco. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare #glos.rp per definire le risorse che il progetto da loro sviluppato avrebbe richiesto.
+Come i progetti Java hanno la cartella `resources`@java-resource, anche #glos.mc dispone di una cartella in cui inserire le risorse. Questa si chiama #glos.rp@resourcepack, e contiene principalmente font, modelli 3D, #glos.tex@game-texture, traduzioni e suoni.\
+Con l'eccezione di #glos.tex e suoni, i quali permettono l'estensione `png`@png e `ogg`@ogg rispettivamente, tutti gli altri file sono in formato #glos.json.\
+Le #glos.rp sono state concepite e rilasciate prima dei #glos.dp, con lo scopo di dare ai giocatori un modo di sovrascrivere le #glos.tex e altri _asset_@assets del videogioco. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare #glos.rp per definire le risorse che il progetto da loro sviluppato avrebbe richiesto.
 
 L'insieme di #glos.dp e #glos.rp è chiamato #glos.pack. Questo, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java, e sarà poi la cartella che verrà pubblicata o condivisa.
 
@@ -100,9 +103,9 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
 )
 
 Anche se l'estensione non lo indica, il file `pack.mcmeta` è in realtà scritto in formato #glos.json e definisce l'intervallo delle versioni (chiamate _format_) supportate dalla cartella, che con ogni aggiornamento di #glos.mc variano, e non corrispondono all'effettiva _game version_.\
-Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88 e quello delle #glos.rp è 69. Queste possono cambiare anche settimanalmente, se si stanno venendo rilasciati degli _snapshot_#footnote[Con il termine snapshot si indicano le versioni di sviluppo intermedie del gioco, rilasciate periodicamente per testare le modifiche in arrivo nei futuri aggiornamenti.].
+Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88 e quello delle #glos.rp è 69. Queste possono cambiare anche settimanalmente, se si stanno venendo rilasciati degli _snapshot_@snapshot.
 
-Ancora più rilevanti sono le cartelle al di sotto di `data` e `assets`, chiamate #glos.ns. Se i progetti Java seguono la seguente struttura `com.package.author`, allora i #glos.ns possono essere visti come la sezione `package`.\
+Ancora più rilevanti sono le cartelle al di sotto di `data` e `assets`, chiamate #glos.ns@namespace. Se i progetti Java seguono la seguente struttura `com.package.author`, allora i #glos.ns possono essere visti come la sezione `package`.\
 
 #quote(
     block: true,
@@ -114,7 +117,7 @@ I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sov
 Tuttavia, si vedrà come operare in #glos.ns distinti è sia sufficiente a garantire l'assenza di conflitti tra i diversi #glos.pack, poiché questi vengono spesso installati dagli utenti in gruppo.
 
 Il namespace `minecraft` è riservato alle risorse native del gioco: sovrascriverle comporta il rischio di rimuovere funzionalità originali o di alterare il comportamento previsto del gioco. È interessante notare che anche gli sviluppatori di #glos.mc stessi fanno uso dei #glos.dp per definire e organizzare molti comportamenti del gioco, come definire le risorse che si possono ottenere da un baule, o gli ingredienti necessari per creare un certo oggetto. In altre parole, i #glos.dp non sono solo uno strumento a disposizione dei giocatori per personalizzare l'esperienza, ma costituiscono anche il *meccanismo interno attraverso cui il gioco stesso struttura e gestisce alcune delle sue funzionalità principali*.\
-Bisogna specificare che i domandi e file `.mcfunction` non sono utilizzati in alcun modo dagli sviluppatori della Mojang per implementare funzionalità del videogioco. Come precedentemente citato, tutta la logica è dettata da codice Java.
+Bisogna specificare che i domandi e file `.mcfunction` non sono utilizzati in alcun modo dagli sviluppatori di #glos.mc per implementare funzionalità del videogioco. Come precedentemente citato, tutta la logica è dettata da codice Java.
 
 All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno: se metto un file #glos.json che il compilatore riconosce come `loot_table` nella cartella `recipe`, il questo segnalerà un errore e il file non sarà disponibile nella sessione di gioco.
 
@@ -123,11 +126,11 @@ In `function` si trovano file e sottodirectory con testo in formato #glos.mcf. Q
 == Comandi
 
 Prima di spiegare cosa fanno i comandi, bisogna definire gli elementi basi su cui essi agiscono.\
-In #glos.mc, si possono creare ed esplorare mondi generati in base a un _seed_ casuale. Ogni mondo è composto da _chunk_, colonne dalla base di 16x16 cubi, e altezza di 320.\
+In #glos.mc, si possono creare ed esplorare mondi generati in base a un _seed_@seed casuale. Ogni mondo è composto da _chunk_@chunk, colonne dalla base di 16x16 cubi, e altezza di 320.\
 L'unità più piccola in questa griglia è il blocco, la cui forma coincide con quella di un cubo di lato unitario. Ogni blocco in un mondo è dotato di collisione ed individuabile tramite coordinate dello spazio tridimensionale.
 Si definiscono entità invece tutti gli oggetti dinamici che si spostano in un mondo: sono dotate di una posizione, rotazione e velocità.
 
-I dati persistenti di blocchi ed entità sono memorizzati in una struttura dati ad albero chiamata _Named Binary Tags_ (#glos.nbt). Il formato "stringificato", `SNBT` è accessibile agli utenti e si presenta come una struttura molto simile a #glos.json, formata da coppie di chiave e valori.\
+I dati persistenti di blocchi ed entità sono memorizzati in una struttura dati ad albero chiamata _Named Binary Tags_@nbt (#glos.nbt). Il formato "stringificato", `SNBT` è accessibile agli utenti e si presenta come una struttura molto simile a #glos.json, formata da coppie di chiave e valori.\
 
 #figure(
     ```snbt
@@ -224,14 +227,14 @@ Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf
 Le funzioni possono essere invocate in vari modi da altri file di un datapack:
 
 - tramite comandi: `function namespace:function_name` esegue la funzione subito, mentre `schedule namespace:function_name <delay>` la esegue dopo un certo tempo specificato.
-- da _function tag_: una _function tag_ è una lista in formato #glos.json di riferimenti a funzioni. #glos.mc ne fornisce due nelle quali inserire le funzioni da eseguire rispettivamente ogni game loop (`tick.json`)#footnote[Il game loop di #glos.mc viene eseguito 20 volte al secondo; di conseguenza, anche le funzioni incluse nel tag `tick.json` vengono eseguite con la stessa frequenza.], e ogni volta che si ricarica da disco il datapack (`load.json`). Queste due _function tag_ sono riconosciute dal compilatore di #glos.mc solo se nel namespace `minecraft`.
+- da _function tag_: una _function tag_ è una lista in formato #glos.json di riferimenti a funzioni. #glos.mc ne fornisce due nelle quali inserire le funzioni da eseguire rispettivamente ogni game loop@tick(`tick.json`)#footnote[Il game loop di #glos.mc viene eseguito 20 volte al secondo; di conseguenza, anche le funzioni incluse nel tag `tick.json` vengono eseguite con la stessa frequenza.], e ogni volta che si ricarica da disco il datapack (`load.json`). Queste due _function tag_ sono riconosciute dal compilatore di #glos.mc solo se nel namespace `minecraft`.
 - Altri oggetti di un #glos.dp quali `Advancement` (obiettivi) e `Enchantment` (incantesimi).
 
 Le funzioni vengono eseguite durante un game loop, completando tutti i comandi che contengono, inclusi quelli invocati altre funzioni. Le funzioni usano il contesto di esecuzione dell'entità che le sta invocando (se presente). Quando un comando `execute` altera il contesto di esecuzione, la modifica non influenza i comandi successivi, ma viene propagata alle funzioni chiamate a partire da quel punto.
 
 In base alla complessità del branching e alle operazioni eseguite dalle funzioni, il compilatore (o più precisamente, il motore di esecuzione dei comandi) deve allocare una certa quantità di risorse per svolgere tutte le istruzioni durante un singolo tick. Il tempo di elaborazione aggiuntivo richiesto per l'esecuzione di un comando o di una funzione è definito _overhead_.
 
-Le funzioni possono includere linee _macro_, ovvero comandi che preceduti dal simbolo `$`, hanno parte o l'intero corpo sostituito al momento dell'invocazione da un oggetto #glos.nbt indicato dal comando invocante.
+Le funzioni possono includere linee _macro_: comandi, che preceduti dal carattere `$`, hanno parte o l'intero corpo sostituito al momento dell'invocazione da un oggetto #glos.nbt indicato dal comando invocante.
 
 #figure(
     {
@@ -270,9 +273,9 @@ Una funzione può essere richiamata ricorsivamente, anche modificando il contest
     caption: [Esempio di funzione ricorsiva che crea una scia lunga 10 blocchi nella direzione dove il giocatore sta guardando.],
 ) <funzione_ricorsiva>
 
-Questa funzione ogni volta che viene chiamata creerà una piccola #glos.tex intangibile e temporanea (_particle_), alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
+Questa funzione ogni volta che viene chiamata istanzierà una piccola #glos.tex intangibile e temporanea@particle (_particle_) alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
 
-Un linguaggio di programmazione si definisce Turing completo se soddisfa tre condizioni fondamentali:
+Un linguaggio di programmazione si definisce Turing completo@turing-complete se soddisfa tre condizioni fondamentali:
 - Presenta rami condizionali: deve poter eseguire istruzioni diverse in base a una condizione logica. Nel caso di #glos.mcf, ciò è realizzabile tramite il sotto-comando `if`.
 - #e dotato di iterazione o ricorsione: deve consentire la ripetizione di operazioni. In questo linguaggio, tale comportamento è ottenuto attraverso la ricorsione delle funzioni.
 - Permette la memorizzazione di dati: deve poter gestire una quantità arbitraria di informazioni. In #glos.mcf, ciò avviene tramite la manipolazione dei dati all'interno dei #glos.str.
@@ -318,7 +321,7 @@ Di seguito viene mostrato come l'espressione `int x = (y*2)/4-2` si calcola in #
 )<scoreboard_set_const>
 Qualora non fossero stati impostati i valori di `#2` e `#4`, il compilatore li avrebbe valutati con valore 0 e l'espressione non sarebbe stata corretta.
 
-Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore viene poi assegnato a $x$. Di conseguenza, sia `#x` math che `#y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ dovrebbe rimanere invariato.
+Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore viene poi assegnato a $x$. Di conseguenza, sia `#x` che `#y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ dovrebbe rimanere invariato.
 Per evitare questo effetto collaterale, è necessario eseguire l'assegnazione $x = y$ prima delle altre operazioni aritmetiche.
 #codly(
     annotations: (
@@ -375,8 +378,7 @@ Nel secondo caso invece, si ottiene il risultato corretto pari a 2, poiché le o
 
 Poiché tramite #glos.score è possibile eseguire esclusivamente le quattro operazioni aritmetiche di base, il calcolo di funzioni più complesse quali logaritmi, esponenziali, radici quadrate o funzioni trigonometriche risulta particolarmente difficile da implementare.
 
-Bisogna inoltre considerare il fatto che queste operazioni saranno ristrette al dominio dei numeri naturali.\
-Si può dunque cercare un algoritmo che approssimi queste funzioni, oppure creare una _lookup table_.
+Bisogna inoltre considerare il fatto che queste operazioni saranno ristrette al dominio dei numeri naturali. Si può dunque cercare un algoritmo che approssimi queste funzioni, oppure creare una _lookup table_@lookup-table.
 
 #figure(
     [```mcfunction
@@ -419,7 +421,29 @@ Ipotizziamo mi serva la radice quadrata con precisione decimale di tutti gli int
 )
 Dunque, data `get storage my_storage sqrt[4]` restituirà il quinto elemento dell'array, ovvero $2.0$, l'equivalente di $sqrt(4)$.
 
-Dato che sono richiesti gli output di decine, se non centinaia di queste funzioni, i comandi per creare le _lookup table_ vengono generati con script Python, ed eseguiti da #glos.mc solamente quando si ricarica il #glos.dp, dato che queste strutture non sono soggette ad operazioni di scrittura, solo di lettura.
+/*
+Ipotizziamo mi servano i valori di $sin(x times 10)$. Si può creare uno #glos.str che contiene i valori $sin("rad"(i) times 10) space forall i in [0,360] inter NN$.
+#codly(
+    skips: ((7, 355),),
+)
+#figure(
+    [```mcfunction
+        data modify storage esempio:storage sin set value [
+          {value:0.0},
+          {value:0.17364817766693033},
+          {value:0.3420201433256687},
+          {value:0.49999999999999994},
+          {value:0.6427876096865393},
+          {value:-2.4492935982947065E-15}
+        ]
+        ```
+    ],
+    caption: [_Lookup table_ per  $sin(x times 10)$ #ex.],
+)
+Dunque, data `get storage esempio:storage sin[4].value` restituirà il quinto elemento dell'array, ovvero $0.6427876096865393$, l'equivalente di $sin("rad"(4)times 10)$.
+*/
+
+Dato che sono richiesti gli output di decine, se non centinaia di queste funzioni, i comandi per creare le _lookup table_ vengono generati con script Python@python-book, ed eseguiti da #glos.mc solamente quando si ricarica il #glos.dp, dato che queste strutture non sono soggette ad operazioni di scrittura, solo di lettura.
 
 == Alto Rischio di Conflitti
 
@@ -478,7 +502,7 @@ Di conseguenza, se nell'esempio precedente gli sviluppatori intendono che la fun
 
 In entrambi i casi, `@e[tag=has_timer]` seleziona lo stesso insieme di entità. Ciò può risultare problematico se, allo scadere del timer di $b$, vengono eseguiti comandi che determinano comportamenti inaspettati o erronei per le entità del #glos.dp di $a$ (o viceversa).
 
-Dunque, come per i nomi delle #glos.score, è buona norma prefissare i tag con il #glos.ns del proprio progetto.
+Dunque, come per i nomi delle #glos.score, è buona norma prefissare i _tag_ con il #glos.ns del proprio progetto.
 
 In conclusione, è buona pratica utilizzare prefissi anche per i nomi di #glos.str, #glos.score e _tag_, nonostante i #glos.dp compilano correttamente anche senza di essi.
 
@@ -558,7 +582,7 @@ say meow
 Considerando che i #glos.dp si basano sull'esecuzione di funzioni *in base a eventi già esistenti*, sono numerosi i casi in cui ci si trova a creare più file che contengono un numero ridotto, purché significativo, di comandi.
 
 Per quanto riguarda i cicli, come mostrato in @funzione_ricorsiva, l'unico modo per ripetere gli stessi comandi più volte è attraverso la ricorsione. Di conseguenza, ogni volta che è necessario implementare un ciclo, è indispensabile creare almeno una funzione dedicata.
-Se è invece necessario un contatore per tenere traccia dell'iterazione corrente (il classico `i` dei cicli `for`), è possibile utilizzare funzioni ricorsive che si richiamano passando come parametro una _macro_, il cui valore viene aggiornato all'interno del corpo della funzione. In alternativa, si possono scrivere esplicitamente i comandi necessari a gestire ciascun valore possibile, in modo analogo a quanto avviene con le _lookup table_.
+Se è invece necessario un contatore per tenere traccia dell'iterazione corrente (il classico indice `i` dei cicli `for`), è possibile utilizzare funzioni ricorsive che si richiamano passando come parametro una _macro_, il cui valore viene aggiornato all'interno del corpo della funzione. In alternativa, si possono scrivere esplicitamente i comandi necessari a gestire ciascun valore possibile, in modo analogo a quanto avviene con le _lookup table_.
 
 Ipotizziamo si voglia determinare in quale _slot_ dell'inventario del giocatore si trovi l'oggetto `diamond`. Una possibile soluzione è utilizzare una funzione che iteri da 0 a 35 (un giocatore può tenere fino a 36 oggetti diversi), dove il parametro della _macro_ indica lo _slot_ che si vuole controllare, ma questo approccio comporta un overhead maggiore rispetto alla verifica diretta, caso per caso, dei valori da 0 a 35.
 
@@ -592,13 +616,13 @@ I problemi mostrati fin'ora sono prettamente legati alla sintassi dei comandi e 
 
 Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`. Tuttavia, operare su queste due cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra i due sistemi. Lavorare direttamente dalla directory radice `.minecraft/` invece inoltre poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
 
-Una possibile soluzione consiste nel creare una directory che contenga sia il #glos.dp sia il #glos.rp e, successivamente, utilizzare _symlink_ o _junction_ per creare riferimenti dalle rispettive cartelle verso i percorsi in cui il compilatore si aspetta di trovarli.\
+Una possibile soluzione consiste nel creare una directory che contenga sia il #glos.dp sia il #glos.rp e, successivamente, utilizzare _symlink_ o _junction_@symlink per creare riferimenti dalle rispettive cartelle verso i percorsi in cui il compilatore si aspetta di trovarli.\
 I _symlink_ (collegamenti simbolici) e le _junction_ sono riferimenti a file o directory che consentono di accedere a un percorso diverso come se fosse locale, evitando la duplicazione dei contenuti.
 
-Disporre di un'unica cartella radice contenente #glos.dp e #glos.rp semplifica notevolmente la gestione del progetto. In particolare, consente di creare una sola repository Git, facilitando così il versionamento del codice, il tracciamento delle modifiche e la collaborazione tra più sviluppatori.\
-Attraverso il sistema delle _release_ di GitHub è possibile ottenere un link diretto a #glos.dp e #glos.rp pubblicati, che può poi essere utilizzato nei principali siti di hosting. Queste piattaforme, essendo spesso gestite da piccoli team di sviluppo, tendono ad affidarsi a servizi esterni per la memorizzazione dei file, come GitHub o altri provider.
+Disporre di un'unica cartella radice contenente #glos.dp e #glos.rp semplifica notevolmente la gestione del progetto. In particolare, consente di creare una sola repository Git@git, facilitando così il versionamento del codice, il tracciamento delle modifiche e la collaborazione tra più sviluppatori.\
+Attraverso il sistema delle _release_ di GitHub@github è possibile ottenere un link diretto a #glos.dp e #glos.rp pubblicati, che può poi essere utilizzato nei principali siti di hosting. Queste piattaforme, essendo spesso gestite da piccoli team di sviluppo, tendono ad affidarsi a servizi esterni per la memorizzazione dei file, come GitHub o altri provider.
 
-Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrato in precedenza, viene presentato un esempio di struttura che mostra i file necessari per introdurre un nuovo _item_ (oggetto). Sebbene l'_item_ costituisca una delle funzionalità più semplici da implementare, la sua integrazione richiede comunque un numero non trascurabile di file.
+Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrato in precedenza, viene presentato un esempio di struttura che mostra i file necessari per introdurre un nuovo _item_@item (oggetto). Sebbene l'_item_ costituisca una delle funzionalità più semplici da implementare, la sua integrazione richiede comunque un numero non trascurabile di file.
 #figure(
     grid(
         columns: 2,
@@ -639,12 +663,12 @@ Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrat
     caption: [File necessari per implementare un semplice _item_.],
 )
 
-Nella sezione _data_, che determina la logica e i contenuti, _loot\_table_ e _recipe_ definiscono rispettivamente le proprietà dell'oggetto, e come questo può essere creato. L'_advancement_ `use_my_item` serve a rilevare quando un giocatore usa l'oggetto, e chiama la funzione `on_item_use` che produrrà un suono.
+Nella sezione _data_, che determina la logica e i contenuti, _loot\_table_ e _recipe_ definiscono rispettivamente attributi dell'oggetto, e come questo può essere creato. L'_advancement_ `use_my_item` serve a rilevare quando un giocatore usa l'oggetto, e chiama la funzione `on_item_use` che produrrà un suono.
 
 I suoni devono essere collocati all'interno degli _assets_. Per poter essere riprodotti, ciascun suono deve avere un file audio in formato `.ogg` ed essere registrato nel file `sounds.json`. Nella cartella _lang_ sono invece presenti i file responsabili della gestione delle traduzioni, organizzate come insiemi di coppie chiave-valore.\
 Per definire l'aspetto visivo dell'oggetto, si parte dalla sua _item model definition_, situata nella cartella `item`. Questa specifica il modello che l'_item_ utilizzerà. Il modello 3D, collocato in `models/item`, ne definisce la forma geometrica, mentre la #glos.tex associata al modello è contenuta nella directory `textures/item`.
 
-Si osserva quindi che, per implementare anche la _feature_ più semplice, è necessario creare sette file e modificarne due. Pur riconoscendo che ciascun file svolge una funzione distinta e che la loro presenza è giustificata, risulterebbe certamente più comodo poter definire questo tipo di risorse _inline_.
+Si osserva quindi che, per implementare anche la _feature_ più semplice, è necessario creare sette file e modificarne due. Pur riconoscendo che ciascun file svolge una funzione distinta e che la loro presenza è giustificata, risulterebbe certamente più comodo poter definire questo tipo di risorse _inline_@inline.
 
 Con il termine _inline_ si intende la definizione e utilizzo una o più risorse direttamente all'interno dello stesso file in cui vengono impiegate. Questa modalità risulterebbe particolarmente vantaggiosa quando un file gestisce contenuti specifici e indipendenti. Ad esempio, nell'aggiunta di un nuovo item, il relativo modello e la #glos.tex non verrebbero mai condivisi con altri oggetti, rendendo superfluo separarli in file distinti.
 
@@ -661,7 +685,7 @@ Un esempio lampante è il file `sounds.json`, che registra i suoni definisce qua
 Tuttavia, questo software non è disponibile al pubblico, e anche se lo fosse, semplificherebbe la creazione solo dei file #glos.json, non #glos.mcf. Dunque, sviluppatori indipendenti hanno realizzato dei propri precompilatori, progettati per generare automaticamente #glos.dp e #glos.rp a partire da linguaggi o formati più intuitivi.
 
 Un precompilatore è uno strumento che consente di scrivere le risorse e la logica di gioco in un linguaggio o formato più semplice, astratto o strutturato, e di tradurle automaticamente nei numerosi file #glos.json, #glos.mcf e cartelle richieste dal gioco.\
-Il precompilatore al momento più completo e potente si chiama _beet_, e si basa sulla sintassi di Python, integrata con comandi di #glos.mc.\
+Il precompilatore al momento più completo e potente si chiama _beet_@beet, e si basa sulla sintassi di Python, integrata con comandi di #glos.mc.\
 Questo precompilatore, come molti altri, presenta due criticità principali:
 - Elevata barriera d'ingresso: solo gli sviluppatori con una buona padronanza di Python sono in grado di sfruttarne appieno le potenzialità;
 - Assenza di documentazione: la mancanza di una guida ufficiale rende il suo utilizzo accessibile quasi esclusivamente a chi è in grado di interpretare direttamente il codice sorgente di _beet_.
@@ -687,7 +711,7 @@ Questo è più articolato rispetto alla sintassi tradizionale `execute as @a at 
 Dato il contesto descritto e le limitazioni degli strumenti esistenti, ho cercato una soluzione che permettesse di ridurre la complessità d'uso senza sacrificare la completezza delle funzionalità.
 Di seguito verranno illustrate le principali decisioni progettuali e le ragioni che hanno portato alla scelta del linguaggio di sviluppo.
 
-Inizialmente, su suggerimento del prof. Padovani, ho tentato di progettare un superset di #glos.mcf, ossia un linguaggio che estende quello originale introducendo nuove funzionalità mantenendone però la compatibilità.
+Inizialmente, su suggerimento del prof. Padovani, ho tentato di progettare un _superset_@superset di #glos.mcf, ossia un linguaggio che estende quello originale introducendo nuove funzionalità mantenendone però la compatibilità.
 Questo linguaggio avrebbe consentito di dichiarare e utilizzare più elementi (#glos.mcf e #glos.json), all'interno di un unico file, arricchendo anche la sintassi con elementi di zucchero sintattico volti a semplificare la scrittura delle parti più verbose.
 
 #figure(
@@ -729,7 +753,7 @@ Compilando il frammento di codice dell'esempio, si sarebbero ottenuti i seguenti
     ```]
 })
 
-Ho inizialmente scelto di utilizzare la versione Java della libreria ANTLR per definire la grammatica del linguaggio. Tuttavia, mi sono presto reso conto che realizzare una grammatica in grado di cogliere tutte le sfumature della sintassi di #glos.mcf, integrandovi al contempo le mie estensioni, avrebbe richiesto un impegno di sviluppo superiore a quello compatibile con un progetto di tirocinio.
+Ho inizialmente scelto di utilizzare la versione Java della libreria ANTLR@antlr per definire la grammatica del linguaggio. Tuttavia, mi sono presto reso conto che realizzare una grammatica in grado di cogliere tutte le sfumature della sintassi di #glos.mcf, integrandovi al contempo le mie estensioni, avrebbe richiesto un impegno di sviluppo superiore a quello compatibile con un progetto di tirocinio.
 
 Ho quindi pensato di sviluppare una libreria che consentisse di definire la struttura di un #glos.pack, dalla radice del progetto fino ai singoli file, sotto forma di oggetti. In questo modo sarebbe stato possibile rappresentare l'intero insieme delle risorse come una struttura dati ad albero n-ario. Questa, al momento dell'esecuzione, sarebbe stata attraversata per generare automaticamente i file e le cartelle corrispondenti ai nodi, all'interno delle directory di #glos.dp e #glos.rp.
 
