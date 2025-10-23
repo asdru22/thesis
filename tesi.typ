@@ -760,9 +760,9 @@ Ho inizialmente scelto di utilizzare la versione Java della libreria ANTLR@antlr
 
 Ho quindi pensato di sviluppare una libreria che consentisse di definire la struttura di un #glos.pack, dalla radice del progetto fino ai singoli file, sotto forma di oggetti. In questo modo sarebbe stato possibile rappresentare l'intero insieme delle risorse come una struttura dati ad albero n-ario. Questa, al momento dell'esecuzione, sarebbe stata attraversata per generare automaticamente i file e le cartelle corrispondenti ai nodi, all'interno delle directory di #glos.dp e #glos.rp.
 
-Il principale vantaggio di questo approccio consiste nella possibilità di definire più nodi all'interno dello stesso file, evitando così la frammentazione del codice e semplificando la gestione della struttura complessiva del #glos.pack. Inoltre, l'impiego di un linguaggio ad alto livello consente di sfruttare costrutti quali cicli e funzioni per automatizzare la generazione di comandi ripetitivi (ad esempio le già citate lookup table). Infine, la rappresentazione a oggetti della struttura consente di definire metodi di utilità per accedere e modificare i nodi da qualsiasi punto del progetto. Ad esempio, si può implementare un metodo `addTranslation(key, value)` che permette di aggiungere, indipendentemente dal contesto in cui viene invocato, una nuova voce nel file delle traduzioni.
+Il principale vantaggio di questo approccio consiste nella possibilità di definire più nodi all'interno dello stesso file, evitando così la frammentazione del codice e semplificando la gestione della struttura complessiva del #glos.pack. Inoltre, l'impiego di un linguaggio ad alto livello consente di sfruttare costrutti quali cicli e funzioni per automatizzare la generazione di comandi ripetitivi (ad esempio le già citate _lookup table_). Infine, la rappresentazione a oggetti della struttura consente di definire metodi di utilità per accedere e modificare i nodi da qualsiasi punto del progetto. Ad esempio, si può implementare un metodo `addTranslation(key, value)` che permette di aggiungere, indipendentemente dal contesto in cui viene invocato, una nuova voce nel file delle traduzioni.
 
-Dunque ho pensato a quale linguaggio di programmazione si potesse usare per realizzare questa libreria. Le mie opzioni erano Python e Java, e dopo aver valutato i loro punti di forza e debolezza, ho deciso di usare Java.
+Dunque ho pensato a quale linguaggio di programmazione tra Python e Java si potesse usare per realizzare questa libreria.
 
 #figure(
     table(
@@ -771,7 +771,7 @@ Dunque ho pensato a quale linguaggio di programmazione si potesse usare per real
         [], [Vantaggi], [Svantaggi],
         [Python],
         [
-            - Gestione semplice di stringhe (`f-strings`) e file JSON;
+            - Gestione semplice di stringhe (`f-strings`@f-strings) e file JSON;
             - Sintassi concisa;
             - Facilmente distribuibile.
         ],
@@ -807,22 +807,22 @@ Il progetto, denominato _Object Oriented Pack_ (OOPACK), è organizzato in 4 sez
 
 == Spiegazione basso livello
 === Buildable
-L'obiettivo di questa libreria è delegare la creazione file che compongono un #glos.pack, tramite il metodo build() definito nella classe di più alto livello, `Project`.
-Di conseguenza, ogni oggetto appartenente al progetto deve essere _buildable_, ovvero "costruibile" in modo da poter generare il corrispondente file.
+L'obiettivo di questa libreria è delegare la creazione file che compongono un #glos.pack, tramite il metodo `build()` definito nella classe di più alto livello, `Project`.
+Di conseguenza, ogni oggetto appartenente al progetto deve essere _buildable_, ovvero "costruibile", in modo da poter generare il corrispondente file.
 L'interfaccia #c.b definisce il contratto che stabilisce quali oggetti possono essere costruiti attraverso il metodo `build()`.
-```java
+#figure(```java
 public interface Buildable {
     void build(Path parent);
 }
-```
-Il parametro `parent` rappresenta un oggetto di tipo `Path` che indica la directory di destinazione nella memoria locale in cui verrà scritto il file.
+```)
+Il parametro `parent` rappresenta un oggetto di tipo `Path`@path che indica la directory di destinazione nella memoria locale in cui verrà scritto il file.
 Durante il processo di costruzione del progetto, questo percorso viene progressivamente esteso aggiungendo sottocartelle, fino a individuare la posizione finale del file generato.
 
 L'interfaccia #c.fso estende #c.b con lo scopo di rappresentare file e cartelle del _file system_.
 Definisce il contratto `getContent()`, che specifica il contenuto associato all'oggetto. In base al tipo di classe che lo implementa, potrà restituire un qualche tipo di dato (file) o una lista di #c.fso (cartella).
 
 Questa interfaccia definisce il metodo statico `find()` usato per trovare un `file` all'interno di un #c.fso che soddisfa una certa condizione.
-```java
+#figure(```java
 static <T extends FileSystemObject> Optional<T> find(
             FileSystemObject root,
             Class<T> clazz,
@@ -845,15 +845,15 @@ static <T extends FileSystemObject> Optional<T> find(
         }
         return Optional.empty();
     }
-```
+```)
 Questo metodo generico prende in input un #c.fso (non sa se si tratta di una cartella o file), la classe del tipo ricercato (`clazz`), e una condizione da soddisfare affinché l'oggetto risulti trovato. Esegue i seguenti passi:
 + controlla se il nodo attuale è un istanza del tipo cercato;
 + in caso positivo:
-    + applica la condizione passata come `Predicate`;
-    + se è soddisfatta, l'oggetto è trovato e viene restituito un `Optional` contenente l'oggetto.
+    + applica la condizione passata come `Predicate`@predicate;
+    + se è soddisfatta, l'oggetto è trovato e viene restituito un `Optional`@optional contenente l'oggetto.
 + in caso negativo, continua la ricerca nei figli;
 + ottiene il contenuto del nodo corrente;
-+ se il contenuto è un `Set` (dunque il nodo è una cartella):
++ se il contenuto è un `Set`@set (dunque il nodo è una cartella):
     + richiama `find(...)` su ciascun elemento figlio;
     + se uno dei figli contiene l'oggetto cercato, interrompe la ricerca.
 + altrimenti restituisce un `Optional` vuoto, indicando che l'elemento non è stato trovato.
@@ -867,12 +867,12 @@ Tutti gli oggetti rappresentati file nel progetto, che saranno successivamente s
 La classe dispone dell'attributo `name`, che specifica il nome del file da creare, privo di estensione. Possiede inoltre un riferimento al `parent`, ovvero alla sottocartella o cartella delle risorse in cui il file si troverà.
 L'oggetto dispone infine di un riferimento al #glos.ns in cui si trova.\
 `namespace` è formattato per comporre assieme `name` la stringa che corrisponde alla _resource location_ dell'oggetto corrente. Questa logica è implementata nel metodo `toString()`, così che l'istanza possa essere inserita direttamente in altre stringhe restituendo automaticamente il riferimento completo alla risorsa.
-```java
+#figure(```java
 @Override
     public String toString() {
         return String.format("%s:%s", getNamespaceId(), getName());
     }
-```
+```)
 #c.af, oltre ad implementare #c.fso, implementa `PackFolder` ed `Extension`.\
 `PackFolder` fornisce un solo contratto, `getFolderName();` che definisce il nome della cartella in cui sarà collocato. Ad esempio l'oggetto `Function` farà _override_ di questo metodo per restituire `"function"`, dal momento che tutte le funzioni devono essere nella cartella `function`.\
 Similmente, l'interfaccia `Extension`, tramite il contratto `getExtension()` permetterà agli oggetti che estendono #c.af di indicare la propria estensione.
@@ -884,55 +884,66 @@ Il metodo `collectByType(...)` esegue invece una chiamata polimorfica a `collect
 La classe `Folder` estende `AbstractFolder<FileSystemObject>`. I suoi `children` saranno dunque #c.fso. Dispone di un metodo `add()` per aggiungere un elemento all'insieme dei figli. Questo viene usato dalla logica interna della liberia, ma non è pensato per l'utilizzo dell'utente finale.
 
 Nella fase iniziale di sviluppo del progetto, la creazione di una cartella con dei figli richiedeva l'istanza di un oggetto `Folder` e la successiva invocazione del metodo `add(...)`, passando come parametro uno o più oggetti generati manualmente tramite l'operatore `new`.\
-Un sistema basato sulla creazione diretta degli oggetti presenta diverse limitazioni. In primo luogo, introduce un forte accoppiamento tra il codice client e le classi concrete: qualsiasi modifica ai costruttori richiederebbe di aggiornare manualmente ogni punto del codice in cui tali oggetti vengono istanziati. Inoltre, l'utilizzo di espressioni come `myFolder.add(new Function(...))` risulta poco pratico per l'utente finale, soprattutto se l'obiettivo è offrire un'interfaccia più semplice e concisa per la creazione dei file.
+Un sistema basato sulla creazione diretta degli oggetti presenta diverse limitazioni. In primo luogo, introduce un forte accoppiamento tra il codice client e le classi concrete: qualsiasi modifica ai costruttori richiederebbe di aggiornare manualmente ogni punto del codice in cui tali oggetti vengono istanziati. Inoltre, l'utilizzo di espressioni come `myFolder.add(new Function(...))` risulta poco pratico per l'utente finale, soprattutto se l'obiettivo è offrire un'interfaccia più semplice e immediata per la creazione dei file.
 
-Dunque su suggerimento del prof. Padovani, ho modificato il sistema per appoggiarsi su un oggetto `context` che indica il _parent_, ovvero la cartella in cui si sta lavorando. La classe `Context` contiene un attributo statico e privato di tipo `Stack<ContextItem>`. Questo è usato per tenere traccia del livello di _nesting_ delle cartelle. `stack.peek()` restituisce il #c.ci sul quale si sta lavorando al momento.
+Dunque su suggerimento del prof. Padovani, ho modificato il sistema per appoggiarsi su un oggetto `context` che indica il _parent_, ovvero la cartella in cui si sta lavorando. La classe `Context` contiene un attributo statico e privato di tipo `Stack<ContextItem>`@stack. Questo è usato per tenere traccia del livello di _nesting_ delle cartelle. `stack.peek()` restituisce il #c.ci sul quale si sta lavorando al momento.
 
 L'interfaccia #c.ci fornisce il metodo `add()` che un qualsiasi contenitore di oggetti implementerà (non solo `Folder`, ma come si vedrà successivamente, anche #c.ns in quanto anche esso è contenitore di #c.fso).\
 L'interfaccia dispone anche di due metodi `default` per indicare quando si vuole operare nel contesto relativo a quell'oggetto.
-```java
-default void enter() {
-    Context.enter(this);
-  }
-default void exit() {
-    Context.exit();
-  }
-```
+#figure(
+    ```java
+    default void enter() {
+        Context.enter(this);
+      }
+    default void exit() {
+        Context.exit();
+      }
+    ```,
+    caption: [Metodi dell'interfaccia #c.ci.],
+)
 Invocando `enter()`, si sta aggiungendo l'oggetto che implementa #c.ci in cima allo `stack` del contesto, indicando che è la cartella in cui verranno aggiunti tutti i prossimi #c.fso. Per rimuovere l'oggetto dalla cima dello `stack`, si chiama il metodo `exit()`.\
 Con questo sistema, il programmatore può spostarsi tra diversi livelli della struttura del _filesystem_ in modo e controllato, senza dover passare manualmente riferimenti ai vari contenitori.
 
 == Spiegazione livello intermedio
+=== Factory
+Come fa un oggetto che estende #c.fso a sapere in quale #c.ci deve essere inserito?
+Per gestire automaticamente questo aspetto e al tempo stesso evitare la creazione diretta tramite `new`, si ricorre al design pattern #glos.f.
 
-Ma come fa un oggetto che estende #c.fso a sapere in quale #c.ci deve essere inserito?
-Per gestire automaticamente questo aspetto e al tempo stesso evitare la creazione diretta tramite `new`, si ricorre al design pattern _factory_.
-
-Le _factory_ sono un modello di progettazione con lo scopo di separare la logica di creazione degli oggetti dal codice che li utilizza. Invece di istanziare le classi direttamente, il client si limita a chiedere alla _factory_ di creare l'oggetto desiderato. Sarà la _factory_ a occuparsi di scegliere quale classe concreta istanziare e con che stato. Nel nostro caso, si occuperà anche di inserirla nel contesto corrente.
+Le #glos.f sono un modello di progettazione che ha lo scopo di separare la logica di creazione degli oggetti dal codice che li utilizza. Invece di istanziare le classi direttamente, il client si limita a chiedere alla #glos.f di creare l'oggetto desiderato. Sarà la #glos.f a occuparsi di scegliere quale classe concreta istanziare e con che stato. Nel nostro caso, si occuperà anche di inserirla nel contesto in cima allo `stack`.
 
 Un'evoluzione di questo concetto è l'_abstract factory_, un pattern che fornisce un'interfaccia per creare famiglie di oggetti correlati o dipendenti tra loro, senza specificare le loro classi concrete.\
 L'_abstract factory_ non crea direttamente gli oggetti, ma definisce un insieme di metodi di creazione che le sottoclassi concrete implementano per produrre versioni specifiche di tali oggetti.
 
 Questo risulta particolarmente utile nel nostro contesto, in quanto si vuole dare all'utente la possibilità di istanziare oggetti in modi diversi.
-```java
-public interface FileFactory<F> {
-    F ofName(String name, String content, Object... args);
-    F of(String content, Object... args);
-}
-```
+#figure(
+    ```java
+    public interface FileFactory<F> {
+        F ofName(String name, String content, Object... args);
+        F of(String content, Object... args);
+    }
+    ```,
+    caption: [Interfaccia `FileFactory`.],
+)
 L'utente può specificare manualmente il nome del file da costruire, oppure lasciare che sia la libreria a generarlo automaticamente in modo casuale. Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, dal momento che, quando l'oggetto viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca il riferimento alla sua resource location.\
-Gli oggetti passati parametro _variable arguments_ (_varargs_) `Object... args` sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
+Gli oggetti passati parametro _variable arguments_@varargs (_varargs_) `Object... args` sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
 
-L'interfaccia è implementata come una classe annidata statica e protetta all'interno dell'oggetto astratto #c.pf, il quale rappresenta qualsiasi tipo di file che non contiene suoni o immagini (ovvero file di testo o dati generici).\
-Questa _nested class_, chiamata `Factory`, dispone di due parametri e serve a istanziare qualsiasi classe o sottoclasse di #c.pf.
-```java
-protected static class Factory<
-  F extends PlainFile<C>,
-  C
-> implements FileFactory<F>
-```
-`F` è un tipo generico che estende `PlainFile<C>` e rappresenta il tipo di file che la classe istanzierà. Vincolando `F` a `PlainFile<C>`, la _factory_ garantisce che tutti i file creati abbiano un contenuto di tipo `C` e siano sottoclassi di #c.pf.\
-Il contenuto del file, `C`, verrà dettato dalle sottoclassi che erediteranno #c.pf. Questo permette alla factory di essere generica, creando file con contenuti diversi senza riscrivere codice.
+=== File
 
-La _factory_ possiede un riferimento all'oggetto `Class`, parametrizzato con il tipo `F`, degli oggetti che istanzierà, utilizzato nel metodo `instantiate()`. Questo metodo restituisce l'oggetto da creare e richiede due parametri: il nome del file da creare, e il suo contenuto (di tipo Object, dato che ancora si sta operando in un contesto generico). La funzione esegue seguenti passi per istanziare l'oggetto:
+L'interfaccia `FileFactory` è implementata come classe annidata all'interno dell'oggetto astratto #c.pf, il quale rappresenta qualsiasi tipo di file che non contiene suoni o immagini (ovvero file di testo o dati generici).\
+Questa _nested class_, chiamata #c.f, dispone di due parametri e serve a istanziare qualsiasi classe o sottoclasse di #c.pf.
+#figure(
+    ```java
+    protected static class Factory<
+      F extends PlainFile<C>,
+      C
+    > implements FileFactory<F>
+    ```,
+    caption: [Intestazione della classe #c.f per #c.pf],
+)
+`F` è un tipo generico che estende `PlainFile<C>` e rappresenta il tipo di file che la classe istanzierà. Vincolando `F` a `PlainFile<C>`, la #glos.f garantisce che tutti i file creati abbiano un contenuto di tipo `C` e siano sottoclassi di #c.pf.\
+Il contenuto `C` del file verrà dettato dalle sottoclassi che erediteranno #c.pf. Questo permette alla #glos.f di essere generica, creando file con contenuti diversi senza riscrivere codice.
+
+La #glos.f possiede un riferimento all'oggetto `Class`@class, parametrizzato con il tipo `F`, degli oggetti che istanzierà, utilizzato nel metodo `instantiate()`. Questo metodo restituisce l'oggetto da creare e richiede due parametri: il nome del file da creare, e il suo contenuto (di tipo `Object`, dato che ancora si sta operando in un contesto generico). La funzione esegue seguenti passi per istanziare l'oggetto:
 + ottiene un riferimento alla classe del contenuto (`StringBuilder.class` o `JsonObject.class`). Questo è usato per individuare il costruttore della classe `F`;
 + recupera il costruttore tramite _reflection_. Controlla che la classe `F` abbia un costruttore che disponga dei seguenti parametri: `String name` e `C content`;
 + rende accessibile il costruttore. Se si omettesse questo passo, non sarebbe possibile accedere ai costruttori privati o protetti;
@@ -940,7 +951,27 @@ La _factory_ possiede un riferimento all'oggetto `Class`, parametrizzato con il 
 + aggiunge l'istanza al contesto;
 + restituisce l'oggetto creato.
 
-Palra di istranziazione json
+#c.af è esteso da #c.tf, il cui `content` è di tipo `StringBuilder`@stringbuilder, e #c.jf, che utilizza invece `JsonObject`@jsonobject come contenuto.
+
+#c.tf rappresenta un file di testo generico, il cui contenuto è gestito tramite un oggetto `StringBuilder`, così da consentire operazioni di concatenazione delle stringhe in modo efficiente. L'unica classe che la estende è `Function`, poiché è l'unico tipo di file nel progetto che prevede la scrittura diretta di testo.
+
+#c.jf è invece la classe base ereditata da tutti gli altri file di un #glos.pack. Il suo contenuto è di tipo `JsonObject`, affinché si possano gestire e manipolare facilmente dati in formato #glos.json tramite la libreria _GSON_@gson di Google.\
+La #glos.f di #c.jf eredita quella di #c.pf, aggiungendovi metodi.
+#figure(
+    ```java
+    protected static class Factory<F extends JsonFile>
+      extends PlainFile.Factory<F, JsonObject>
+      implements JsonFileFactory<F>
+    ```,
+    caption: [Intestazione della classe #c.f per #c.jf.],
+)
+L'estratto di codice riportato definisce la #glos.f incaricata di istanziare esclusivamente classi che estendono #c.jf. Questa classe eredita la factory di #c.pf, specializzandola per gestire contenuti di tipo `JsonObject`. Inoltre, implementa l'interfaccia `JsonFileFactory`, la quale definisce i metodi di creazione specifici per i file #glos.json, che dunque hanno come parametro `JsonObject`.\
+Nella classe #c.jf viene anche eseguito un `override` del metodo `getExtension()` per restituire la stringa `"json"`.
+
+Le classi rappresentanti file sopra descritte richiedono un contenuto di tipo diverso da `String`. In entrambi i casi viene fatto un leggero _parsing_ prima della scrittura sul file. Oltre alla già citata sostituzione di valori segnaposto, dopo che `StringBuilder` e `JsonObject` sono stati convertiti in stringhe, si controlla il contenuto per alcuni pattern.\ La sottostringa `"$ns$"` verrà sostituita con il nome effettivo del #glos.ns attivo al momento della costruzione, mentre `"$name$"` verrà sostituito con la propria _resource location_.\
+Quest'ultimo risulta particolarmente utile nei casi di dipendenze circolari, in cui può essere richiesto il nome di un oggetto prima che esso sia effettivamente istanziato, dal momento che non è ancora possibile ottenere la sua rappresentazione testuale tramite _casting_ implicito a stringa.
+
+Mappa struttura + spiegare che le classi viste finora possono essere riadattate per essere utilizzate per generare una qualsiasi dsl
 
 == Spiegazione alto livello
 

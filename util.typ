@@ -13,7 +13,8 @@
     "score":[_scoreboard_],
     "nbt": [NBT],
     "str": [_storage_],
-    "tag": [_tag_]
+    "tag": [_tag_],
+    "f": [_factory_]
 )
 
 #let c = (
@@ -23,7 +24,10 @@
   "afo": `AbstractFolder`,
   "ci": `ContextItem`,
   "ns": `Namespace`,
-  "pf": `PlainFile`
+  "pf": `PlainFile`,
+  "tf": `TextFile`,
+  "jf": `JsonFile`,
+  "f": `Factory`
 )
 
 #let e = [È]

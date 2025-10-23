@@ -152,7 +152,6 @@ item:
     title: Minecraft Item
     url: https://minecraft.wiki/w/Item
 
-
 inline:
     type: web
     title: Inline Code
@@ -173,8 +172,62 @@ antlr:
     title: ANTLR
     url: https://www.antlr.org/about.html
 
-
 package:
     type: web
     title: Java Package
     url: https://www.w3schools.com/java/java_packages.asp
+
+f-strings:
+    type: web
+    title: F-Strings
+    url: https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals
+
+path:
+    type: web
+    title: Path
+    url: https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html
+
+predicate:
+    type: web
+    title: Predicate
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/function/Predicate.html
+
+optional:
+    type: web
+    title: Optional
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html
+
+set:
+    type: web
+    title: Set
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/Set.html
+
+stack:
+    type: web
+    title: Stack
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/Stack.html
+
+varargs:
+    type: web
+    title: Varargs
+    url: https://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
+
+class:
+    type: web
+    title: Class
+    url: https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html
+
+stringbuilder:
+    type: web
+    title: StringBuilder
+    url: https://docs.oracle.com/javase/8/docs/api/java/lang/StringBuilder.html
+
+jsonobject:
+    type: web
+    title: JsonObject
+    url: https://www.javadoc.io/doc/com.google.code.gson/gson/2.8.5/com/google/gson/JsonObject.html
+
+gson:
+    type: web
+    title: GSON
+    url: https://github.com/google/gson/blob/main/README.md
