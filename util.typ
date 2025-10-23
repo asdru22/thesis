@@ -20,7 +20,10 @@
   "fso": `FileSystemObject`,
   "af": `AbstractFile`,
   "b": `Buildable`,
-  "afo": `AbstractFolder`
+  "afo": `AbstractFolder`,
+  "ci": `ContextItem`,
+  "ns": `Namespace`,
+  "pf": `PlainFile`
 )
 
 #let e = [È]

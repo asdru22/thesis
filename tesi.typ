@@ -849,13 +849,13 @@ static <T extends FileSystemObject> Optional<T> find(
 Questo metodo generico prende in input un #c.fso (non sa se si tratta di una cartella o file), la classe del tipo ricercato (`clazz`), e una condizione da soddisfare affinché l'oggetto risulti trovato. Esegue i seguenti passi:
 + controlla se il nodo attuale è un istanza del tipo cercato;
 + in caso positivo:
-  + applica la condizione passata come `Predicate`;
-  + se è soddisfatta, l'oggetto è trovato e viene restituito un `Optional` contenente l'oggetto.
+    + applica la condizione passata come `Predicate`;
+    + se è soddisfatta, l'oggetto è trovato e viene restituito un `Optional` contenente l'oggetto.
 + in caso negativo, continua la ricerca nei figli;
 + ottiene il contenuto del nodo corrente;
 + se il contenuto è un `Set` (dunque il nodo è una cartella):
-  + richiama `find(...)` su ciascun elemento figlio;
-  + se uno dei figli contiene l'oggetto cercato, interrompe la ricerca.
+    + richiama `find(...)` su ciascun elemento figlio;
+    + se uno dei figli contiene l'oggetto cercato, interrompe la ricerca.
 + altrimenti restituisce un `Optional` vuoto, indicando che l'elemento non è stato trovato.
 
 #c.fso definisce anche il contratto `collectByType(Namespace data, Namespace assets)`. Questo sarà sovrascritto per indicare se l'oggetto appartiene alla categoria _data_ dei #glos.dp o _assets_ dei #glos.rp.
@@ -881,9 +881,64 @@ L'altra classe astratta che implementa #c.fso è #c.afo. Questa classe astratta 
 Il metodo `collectByType(...)` esegue invece una chiamata polimorfica a `collectByType` su ogni nodo figlio, propagando la divisione di oggetti attraverso l'intera struttura ad albero.
 
 === Folder e ContextItem
+La classe `Folder` estende `AbstractFolder<FileSystemObject>`. I suoi `children` saranno dunque #c.fso. Dispone di un metodo `add()` per aggiungere un elemento all'insieme dei figli. Questo viene usato dalla logica interna della liberia, ma non è pensato per l'utilizzo dell'utente finale.
 
+Nella fase iniziale di sviluppo del progetto, la creazione di una cartella con dei figli richiedeva l'istanza di un oggetto `Folder` e la successiva invocazione del metodo `add(...)`, passando come parametro uno o più oggetti generati manualmente tramite l'operatore `new`.\
+Un sistema basato sulla creazione diretta degli oggetti presenta diverse limitazioni. In primo luogo, introduce un forte accoppiamento tra il codice client e le classi concrete: qualsiasi modifica ai costruttori richiederebbe di aggiornare manualmente ogni punto del codice in cui tali oggetti vengono istanziati. Inoltre, l'utilizzo di espressioni come `myFolder.add(new Function(...))` risulta poco pratico per l'utente finale, soprattutto se l'obiettivo è offrire un'interfaccia più semplice e concisa per la creazione dei file.
 
-== Spiegazione livello intermedio?
+Dunque su suggerimento del prof. Padovani, ho modificato il sistema per appoggiarsi su un oggetto `context` che indica il _parent_, ovvero la cartella in cui si sta lavorando. La classe `Context` contiene un attributo statico e privato di tipo `Stack<ContextItem>`. Questo è usato per tenere traccia del livello di _nesting_ delle cartelle. `stack.peek()` restituisce il #c.ci sul quale si sta lavorando al momento.
+
+L'interfaccia #c.ci fornisce il metodo `add()` che un qualsiasi contenitore di oggetti implementerà (non solo `Folder`, ma come si vedrà successivamente, anche #c.ns in quanto anche esso è contenitore di #c.fso).\
+L'interfaccia dispone anche di due metodi `default` per indicare quando si vuole operare nel contesto relativo a quell'oggetto.
+```java
+default void enter() {
+    Context.enter(this);
+  }
+default void exit() {
+    Context.exit();
+  }
+```
+Invocando `enter()`, si sta aggiungendo l'oggetto che implementa #c.ci in cima allo `stack` del contesto, indicando che è la cartella in cui verranno aggiunti tutti i prossimi #c.fso. Per rimuovere l'oggetto dalla cima dello `stack`, si chiama il metodo `exit()`.\
+Con questo sistema, il programmatore può spostarsi tra diversi livelli della struttura del _filesystem_ in modo e controllato, senza dover passare manualmente riferimenti ai vari contenitori.
+
+== Spiegazione livello intermedio
+
+Ma come fa un oggetto che estende #c.fso a sapere in quale #c.ci deve essere inserito?
+Per gestire automaticamente questo aspetto e al tempo stesso evitare la creazione diretta tramite `new`, si ricorre al design pattern _factory_.
+
+Le _factory_ sono un modello di progettazione con lo scopo di separare la logica di creazione degli oggetti dal codice che li utilizza. Invece di istanziare le classi direttamente, il client si limita a chiedere alla _factory_ di creare l'oggetto desiderato. Sarà la _factory_ a occuparsi di scegliere quale classe concreta istanziare e con che stato. Nel nostro caso, si occuperà anche di inserirla nel contesto corrente.
+
+Un'evoluzione di questo concetto è l'_abstract factory_, un pattern che fornisce un'interfaccia per creare famiglie di oggetti correlati o dipendenti tra loro, senza specificare le loro classi concrete.\
+L'_abstract factory_ non crea direttamente gli oggetti, ma definisce un insieme di metodi di creazione che le sottoclassi concrete implementano per produrre versioni specifiche di tali oggetti.
+
+Questo risulta particolarmente utile nel nostro contesto, in quanto si vuole dare all'utente la possibilità di istanziare oggetti in modi diversi.
+```java
+public interface FileFactory<F> {
+    F ofName(String name, String content, Object... args);
+    F of(String content, Object... args);
+}
+```
+L'utente può specificare manualmente il nome del file da costruire, oppure lasciare che sia la libreria a generarlo automaticamente in modo casuale. Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, dal momento che, quando l'oggetto viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca il riferimento alla sua resource location.\
+Gli oggetti passati parametro _variable arguments_ (_varargs_) `Object... args` sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
+
+Questa interfaccia è implementata in una _nested class_ statica e protetta dell'oggetto astratto #c.pf. Questa classe, chiamata `Factory`, dispone di due parametri.
+```java
+protected static class Factory<
+  F extends PlainFile<C>,
+  C
+> implements FileFactory<F>
+```
+`F` è un tipo generico che estende `PlainFile<C>` e rappresenta il tipo di file che la classe creerà. Vincolando `F` a `PlainFile<C>`, la _factory_ garantisce che tutti i file creati abbiano un contenuto di tipo `C` e siano sottoclassi di #c.pf.
+Il contenuto del file, `C`, verrà dettato dalle sottoclassi che erediteranno #c.pf. Questo permette alla factory di essere generica, creando file con contenuti diversi senza riscrivere codice.
+
+La _factory_ possiede un riferimento all'oggetto `Class`, parametrizzato con il tipo `F`, degli oggetti che istanzierà, utilizzato nel metodo `instantiate()`. Questo metodo restituisce l'oggetto da creare e richiede due parametri: il nome del file da creare, e il suo contenuto (di tipo Object, dato che ancora si sta operando in un contesto generico). La funzione esegue seguenti passi per istanziare l'oggetto:
++ ottiene un riferimento alla classe del contenuto (`StringBuilder.class` o `JsonObject.class`). Questo è usato per individuare il costruttore della classe `F`;
++ recupera il costruttore tramite _reflection_. Controlla che la classe `F` abbia un costruttore che disponga dei seguenti parametri: `String name` e `C content`;
++ rende accessibile il costruttore. Se si omettesse questo passo, non sarebbe possibile accedere ai costruttori privati o protetti;
++ crea un'istanza della classe;
++ aggiunge l'istanza al contesto;
++ restituisce l'oggetto creato.
+
 == Spiegazione alto livello
 
 == Uso working example
