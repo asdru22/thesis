@@ -1,6 +1,7 @@
 #import "template.typ": *
 #import "util.typ": *
 #import "@preview/treet:1.0.0": *
+#import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
 
 #show: project.with(
     title: [
@@ -971,10 +972,52 @@ Nella classe #c.jf viene anche eseguito un `override` del metodo `getExtension()
 Le classi rappresentanti file sopra descritte richiedono un contenuto di tipo diverso da `String`. In entrambi i casi viene fatto un leggero _parsing_ prima della scrittura sul file. Oltre alla già citata sostituzione di valori segnaposto, dopo che `StringBuilder` e `JsonObject` sono stati convertiti in stringhe, si controlla il contenuto per alcuni pattern.\ La sottostringa `"$ns$"` verrà sostituita con il nome effettivo del #glos.ns attivo al momento della costruzione, mentre `"$name$"` verrà sostituito con la propria _resource location_.\
 Quest'ultimo risulta particolarmente utile nei casi di dipendenze circolari, in cui può essere richiesto il nome di un oggetto prima che esso sia effettivamente istanziato, dal momento che non è ancora possibile ottenere la sua rappresentazione testuale tramite _casting_ implicito a stringa.
 
-Mappa struttura + spiegare che le classi viste finora possono essere riadattate per essere utilizzate per generare una qualsiasi dsl
+#todo[
+    Mappa struttura + spiegare che le classi viste finora possono essere riadattate per essere utilizzate per generare una qualsiasi dsl
+]
+
+#figure(diagram(
+    node-stroke: 1pt,
+    node-corner-radius: 2pt,
+    {
+        node((0, 0))[`interface`\ *PackFolder*]
+        node((1, 0))[`interface`\ *Extension*]
+        node((2, 0))[`interface`\ *FileSystemObject*]
+        edge("u", "-|>")
+
+        node((2, -1))[`interface`\ *FileSystemObject*]
+
+        node((1, 1))[*AbstractFile*]
+        edge("ul", "--|>")
+        edge("ur", "--|>")
+        edge("u", "--|>")
+
+        node((2, 1))[*AbstractFolder*]
+        edge("u", "--|>")
+
+        node((3, 1))[`interface`\ *ContextItem*]
+        node((2, 2))[*Folder*]
+        edge("u", "-|>")
+        edge("ur", "--|>")
+
+        node((1, 2))[*PlainFile*]
+        edge("u", "-|>")
+        node((1, 3))[*JsonFile*]
+        edge("u", "-|>")
+        node((0, 3))[*TextFile*]
+        edge("ur", "-|>")
+
+        node((2, 3))[`interface`\ *FileFactory*]
+
+        node((2, 4))[`interface`\ *JsonFileFactory*]
+        edge("u", "-|>")
+                edge("ul", "--|>")
+
+    },
+),caption:[Diagramma del sistema progettato fino a questo punto.])
 
 == Spiegazione alto livello
-
+partire da datajson e assets json
 == Uso working example
 
 = Conclusione
