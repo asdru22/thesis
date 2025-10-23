@@ -921,14 +921,15 @@ public interface FileFactory<F> {
 L'utente può specificare manualmente il nome del file da costruire, oppure lasciare che sia la libreria a generarlo automaticamente in modo casuale. Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, dal momento che, quando l'oggetto viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca il riferimento alla sua resource location.\
 Gli oggetti passati parametro _variable arguments_ (_varargs_) `Object... args` sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
 
-Questa interfaccia è implementata in una _nested class_ statica e protetta dell'oggetto astratto #c.pf. Questa classe, chiamata `Factory`, dispone di due parametri.
+L'interfaccia è implementata come una classe annidata statica e protetta all'interno dell'oggetto astratto #c.pf, il quale rappresenta qualsiasi tipo di file che non contiene suoni o immagini (ovvero file di testo o dati generici).\
+Questa _nested class_, chiamata `Factory`, dispone di due parametri e serve a istanziare qualsiasi classe o sottoclasse di #c.pf.
 ```java
 protected static class Factory<
   F extends PlainFile<C>,
   C
 > implements FileFactory<F>
 ```
-`F` è un tipo generico che estende `PlainFile<C>` e rappresenta il tipo di file che la classe creerà. Vincolando `F` a `PlainFile<C>`, la _factory_ garantisce che tutti i file creati abbiano un contenuto di tipo `C` e siano sottoclassi di #c.pf.
+`F` è un tipo generico che estende `PlainFile<C>` e rappresenta il tipo di file che la classe istanzierà. Vincolando `F` a `PlainFile<C>`, la _factory_ garantisce che tutti i file creati abbiano un contenuto di tipo `C` e siano sottoclassi di #c.pf.\
 Il contenuto del file, `C`, verrà dettato dalle sottoclassi che erediteranno #c.pf. Questo permette alla factory di essere generica, creando file con contenuti diversi senza riscrivere codice.
 
 La _factory_ possiede un riferimento all'oggetto `Class`, parametrizzato con il tipo `F`, degli oggetti che istanzierà, utilizzato nel metodo `instantiate()`. Questo metodo restituisce l'oggetto da creare e richiede due parametri: il nome del file da creare, e il suo contenuto (di tipo Object, dato che ancora si sta operando in un contesto generico). La funzione esegue seguenti passi per istanziare l'oggetto:
@@ -938,6 +939,8 @@ La _factory_ possiede un riferimento all'oggetto `Class`, parametrizzato con il 
 + crea un'istanza della classe;
 + aggiunge l'istanza al contesto;
 + restituisce l'oggetto creato.
+
+Palra di istranziazione json
 
 == Spiegazione alto livello
 
