@@ -14,7 +14,8 @@
     "nbt": [NBT],
     "str": [_storage_],
     "tag": [_tag_],
-    "f": [_factory_]
+    "f": [_factory_],
+    "or": [_override_],
 )
 
 #let c = (
@@ -27,7 +28,16 @@
   "pf": `PlainFile`,
   "tf": `TextFile`,
   "jf": `JsonFile`,
-  "f": `Factory`
+  "f": `Factory`,
+  "dj": `DataJson`,
+  "aj": `AssetsJson`,
+  "fn": `Function`,
+  "sb": `StringBuilder`,
+  "p": `Project`,
+  "c": `Context`,
+  "dp": `Datapack`,
+  "rp": `Resourcepack`,
+  "gp": `GenericPack`
 )
 
 #let e = [È]

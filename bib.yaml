@@ -231,3 +231,13 @@ gson:
     type: web
     title: GSON
     url: https://github.com/google/gson/blob/main/README.md
+
+javapoet:
+    type: web
+    title: JavaPoet
+    url: https://square.github.io/javapoet/javadoc/javapoet/
+
+map:
+    type: web
+    title: Map
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/Map.html
