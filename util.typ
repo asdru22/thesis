@@ -41,7 +41,9 @@
   "t": `Texture`,
   "s": `Sound`,
   "bi": `BufferedImage`,
-  "m": `Module`
+  "m": `Module`,
+  "o": `Optional`,
+  "l": `Locale`
 )
 
 #let e = [È]

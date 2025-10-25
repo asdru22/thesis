@@ -246,3 +246,33 @@ bufferedimage:
     type: web
     title: BufferedImage
     url: https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html
+
+supplier:
+    type: web
+    title: Supplier
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html
+
+stream:
+    type: web
+    title: Stream
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html
+
+locale:
+    type: web
+    title: Locale
+    url: https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html
+
+lazy-loading:
+    type: web
+    title: Lazy Loading
+    url: https://java-design-patterns.com/patterns/lazy-loading/#detailed-explanation-of-lazy-loading-pattern-with-real-world-examples
+
+lazy-loading-ex:
+    type: web
+    title: Lazy Loading Example
+    url: https://stackoverflow.com/questions/28818506/optional-orelse-optional-in-java
+
+record:
+    type: web
+    title: Record
+    url: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html

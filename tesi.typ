@@ -849,18 +849,18 @@ static <T extends FileSystemObject> Optional<T> find(
         }
         return Optional.empty();
     }
-```)
+```) <find>
 Questo metodo generico prende in input un #c.fso (non sa se si tratta di una cartella o file), la classe del tipo ricercato (`clazz`), e una condizione da soddisfare affinché l'oggetto risulti trovato. Esegue i seguenti passi:
 + controlla se il nodo attuale è un istanza del tipo cercato;
 + in caso positivo:
     + applica la condizione passata come `Predicate`@predicate;
-    + se è soddisfatta, l'oggetto è trovato e viene restituito un `Optional`@optional contenente l'oggetto.
+    + se è soddisfatta, l'oggetto è trovato e viene restituito un #c.o@optional contenente l'oggetto.
 + in caso negativo, continua la ricerca nei figli;
 + ottiene il contenuto del nodo corrente;
 + se il contenuto è un `Set`@set (dunque il nodo è una cartella):
     + richiama `find(...)` su ciascun elemento figlio;
     + se uno dei figli contiene l'oggetto cercato, interrompe la ricerca.
-+ altrimenti restituisce un `Optional` vuoto, indicando che l'elemento non è stato trovato.
++ altrimenti restituisce un #c.o vuoto, indicando che l'elemento non è stato trovato.
 
 #c.fso definisce anche il contratto `collectByType(Namespace data, Namespace assets)`. Questo sarà sovrascritto per indicare se l'oggetto appartiene alla categoria _data_ dei #glos.dp o _assets_ dei #glos.rp.
 
@@ -1103,13 +1103,72 @@ Il #glos.ns che contiene i file di _data_ sarà aggiunto alla lista di #c.ns di 
 
 Quindi chiamate al metodo build si propagheranno inizialmente da #c.p, poi ai suoi campi `datapack` e `resourcepack`, questi la invocheranno sui loro `namespace`. Questi a loro volta lo invocheranno su tutti i loro figli (cartelle e file), ricoprendo così l'intero albero.
 
-=== Scrittura su File System
-
-Con questi oggetti è possibile costruire un #glos.pack a partire da codice Java, tuttavia si possono sfruttare ulteriormente proprietà del linguaggio di programmazione per implementare funzioni di utilità, che semplificano ulteriormente lo sviluppo.
+Con gli oggetti descritti fin'ora è possibile costruire un #glos.pack a partire da codice Java, tuttavia si possono sfruttare ulteriormente proprietà del linguaggio di programmazione per implementare funzioni di utilità, che semplificano ulteriormente lo sviluppo.
 
 == Utilità
 
-#todo[spiegare utils, esportazione in zip e release con github]
+Il metodo `find()` (@find), descritto precedentemente, è impiegato in metodi di utilità che permettono di inserire progressivamente i contenuti di oggetti rappresentanti file, in particolare quelli soggetti a modifiche continue.
+Ad esempio, i file _lang_ che contengono le traduzioni devono essere continuamente aggiornati con nuove voci; similmente, ogni nuovo suono essere registrato nel file `sounds.json`. Come accennato in precedenza, quando questi file di risorse vengono utilizzati dagli sviluppatori di #glos.mc, non vengono compilati manualmente, ma generati automaticamente tramite codice Java proprietario.
+
+Poiché questi file non sono stati concepiti per essere modificati manualmente, ho deciso di implementare nella classe `Util` metodi dedicati per aggiungere elementi alle risorse in modo programmatico, accessibili da qualunque parte del progetto.\
+Ho prima scritto una funzione che permette di ottenere un riferimento all'oggetto ricercato, o di crearne uno nuovo qualora non fosse trovato.
+#figure(
+    ```java
+    private static <T extends JsonFile> T getOrCreateJsonFile(
+            Namespace namespace,
+            Class<T> clazz,
+            String name,
+            Supplier<T> creator
+    ) {
+        return namespace.getContent().stream()
+                .map(child -> FileSystemObject.find(child,
+                        clazz,
+                        file -> file.getName().equals(name)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElseGet(creator);
+    }
+    ```,
+    caption: [Metodo che sfrutta la programmazione funzionale per restituire il #c.jf cercato.],
+)
+Il metodo richiede la classe del tipo che si sta cercando, il suo nome e un `Supplier`@supplier. Esegue i seguenti passi:
++ Ottiene l'insieme dei figli del `namespace` in cui effettuare la ricerca, e ne crea uno `Stream`@stream per l'elaborazione funzionale;
++ ogni `child` è trasformato in un #c.o:
+    + per ogni `child` dello `stream`, invoca il metodo `find()`, specificando la classe e una condizione che determina il successo della ricerca (`Predicate`);
+    + `find()` restituisce un #c.o. Questo sarà vuoto se la ricerca non ha avuto successo;
++ si scartano gli #c.o vuoti;
++ si estraggono i valori degli #c.o rimasti;
++ si seleziona il primo elemento trovato. Se non è presente alcun elemento, si restituisce un #c.o vuoto;
++ se l'#c.o è vuoto, il `Supplier` fornisce una nuova istanza dell'oggetto da restituire.
+In questo modo si garantisce che il metodo restituisca sempre o l'oggetto ricercato, oppure ne viene istanziato uno nuovo. Il metodo `orElseGet()` di Java rappresenta un'applicazione del _design pattern_ _lazy loading_, che differisce dal tradizionale `orElse()` per l'uso di un `Supplier` che viene invocato solo se l'#c.o è vuoto. Questo approccio consente di ritardare la creazione di un oggetto fino al momento in cui è effettivamente necessario, rendendo il sistema leggermente più efficiente in termini di memoria@lazy-loading@lazy-loading-ex.
+
+La funzione appena mostrata è applicata in numerosi metodi di utilità per inserire rapidamente elementi in dizionari o liste #glos.json.
+#figure(```java
+public static void addTranslation(Namespace namespace, Locale locale, String key, String value) {
+      String formattedLocale = LocaleUtils.formatLocale(locale);
+      JsonObject content = getOrCreateJsonFile(namespace,
+              Lang.class,
+              formattedLocale,
+              () -> Lang.f.ofName(formattedLocale, "{}")
+      ).getContent();
+      content.addProperty(key, value);
+  }
+```,caption:[Applicazione del metodo `getOrCreateJsonFile()`])
+In questo esempio viene aggiunta una nuova traduzione per un determinato #c.l@locale (lingua). La traduzione è rappresentata da una coppia chiave-valore, in cui la chiave identifica in modo univoco la componente testuale, e il valore ne specifica la traduzione per il #c.l indicato.
+Il metodo ottiene il contenuto JSON del file lang corrispondente al #c.l richiesto. Successivamente vi aggiunge la coppia chiave-valore.
+Nel caso in cui il file non esista ancora (ad esempio, alla prima esecuzione per quel #c.l), esso viene creato tramite la factory, garantendo comunque l'esistenza del file di traduzione prima dell'inserimento dei dati.
+
+Un'altra applicazione simile sono le funzioni `setOnTick()` e `setOnLoad()`, che permettono di aggiungere o un intera `Function` o una stringa contenenti comandi alla lista di funzioni da eseguire ogni _tick_ o ad ogni caricamento dei file.
+
+#e stato precedentemente menzionato che nel `Builder` di #c.p, in base alla versione specificata si ottiene il _pack format_ di #glos.dp e #glos.rp.
+Questi valori sono memorizzati in un `Record`@record chiamato `VersionInfo`.
+
+Ogni volta che il `Builder` chiama `VersionUtils.getVersionInfo(String versionKey)`, dove `versionKey` rappresenta il nome della versione (ad esempio `25w05a`), vengono eseguiti i seguenti passi:
+#todo(inline:true)[Completare]
+
+
+#todo[spiegare esportazione in zip e release con github]
 
 == Uso working example
 
