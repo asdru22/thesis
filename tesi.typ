@@ -1054,9 +1054,20 @@ Un'alternativa possibile sarebbe potuta consistere nel definire un metodo static
 Tuttavia è evidente che non risulta comodo per l'utente finale dover specificare tutti questi parametri ogni volta che si vuole usare la #glos.f.\
 Dunque ho scritto una classe di utilità `CodeGen` che sfrutta la libreria _JavaPoet_@javapoet per creare le classi e i metodi al loro interno. In questo modo per creare un modello si può semplicemente scrivere `Model.f.of(json)`.
 
-#todo[Creazione png e ogg]
+Sono disponibili anche classi rappresentanti file binari. Queste non ereditano la #c.af di #c.pf, ma usano #glos.f proprie per istanziare #c.t e #c.s.
 
-#todo[Spiegare module]
+L'oggetto #c.t estende un #c.af che ha come contenuto una #c.bi@bufferedimage. Se viene passata una stringa al suo metodo `of()`, verrà convertita in un path che punta alla cartella `resources/texture` del progetto Java. Si può anche passare direttamente una #c.bi, creata tramite codice Java.
+
+I suoni invece usano come contenuto un array di byte. La loro #glos.f, similmente a quella di #c.t, permette di caricare suoni dalle risorse del progetto (`resources/sound`).
+
+Ho voluto creare una sottoclasse astratta di `Folder`, chiamata #c.m, con lo scopo di invitare ulteriormente a scrivere codice "modulare", dove c'è una chiara divisione di compiti e raggruppamento di contenuti affini. Ad esempio, se sto implementando una feature $A$, tutte le risorse e dati relative ad $A$, potranno essere inserite nel #c.m $A$.
+
+La classe dispone di un _entrypoint_, ovvero una funzione astratta `content()` che verrà sovrascritta da tutte le classi che erediteranno #c.m, con lo scopo di fornire un chiaro punto in cui definire la logica interna del modulo.
+
+I moduli vengono istanziati tramite il metodo `register(Class<? extends Module>... classes)`, che invoca il costruttore una o più classi che estendono #c.m.
+
+Quando un nuovo modulo viene istanziato, il costruttore imposta la nuova istanza come contesto corrente. Successivamente viene invocato il metodo `content()`, tramite il quale viene eseguito il codice specifico del modulo. Al termine di questa esecuzione, il costruttore ripristina il contesto precedente tramite il metodo `exit()` dei #c.ci.
+In questo modo si garantisce che l'esecuzione di ciascun modulo avvenga in maniera indipendente, evitando di operare in un contesto non pertinente.
 
 === Namespace, Project
 

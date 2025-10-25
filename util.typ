@@ -37,7 +37,11 @@
   "c": `Context`,
   "dp": `Datapack`,
   "rp": `Resourcepack`,
-  "gp": `GenericPack`
+  "gp": `GenericPack`,
+  "t": `Texture`,
+  "s": `Sound`,
+  "bi": `BufferedImage`,
+  "m": `Module`
 )
 
 #let e = [È]

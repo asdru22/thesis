@@ -241,3 +241,8 @@ map:
     type: web
     title: Map
     url: https://docs.oracle.com/javase/8/docs/api/java/util/Map.html
+
+bufferedimage:
+    type: web
+    title: BufferedImage
+    url: https://docs.oracle.com/javase/8/docs/api/java/awt/image/BufferedImage.html
