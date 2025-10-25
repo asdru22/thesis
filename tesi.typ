@@ -1023,9 +1023,9 @@ Di seguito invece si esporranno elementi caratterizzanti dei pack.
 
 == Struttura dell'Alto Livello
 
-=== Classi Concrete
+=== File e Module
 
-Le classi astratte #c.dj e #c.aj sono sottoclassi di #c.jf, e hanno il compito di eseguire un #glos.or del metodo `collectByType()` di #c.fso per indicare se si tratta di un oggetto che appartiene alla categoria #glos.dp o #glos.rp.
+Le classi astratte #c.dj e #c.aj sono sottoclassi di #c.jf, e hanno il compito di eseguire un #glos.or del metodo `collectByType()` di #c.fso per indicare se il file che rappresentano appartiene alla categoria #glos.dp o #glos.rp.
 #figure(
     ```java
     @Override
@@ -1038,11 +1038,11 @@ Le classi astratte #c.dj e #c.aj sono sottoclassi di #c.jf, e hanno il compito d
 
 Queste classi saranno poi ereditate dalle classi concrete dei file che compongono un #glos.pack.
 
-Unica eccezione è la classe #c.fn. Questa estende #c.tf, indicando la propria estensione (`.mcfunction`) con #glos.or del metodo `getExtension()`, e anche il proprio tipo come visto nel esempio sopra con #c.dj. Dato che #c.tf non dispone di una #glos.f per file di testo non in formato #glos.json, sarà #c.fn stessa a estendere `PlainFile.Factory`, definendo come parametro per il contenuto del file #c.sb, e come oggetto istanziato #c.fn.
+Unica eccezione è la classe #c.fn. Questa estende #c.tf, indicando la propria estensione (`.mcfunction`) con #glos.or del metodo `getExtension()`, e anche il proprio tipo come visto nel esempio sopra con #c.dj. Dato che #c.tf non dispone di una #glos.f per file di testo non in formato #glos.json, sarà  la #glos.f di #c.fn stessa a estendere `PlainFile.Factory`, definendo come parametro per il contenuto del file #c.sb, e come oggetto istanziato #c.fn.
 
-Le classi rappresentanti file di alto livello sono dotate di attributo statico e pubblico di tipo `JsonFileFactory<...>`, parametrizzato per la classe specifica che istanzia. Queste classi sono 39 in totale, e ognuna corrisponde a un specifico oggetto utile al funzionamento di un #glos.dp o #glos.rp (30 e 9 rispettivamente). Dal momento che ognuna di queste classi deve disporre di una #glos.f, un costruttore, e un #glos.or al metodo `getFolderName()`, ho scelto di usare una libreria che generasse il codice Java.
+Le classi rappresentanti file di alto livello sono dotate di attributo statico e pubblico di tipo `JsonFileFactory<...>`, parametrizzato per la classe specifica che istanzia. Queste classi sono 39 in totale, e ognuna corrisponde a un specifico oggetto utile al funzionamento di un #glos.dp o #glos.rp (30 e 9 rispettivamente). Dal momento che ognuna di queste classi deve disporre di una #glos.f, un costruttore, e un #glos.or al metodo `getFolderName()`, ho scelto di usare una libreria per generare il loro codice Java.
 
-Un'alternativa possibile consiste nel definire un metodo statico generico all'interno di `JsonFile.Factory`, che richiede come parametri il tipo della classe da istanziare e la cartella corrispondente. Così facendo non sarebbe necessario creare una #glos.f dedicata per ciascun tipo di file, ma risulterebbe sufficiente invocare direttamente la funzione `create()` per generare l'istanza desiderata.
+Un'alternativa possibile sarebbe potuta consistere nel definire un metodo statico generico all'interno di `JsonFile.Factory`, che richiede come parametri il tipo della classe da istanziare e la cartella corrispondente. Così facendo non sarebbe necessario creare una classe dedicata per ciascun tipo di file, ma risulterebbe sufficiente invocare direttamente la funzione `create()` per generare l'istanza desiderata.
 #figure(
     ```java
     Advancement adv = JsonFile.Factory.create(Advancement.class, "advancement", json);
@@ -1054,12 +1054,16 @@ Un'alternativa possibile consiste nel definire un metodo statico generico all'in
 Tuttavia è evidente che non risulta comodo per l'utente finale dover specificare tutti questi parametri ogni volta che si vuole usare la #glos.f.\
 Dunque ho scritto una classe di utilità `CodeGen` che sfrutta la libreria _JavaPoet_@javapoet per creare le classi e i metodi al loro interno. In questo modo per creare un modello si può semplicemente scrivere `Model.f.of(json)`.
 
-=== Namespace e Project
+#todo[Creazione png e ogg]
 
-La classi concrete vengono raccolte dai #c.ns. Come i `Folder` dispongono di un `Set` che contiene i figli, ed implementa le interfacce #c.b e #c.ci. Quest'ultima viene utilizzata perché un #c.p può essere composto da più #glos.ns, e dunque bisogna tenere traccia di quello corrente, in cui vanno inseriti i #c.fso appena creati.\
-I _children_ di #c.ns possono essere sia dati che risorse, dunque prima che vengano scritti su file sarà necessario dividerli nelle cartelle corrispondenti.
+#todo[Spiegare module]
 
-La classe presenta una particolarità nel suo metodo `exit()`, usato per dichiarare quando non si vogliono più creare file su questo #glos.ns. Oltre a indicare all'oggetto #c.c di chiamare `pop()` sul suo `stack` interno, viene anche chiamato il metodo `addNamespace()` che verrà mostrato in seguito.
+=== Namespace, Project
+
+La classi concrete vengono raccolte dai #c.ns. Come i `Folder`,  dispongono di un `Set` che contiene i figli, ed implementa le interfacce #c.b e #c.ci. Quest'ultima viene utilizzata perché un #c.p può essere composto da più #glos.ns, quindi bisogna tenere traccia di quello corrente in cui si aggiungono i #c.fso appena creati.\
+I _children_ di #c.ns possono essere di natura _data_ o _assets_, dunque prima che vengano scritti su file sarà necessario dividerli nelle cartelle corrispondenti.
+
+La classe presenta una particolarità nel suo metodo `exit()`, usato per dichiarare quando non si vogliono più creare file su questo #glos.ns. Oltre a indicare all'oggetto #c.c di chiamare `pop()` sul suo `stack` interno, viene anche chiamato il metodo `addNamespace()` di #c.p  che verrà mostrato in seguito.
 
 La classe #c.p rappresenta la radice del progetto che verrà creato, e contiene informazioni essenziali per l'esportazione del progetto. Queste verranno impostate dall'utente finale tramite un _builder_.
 
@@ -1073,23 +1077,28 @@ Tramite la classe `Builder` di #c.p, si possono specificare:
 - descrizione in formato #glos.json o stringa di #glos.dp e #glos.rp, richiesta dal file `pack.mcmeta` di entrambi.
 - uno o più _build path_, ovvero la cartella radice in cui verrà esportato l'intero progetto. In genere questa coinciderà con la cartella globale di minecraft, nella quale sono raccolti tutti i #glos.rp e i _save file_, tra cui quello in cui si vuole esportare il #glos.dp.
 
-Dopo aver definito questi valori, il progetto saprà la posizione esatta del _file system_ in cui si troveranno le cartelle radice di #glos.dp e #glos.rp.
+Dopo aver definito questi valori, il progetto saprà la posizione esatta del _file system_ in cui si saranno esportate le cartelle radice di #glos.dp e #glos.rp.
 
 Un altro _design pattern_ creazionale applicato a #c.p è _singleton_, il cui scopo è garantire che una classe abbia una sola istanza in tutto il programma e che sia facilmente accessibile da qualunque punto del codice. Questo viene implementato tramite una variabile statica e privata di tipo #c.p all'interno della classe stessa. Un riferimento ad essa è ottenuto con il metodo `getInstance()`, che solleva un errore nel caso il progetto non sia ancora stato costruito con il `Builder`.
 
-Un #c.p dispone al suo interno di attributi #c.dp e #c.rp. Questi conterranno i file che saranno scritti su memoria rigida ed estendono la classe astratta #c.gp.\
-#c.gp implementa le interfacce #c.b e `Versionable`. Quest'ultima fornisce i metodi per ottenere i pack format corrispettivi dalla versione dal progetto.\
-Fornisce inoltre l'attributo `namespaces` `Map`@map nella quale verranno salvati i corrispettivi #c.ns.
+Un #c.p dispone al suo interno di attributi di tipo #c.dp e #c.rp. Questi hanno il compito di contenere i file che saranno scritti su memoria rigida ed estendono la classe astratta #c.gp.\
+#c.gp implementa le interfacce #c.b e `Versionable`. Quest'ultima fornisce i metodi per ottenere i _pack format_ corrispettivi dalla versione dal progetto.\
+Fornisce inoltre l'attributo `namespaces` di tipo `Map`@map, nel quale verranno salvati i corrispettivi #c.ns.
 Tramite il suo metodo `makeMcMeta()` viene generata la struttura #glos.json che specifica il format (_minor_ e _major_) della cartella e la sua descrizione.\
-Tramite l'#glos.or del metodo `build()`, itera su tutti i valori del dizionario `namespaces` per costruire anch'essi.
+Eseguendo l'#glos.or del metodo `build()`, itera su tutti i valori del dizionario `namespaces` per costruire anch'essi.
 
-Il metodo `addNamespace()` accennato precedentemente, non aggiunge direttamente il #glos.ns al progetto, ma prima divide i #c.fso contenuti tra quelli inerenti alle risorse (_assets_) e quelli relativi alla logica (_data_). Questa suddivisione viene fatta chiamando il metodo precedentemente citato `collectByType()` e risulta in due nuovi #glos.ns.
-Una volta terminata questa operazione, il #glos.ns che contiene i file di _data_ sarà aggiunto alla lista di #c.ns di `datapack`. Se il #glos.ns che contiene gli _assets_ non è vuoto, verrà aggiunto a quelli di `resourcepack`.
+Il metodo `addNamespace()` accennato precedentemente, non aggiunge direttamente il #glos.ns al progetto, prima divide i #c.fso contenuti in quelli inerenti alle risorse (_assets_) e quelli relativi alla logica (_data_). Questa suddivisione viene fatta chiamando il metodo precedentemente citato `collectByType()`. Al termine della divisione si avranno due nuovi #glos.ns omonimi, ma con i contenuti divisi per funzionalità.
+Il #glos.ns che contiene i file di _data_ sarà aggiunto alla lista di #c.ns di `datapack`. Se il #glos.ns che contiene gli _assets_ non è vuoto, verrà aggiunto a quelli di `resourcepack`.
 
 Quindi chiamate al metodo build si propagheranno inizialmente da #c.p, poi ai suoi campi `datapack` e `resourcepack`, questi la invocheranno sui loro `namespace`. Questi a loro volta lo invocheranno su tutti i loro figli (cartelle e file), ricoprendo così l'intero albero.
 
+=== Scrittura su File System
+
+Con questi oggetti è possibile costruire un #glos.pack a partire da codice Java, tuttavia si possono sfruttare ulteriormente proprietà del linguaggio di programmazione per implementare funzioni di utilità, che semplificano ulteriormente lo sviluppo.
+
 == Utilità
-risorse, versione, classi di utilità, publishing
+
+#todo[spiegare utils, esportazione in zip e release con github]
 
 == Uso working example
 
