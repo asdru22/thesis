@@ -2,6 +2,8 @@
 #import "util.typ": *
 #import "@preview/treet:1.0.0": *
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
+#import "@preview/cetz:0.4.2"
+#import "@preview/cetz-plot:0.1.3": chart, plot
 
 #show: project.with(
     title: [
@@ -626,7 +628,7 @@ Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono 
 Una possibile soluzione consiste nel creare una directory che contenga sia il #glos.dp sia il #glos.rp e, successivamente, utilizzare _symlink_ o _junction_@symlink per creare riferimenti dalle rispettive cartelle verso i percorsi in cui il compilatore si aspetta di trovarli.\
 I _symlink_ (collegamenti simbolici) e le _junction_ sono riferimenti a file o directory che consentono di accedere a un percorso diverso come se fosse locale, evitando la duplicazione dei contenuti.
 
-Disporre di un'unica cartella radice contenente #glos.dp e #glos.rp semplifica notevolmente la gestione del progetto. In particolare, consente di creare una sola repository Git@git, facilitando così il versionamento del codice, il tracciamento delle modifiche e la collaborazione tra più sviluppatori.\
+Disporre di un'unica cartella radice contenente #glos.dp e #glos.rp semplifica notevolmente la gestione del progetto. In particolare, consente di creare una sola _repository_@repository Git@git, facilitando così il versionamento del codice, il tracciamento delle modifiche e la collaborazione tra più sviluppatori.\
 Attraverso il sistema delle _release_ di GitHub@github è possibile ottenere un link diretto a #glos.dp e #glos.rp pubblicati, che può poi essere utilizzato nei principali siti di hosting. Queste piattaforme, essendo spesso gestite da piccoli team di sviluppo, tendono ad affidarsi a servizi esterni per la memorizzazione dei file, come GitHub o altri provider.
 
 Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrato in precedenza, viene presentato un esempio di struttura che mostra i file necessari per introdurre un nuovo _item_@item (oggetto). Sebbene l'_item_ costituisca una delle funzionalità più semplici da implementare, la sua integrazione richiede comunque un numero non trascurabile di file.
@@ -954,11 +956,11 @@ La #glos.f possiede un riferimento all'oggetto `Class`@class, parametrizzato con
 + aggiunge l'istanza al contesto;
 + restituisce l'oggetto creato.
 
-#c.af è esteso da #c.tf, il cui `content` è di tipo #c.sb@stringbuilder, e #c.jf, che utilizza invece `JsonObject`@jsonobject come contenuto.
+#c.af è esteso da #c.tf, il cui `content` è di tipo #c.sb@stringbuilder, e #c.jf, che utilizza invece #c.jo@jsonobject come contenuto.
 
 #c.tf rappresenta un file di testo generico, il cui contenuto è gestito tramite un oggetto #c.sb, così da consentire operazioni di concatenazione delle stringhe in modo efficiente. L'unica classe che la estende è `Function`, poiché è l'unico tipo di file nel progetto che prevede la scrittura diretta di testo.
 
-#c.jf è invece la classe base ereditata da tutti gli altri file di un #glos.pack. Il suo contenuto è di tipo `JsonObject`, affinché si possano gestire e manipolare facilmente dati in formato #glos.json tramite la libreria _GSON_@gson di Google.\
+#c.jf è invece la classe base ereditata da tutti gli altri file di un #glos.pack. Il suo contenuto è di tipo #c.jo, affinché si possano gestire e manipolare facilmente dati in formato #glos.json tramite la libreria _GSON_@gson di Google.\
 La #glos.f di #c.jf eredita quella di #c.pf, aggiungendovi metodi.
 #figure(
     ```java
@@ -968,10 +970,10 @@ La #glos.f di #c.jf eredita quella di #c.pf, aggiungendovi metodi.
     ```,
     caption: [Intestazione della classe #c.f per #c.jf.],
 )
-L'estratto di codice riportato definisce la #glos.f incaricata di istanziare esclusivamente classi che estendono #c.jf. Questa classe eredita la factory di #c.pf, specializzandola per gestire contenuti di tipo `JsonObject`. Inoltre, implementa l'interfaccia `JsonFileFactory`, la quale definisce i metodi di creazione specifici per i file #glos.json, che dunque hanno come parametro `JsonObject`.\
+L'estratto di codice riportato definisce la #glos.f incaricata di istanziare esclusivamente classi che estendono #c.jf. Questa classe eredita la factory di #c.pf, specializzandola per gestire contenuti di tipo #c.jo. Inoltre, implementa l'interfaccia `JsonFileFactory`, la quale definisce i metodi di creazione specifici per i file #glos.json, che dunque hanno come parametro #c.jo.\
 Nella classe #c.jf viene anche eseguito un #glos.or del metodo `getExtension()` per restituire la stringa `"json"`.
 
-Le classi rappresentanti file sopra descritte richiedono un contenuto di tipo diverso da `String`. In entrambi i casi viene fatto un leggero _parsing_ prima della scrittura sul file. Oltre alla già citata sostituzione di valori segnaposto, dopo che #c.sb e `JsonObject` sono stati convertiti in stringhe, si controlla il contenuto per alcuni pattern.\ La sottostringa `"$ns$"` verrà sostituita con il nome effettivo del #glos.ns attivo al momento della costruzione, mentre `"$name$"` verrà sostituito con la propria _resource location_.\
+Le classi rappresentanti file sopra descritte richiedono un contenuto di tipo diverso da `String`. In entrambi i casi viene fatto un leggero _parsing_ prima della scrittura sul file. Oltre alla già citata sostituzione di valori segnaposto, dopo che #c.sb e #c.jo sono stati convertiti in stringhe, si controlla il contenuto per alcuni pattern.\ La sottostringa `"$ns$"` verrà sostituita con il nome effettivo del #glos.ns attivo al momento della costruzione, mentre `"$name$"` verrà sostituito con la propria _resource location_.\
 Quest'ultimo risulta particolarmente utile nei casi di dipendenze circolari, in cui può essere richiesto il nome di un oggetto prima che esso sia effettivamente istanziato, dal momento che non è ancora possibile ottenere la sua rappresentazione testuale tramite _casting_ implicito a stringa.
 
 
@@ -1107,7 +1109,9 @@ Con gli oggetti descritti fin'ora è possibile costruire un #glos.pack a partire
 
 == Utilità
 
-Il metodo `find()` (@find), descritto precedentemente, è impiegato in metodi di utilità che permettono di inserire progressivamente i contenuti di oggetti rappresentanti file, in particolare quelli soggetti a modifiche continue.
+=== Trova o Crea File
+
+Il metodo `find()`, descritto precedentemente (@find), è impiegato in metodi di utilità che permettono di inserire progressivamente i contenuti di oggetti rappresentanti file, in particolare quelli soggetti a modifiche continue.
 Ad esempio, i file _lang_ che contengono le traduzioni devono essere continuamente aggiornati con nuove voci; similmente, ogni nuovo suono essere registrato nel file `sounds.json`. Come accennato in precedenza, quando questi file di risorse vengono utilizzati dagli sviluppatori di #glos.mc, non vengono compilati manualmente, ma generati automaticamente tramite codice Java proprietario.
 
 Poiché questi file non sono stati concepiti per essere modificati manualmente, ho deciso di implementare nella classe `Util` metodi dedicati per aggiungere elementi alle risorse in modo programmatico, accessibili da qualunque parte del progetto.\
@@ -1144,17 +1148,20 @@ Il metodo richiede la classe del tipo che si sta cercando, il suo nome e un `Sup
 In questo modo si garantisce che il metodo restituisca sempre o l'oggetto ricercato, oppure ne viene istanziato uno nuovo. Il metodo `orElseGet()` di Java rappresenta un'applicazione del _design pattern_ _lazy loading_, che differisce dal tradizionale `orElse()` per l'uso di un `Supplier` che viene invocato solo se l'#c.o è vuoto. Questo approccio consente di ritardare la creazione di un oggetto fino al momento in cui è effettivamente necessario, rendendo il sistema leggermente più efficiente in termini di memoria@lazy-loading@lazy-loading-ex.
 
 La funzione appena mostrata è applicata in numerosi metodi di utilità per inserire rapidamente elementi in dizionari o liste #glos.json.
-#figure(```java
-public static void addTranslation(Namespace namespace, Locale locale, String key, String value) {
-      String formattedLocale = LocaleUtils.formatLocale(locale);
-      JsonObject content = getOrCreateJsonFile(namespace,
-              Lang.class,
-              formattedLocale,
-              () -> Lang.f.ofName(formattedLocale, "{}")
-      ).getContent();
-      content.addProperty(key, value);
-  }
-```,caption:[Applicazione del metodo `getOrCreateJsonFile()`])
+#figure(
+    ```java
+    public static void addTranslation(Namespace namespace, Locale locale, String key, String value) {
+          String formattedLocale = LocaleUtils.formatLocale(locale);
+          JsonObject content = getOrCreateJsonFile(namespace,
+                  Lang.class,
+                  formattedLocale,
+                  () -> Lang.f.ofName(formattedLocale, "{}")
+          ).getContent();
+          content.addProperty(key, value);
+      }
+    ```,
+    caption: [Applicazione del metodo `getOrCreateJsonFile()`],
+)
 In questo esempio viene aggiunta una nuova traduzione per un determinato #c.l@locale (lingua). La traduzione è rappresentata da una coppia chiave-valore, in cui la chiave identifica in modo univoco la componente testuale, e il valore ne specifica la traduzione per il #c.l indicato.
 Il metodo ottiene il contenuto JSON del file lang corrispondente al #c.l richiesto. Successivamente vi aggiunge la coppia chiave-valore.
 Nel caso in cui il file non esista ancora (ad esempio, alla prima esecuzione per quel #c.l), esso viene creato tramite la factory, garantendo comunque l'esistenza del file di traduzione prima dell'inserimento dei dati.
@@ -1164,12 +1171,267 @@ Un'altra applicazione simile sono le funzioni `setOnTick()` e `setOnLoad()`, che
 #e stato precedentemente menzionato che nel `Builder` di #c.p, in base alla versione specificata si ottiene il _pack format_ di #glos.dp e #glos.rp.
 Questi valori sono memorizzati in un `Record`@record chiamato `VersionInfo`.
 
-Ogni volta che il `Builder` chiama `VersionUtils.getVersionInfo(String versionKey)`, dove `versionKey` rappresenta il nome della versione (ad esempio `25w05a`), vengono eseguiti i seguenti passi:
-#todo(inline:true)[Completare]
+=== Ottenimento Versioni
 
+Quando il `Builder` chiama `VersionUtils.getVersionInfo(String versionKey)`, dove `versionKey` rappresenta il nome della versione (ad esempio `25w05a`), esegue i seguenti passi:
++ controlla che sia presente in `resources/_generated` un file #glos.json contenente tutte le versioni e i format associati (`versions.json`);
++ controlla che sia passato più di un giorno dall'ultima volta che è stato scritto `versions.json`;
++ Se il file non è presente oppure è passato più di un giorno dall'ultima volta che è stata eseguita la generazione del file, e dunque c'è la possibilità che sia stato pubblicata una nuova versione o _snapshot_, si ricrea il file.
++ si carica il file come #c.jo
++ se `versionKey=="latest"`, vuol dire che si sta cercando la versione più recente,
+    + si crea un `Iterator`#footnote[Dato che un `Set` non è ordinato, non dispone di un metodo `getFirst()`, e dunque si ricorre all'`Iterator`.] di #c.jo e si ottiene il valore del primo elemento;
+    + si converte l'elemento in un _record_ `VersionInfo`.
++ se invece `versionKey` è una chiave valida, viene restituito il `VersionInfo` corrispondente alla chiave richiesta.
 
-#todo[spiegare esportazione in zip e release con github]
+Ma come viene creato `versions.json`? Ogni volta che è necessario creare un nuovo file, viene fatta una chiamata HTTP ad un'API che restituisce un oggetto #glos.json contenente i dati di tutte le versioni.\
+Queste vengono poi mappate al nome della versione corrispondente e ordinate dalla più nuova alla più vecchia. La mappa cosi creata è avvolta in un #c.o. Se quest'ultimo è vuoto verrà sollevato un errore, altrimenti si scriverà la mappa sul file `versions.json`.
+
+=== Esportazione in File Compressi
+I file #glos.dp e #glos.rp vengono compilati correttamente anche in formato `.zip`. Questo risulta comodo in fase di distribuzione, perché consente di fornire agli utenti due pacchetti distinti da scaricare.
+La classe #c.p dispone di un metodo `buildZip()`, che, dopo aver ottenuto le cartelle #glos.dp e #glos.rp tramite il metodo `build()`, provvede a comprimerle generando i rispettivi archivi `.zip`. Al termine dell'operazione, le cartelle originali vengono eliminate.
+
+Il metodo `zipDirectory()` si occupa di comprimere il contenuto di una cartella in un archivio `.zip`. Esplora tutte le sottocartelle e file presenti nel percorso specificato, aggiungendo ciascun file all'archivio di destinazione.\
+Per farlo, utilizza il metodo `Files.walk(folder)`, che genera uno `stream` di tutti i percorsi contenuti nella cartella, escludendo le cartelle. Per ogni file trovato, viene calcolato il percorso relativo rispetto alla cartella base (`basePath`), in modo che all'interno dell'archivio venga mantenuta la stessa struttura del progetto originale.\
+Successivamente, il metodo apre uno `stream` di lettura sul file e crea una nuova _entry_ ZIP, ovvero un elemento che rappresenta un singolo file all'interno dell'archivio.
+L'oggetto `ZipArchiveOutputStream`@zaos della libreria `commons-compress`@commons-compress si occupa di aprire l'_entry_ per consentire la scrittura dei dati relativi al file.
+Il contenuto viene quindi copiato nell'archivio tramite la classe `IOUtils`@io-utils di _Apache Commons_, dopodiché l'_entry_ viene chiusa per indicare che la scrittura del file è stata completata.
+
+Il metodo `buildZip()` è stato pensato per essere usato in concomitanza con un _workflow_@workflows di GitHub che, qualora il progetto abbia una _repository_ associata, costruisce le cartelle compresse di #glos.dp e #glos.rp ogni volta che viene creata una nuova _release_@release. Questi archivi saranno nominati per chiarezza dell'utente finale con la versione specificata nel file `pom.xml` del progetto, e saranno scaricabili dalla pagina GitHub che contiene tutti gli artefatti associati alla _release_.
 
 == Uso working example
+In questo capitolo verrà implementato un progetto che utilizza la libreria per modificare un _item_ di #glos.mc. L'obiettivo è far sì che, al clic destro sull'oggetto, esso possa consumare tre tipi diversi di munizioni per produrre un'onda la cui lunghezza dipende dal tipo di munizione utilizzata.
 
+Viene innanzitutto creato il progetto:
+#figure(```java
+Project myProject = new Project.Builder()
+    .projectName("esempio")
+    .version("1.21.10")
+    .worldName("OOPack test world")
+    .icon("icona")
+    .description("esempio tesi")
+    .addBuildPath("C:\\Users\\Ale\\AppData\\Roaming\\.minecraft")
+    .build();
+```)
+
+In seguito si dichiara il #glos.ns del progetto:
+#figure(```java
+var namespace = Namespace.of("esempio");
+```)
+
+Viene creato il modulo `Munizioni`, che si occuperà di definire il codice e risorse degli oggetti che saranno consumati. L'_item_ munizione non ha comportamenti propri, tuttavia dispone di una ricetta per poter essere creato a partire da altri _item_. Dunque, ho scritto un metodo `make()` che in base ai parametri passati crea le 3 munizioni diverse.
+#figure(```java
+@Override
+    protected void content() {
+        make("blue_ammo", "Munizione Blu", "Blue Ammo", "diamond",20);
+        make("green_ammo", "Munizione Verde", "Green Ammo", "emerald",25);
+        make("purple_ammo", "Munizione Viola", "Purple Ammo", "amethyst_shard",30);
+    }
+```)
+
+I parametri passati al metodo sono, nell'ordine: l'ID interno dell'_item_, la sua traduzione in italiano, la sua traduzione in inglese, l'ID di un altro _item_ necessario per la sua creazione, e la distanza in blocchi del raggio generato dall'onda.
+
+Il metodo make, oltre ad aggiungere le traduzioni tramite i metodi di utilità
+#figure(```java
+Util.addTranslation("item.esempio.%s".formatted(id), en);
+Util.addTranslation(Locale.ITALY, "item.esempio.%s".formatted(id), it);
+```)
+
+Crea i file relativi all'aspetto dell'_item_.
+
+#codly(
+    annotations: (
+        (
+            start: 1,
+            end: 7,
+            content: block(
+                width: 2em,
+                rotate(-90deg, reflow: true, align(center)[Item Model Definition]),
+            ),
+        ),
+        (
+            start: 8,
+            end: 14,
+            content: block(
+                width: 2em,
+                rotate(-90deg, reflow: true, align(center)[Modello 3D]),
+            ),
+        ),
+        (
+            start: 15,
+            end: 15,
+            content: block(
+                width: 2em,
+                rotate(-90deg, reflow: true, align(center)[Texture]),
+            ),
+        ),
+    ),
+)
+
+#figure(```java
+Item.f.ofName(id,"""
+        {
+          "model": {
+            "type": "minecraft:model",
+            "model": "%s"
+          }
+        }
+        """, Model.f.ofName("item/","""
+        {
+        	"parent": "item/generated",
+        	"textures": {
+        		"layer0": "%s"
+        	}
+        }
+        """, Texture.of("item/"+id)));
+```)
+La funzione `makeData()` invece, si occupa di creare la _recipe_, ovvero il file #glos.json che indica come ottenere la munizione e le sue proprietà, tra cui la distanza dell'onda. Oltre alla _recipe_, è creato un _advancement_ che si è soliti usare per rilevare quando un giocatore possiede uno degli ingredienti richiesti, e dunque comunica che la ricetta è disponibile tramite un messaggio sullo schermo.
+
+Il modulo `MostraRaggio` si occupa di modificare un `carrot_on_a_stick`#footnote[`carrot_on_a_stick` è l'unico _item_ che possiede una #glos.score in grado di rilevare quando è cliccato con il tasto destro.], per renderlo i grado di consumare le munizioni sopra create e mostrare l'onda.
+
+Viene inizialmente invocata una funzione che crea la _lookup table_ che contiene i valori necessari per creare un onda ottenendo i valori da 0 a 360 della funzione seno, moltiplicata per 10 per rendere l'onda ancora più evidente.
+#figure(```java
+private void makeSinLookup() {
+    StringBuilder sin = new StringBuilder("data modify storage esempio:storage sin set value [");
+    for (int i = 0; i <= 360; i++) {
+        sin.append("{value:").append(Math.sin(Math.toRadians(i * 10))).append("},");
+    }
+    sin.append("]");
+    Util.setOnLoad(Function.f.of(sin.toString()));
+}
+```)
+
+
+#figure(
+    cetz.canvas({
+        plot.plot(size: (10, 2), axis-style: "school-book", y-tick-step: 1, {
+            plot.add(domain: (0, 360), samples: 200, it => calc.sin(it / 10))
+        })
+    }),
+    caption: [Rappresentazione dei valori memorizzati nella _lookup_table_],
+)
+
+Successivamente si creano gli #glos.score utili al funzionamento del progetto. `click` aumenterà di 1 ogni volta che il giocatore clicca il tasto destro del mouse, mentre `var` è usato per le operazioni matematiche.
+#figure(```java
+Util.setOnLoad(Function.f.of("""
+                scoreboard objectives add $ns$.click minecraft.used:minecraft.warped_fungus_on_a_stick
+                scoreboard objectives add $ns$.var dummy
+                """));
+```)
+
+Il comportamento dell'_item_ è implementato con una catena di funzioni annidate. Alla radice c'è una funzione che ogni _tick_ esegue la funzione (@ex-1) che sarà passata come `varargs` della factory, e sostituirà `%s`.
+#codly(
+    skips: ((3, 44),),
+)
+#figure(
+    ```java
+    var tick = Function.f.of("""
+      execute as @a at @s run function %s""",
+    );
+    Util.setOnTick(tick);
+    ```,
+    caption: [],
+)
+
+Questa funzione invoca @ex-2 se il giocatore ha cliccato l'_item_, e in seguito azzera il valore dello #glos.score per evitare che nel prossimo _tick_ venga eseguito @ex-2 anche se l'_item_ non è stato usato.
+
+#figure(
+    ```java
+    Function.f.of("""
+      execute if score @s $ns$.click matches 1.. run function %s
+      scoreboard players reset @s $ns$.click
+    """,
+    ```,
+    caption: [],
+) <ex-1>
+
+Questa funzione controlla se il giocatore possiede item identificati come `ammo`. In caso negativo viene bloccato il flusso di esecuzione, in caso positivo viene invocata una funzione (@ex-3) per ottenere la prima munizione che il giocatore possiede. Se è stata trovata una munizione, viene eseguito @ex-4.
+
+#figure(
+    ```java
+    Function.f.of("""
+      execute unless items entity @s container.* *[minecraft:custom_data~{$ns$:{ammo:1b}}] run return fail
+      data remove storage $ns$:storage item
+      function %s
+      execute if data storage $ns$:storage item run function %s
+      """,
+    ```,
+    caption: [],
+) <ex-2>
+
+Questo metodo genera una #c.f che controlla i 36 _slot_ del giocatore, arrestando l'esecuzione al primo _item_ contrassegnato come `ammo`.
+
+#figure(
+    ```java
+    private String getSlot() {
+            var slots = new StringBuilder();
+            for (int i = 0; i <= 35; i++) {
+                slots.append("""
+                        execute if items entity @s container.%1$s *[minecraft:custom_data~{$ns$:{ammo:1b}}] run return run data modify storage $ns$:storage item set from entity @s Inventory[{Slot:%1$sb}]
+                        """.formatted(i)
+                );
+            }
+            return slots.toString();
+        }
+    ```,
+    caption: [],
+) <ex-3>
+
+Vengono eseguiti i seguenti comandi:
++ @ex-4:2: salva la distanza associata alla munizione in una #glos.score;
++ @ex-4:3: viene riprodotto un suono. Tramite il metodo di utilità `addSound()` questo è aggiunto al dizionario di `sounds.json` e `Sound.of()` si occupa di prelevare il file `.ogg` al path indicato;
++ @ex-4:4 chiama una funzione _macro_ che elimina la munizione trovata dallo _slot_ del nm   giocatore;
++ @ex-4:4 sposta l'esecuzione della funzione all'altezza degli occhi del giocatore, ed invoca @ex-5.
+#figure(
+    ```java
+    Function.f.of("""
+      execute store result score $distance $ns$.var run data get storage $ns$:storage item.components."minecraft:custom_data".$ns$.distance 10
+      playsound %s player @a[distance=..16]
+      function %s with storage $ns$:storage item.components."minecraft:custom_data".$ns$
+      execute anchored eyes positioned ^ ^ ^ run function %s
+    """, Util.addSound(
+      "item.%s".formatted(id),
+      "Beam Sparkles",
+      Sound.of("item/%s".formatted(id)
+    )
+    ```,
+    caption: [],
+) <ex-4>
+
+La seguente funzione rappresenta il nucleo della logica ricorsiva per creare l'onda.
+Si rimuove 1 dallo _score_ distance, e si memorizza l'esito di questa operazione in uno #glos.str. Se ancora non si è raggiunta la distanza massima, ovvero `$ns$.var matches 1..` si sposta l'esecuzione 0.1 blocchi più avanti e si ripete la funzione.\
+@ex-5:4 invoca la funzione @ex-6, passando l'indice dell'iterazione corrente come parametro.
+
+#figure(
+    ```java
+    Function.f.of("""
+      scoreboard players remove $distance $ns$.var 1
+      execute store result storage $ns$:storage distance.amount int 1 run scoreboard players get $distance $ns$.var
+      function %s with storage $ns$:storage distance
+      execute if score $distance $ns$.var matches 1.. positioned ^ ^ ^0.1 run function $ns$:$name$
+    """)
+    ```,
+    caption: [],
+) <ex-5>
+
+Viene invocata un'ultima macro (@ex-7) con il valore corrispondente a $sin("amount"times 10)$.
+
+#figure(
+    ```java
+    Function.f.of("""
+    $function %s with storage esempio:storage sin[$(amount)]
+    """
+    ```,
+    caption: [],
+) <ex-6>
+
+Questo valore è usato per determinare l'offset verticale della _particle_, dando quindi l'impressione che si stia creando una funzione sinusoidale.
+
+#figure(
+    ```java
+    Function.f.of("""
+    $particle end_rod ^ ^$(value) ^
+    """)
+    ```,
+    caption: [],
+) <ex-7>
 = Conclusione

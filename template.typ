@@ -144,6 +144,11 @@
     set par(spacing: 1.6em)
     show heading: set block(spacing: 1em)
 
+    show figure.caption.where(body: []): it => context {
+        let num = numbering(it.numbering, ..it.counter.get())
+        it.supplement + [~] + num
+    }
+
     if abstract != [] {
         align(
             horizon,

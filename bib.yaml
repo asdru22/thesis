@@ -1,12 +1,12 @@
 minecraft:
     type: web
-    title: Minecraft Wiki
+    title: Minecraft
     url: https://minecraft.wiki/w/Minecraft
 
 mojang:
     type: web
-    title: Mojang AB
-    url: https://minecraft.wiki/w/Minecraft
+    title: Mojang Studios
+    url: https://minecraft.wiki/w/Mojang_Studios
 
 sandbox:
     type: web
@@ -276,3 +276,33 @@ record:
     type: web
     title: Record
     url: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html
+
+zaos:
+    type: web
+    title: ZipArchiveOutputStream
+    url: https://commons.apache.org/proper/commons-compress/apidocs/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.html
+
+commons-compress:
+    type: web
+    title: Commons Compress
+    url: https://commons.apache.org/proper/commons-compress/
+
+io-utils:
+    type: web
+    title: IO Utils
+    url: https://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/IOUtils.html
+
+workflows:
+    type: web
+    title: GitHub Workflows
+    url: https://docs.github.com/en/actions/how-tos/write-workflows
+
+repository:
+    type: web
+    title: Repository
+    url: https://docs.github.com/en/enterprise-cloud@latest/repositories/creating-and-managing-repositories/about-repositories
+
+release:
+    type: web
+    title: Release
+    url: https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository

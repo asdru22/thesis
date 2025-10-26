@@ -30,6 +30,7 @@
     "Mojang",
     "OOPACK",
     "pagebreak",
+    "playsound",
     "pseudocodice",
     "resourcepack",
     "resourcepacks",
@@ -48,6 +49,7 @@
     "versionamento",
     "videoludico",
     "Vorbis",
-    "worldgen"
+    "worldgen",
+    "zaos"
   ]
 }

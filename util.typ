@@ -43,7 +43,8 @@
   "bi": `BufferedImage`,
   "m": `Module`,
   "o": `Optional`,
-  "l": `Locale`
+  "l": `Locale`,
+  "jo": `JsonObject`
 )
 
 #let e = [È]
