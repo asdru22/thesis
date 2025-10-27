@@ -9,7 +9,7 @@
     title: [
         Framework per la\
         Meta-programmazione\
-        di Minecraf#h(0.1pt)t
+        di Minecraf#h(0.0001pt)t
     ],
     author: "Alessandro Nanni",
     professors: (
@@ -23,7 +23,7 @@
     abstract: [
         In questo documento tratterò del mio lavoro svolto sotto la supervisione del prof. Padovani nello sviluppare un sistema software che agevola l'utilizzo della _Domain Specific Language_ del videogioco #glos.mc.\
         Inizialmente verranno illustrate la struttura e i principali componenti di questa DSL, evidenziandone gli aspetti sintattici e strutturali che ne determinano le principali criticità.
-        Successivamente sarà presentato l'approccio adottato per mitigare tali problematiche, utilizzando una libreria Java sviluppata durante il tirocinio. Tale libreria è stata progettata con l'obiettivo di semplificare le operazioni più ripetitive e onerose, sfruttando i costrutti di un linguaggio ad alto livello e consentendo, e anche di definire più oggetti all'interno di un unico file, favorendo così uno sviluppo più coerente e strutturato.\
+        Successivamente sarà presentato l'approccio adottato per mitigare tali problematiche, utilizzando una libreria Java sviluppata durante il tirocinio. Tale libreria è stata progettata con l'obiettivo di semplificare le operazioni più ripetitive e onerose, sfruttando i costrutti di un linguaggio ad alto livello e consentendo anche di definire più oggetti all'interno di un unico file, favorendo così uno sviluppo più coerente e strutturato.\
         Attraverso un _working example_ verrà poi mostrato come tale libreria consenta di ridurre la complessità nello sviluppo dei punti più critici, mettendola a confronto con l'approccio tradizionale.\
         Infine, mostrerò la differenza in termini di righe di codice e file creati tra i due sistemi, con l'intento di affermare l'efficienza della mia libreria.
     ],
@@ -42,7 +42,7 @@ Come suggerisce il nome, le attività principali consistono nello scavare per ot
 Proprio a causa dell'assenza di regole predefinite, fin dal suo rilascio #glos.mc era dotato di un insieme rudimentale di comandi@command che consentiva ai giocatori di aggirare le normali meccaniche di gioco, ad esempio ottenendo risorse istantaneamente o spostandosi liberamente nel mondo.\
 Con il tempo, tale meccanismo è diventato un articolato linguaggio di configurazione e scripting, basato su file testuali, che costituisce una _Domain Specific Language_@dsl (DSL) attraverso la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
 
-Con _Domain Specific Language_ si intende un linguaggio di programmazione meno complesso e più astratto di uno _general purpose_, specializzato in uno specifico compito. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
+Con _Domain Specific Language_ si intende un linguaggio di programmazione meno complesso e più astratto rispetto a uno _general purpose_, specializzato in uno specifico compito. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
 #quote(
     attribution: [JetBrains#footnote[JetBrains è un'azienda specializzata nello sviluppo di ambienti di sviluppo integrati (IDE).]],
     block: true,
@@ -52,11 +52,11 @@ Con _Domain Specific Language_ si intende un linguaggio di programmazione meno c
 Negli ultimi anni, grazie all'introduzione e all'evoluzione di una serie di file in formato #glos.json@json, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché gran parte della logica continua a essere definita e gestita attraverso i file #glos.mcf.
 
 Il tirocinio ha avuto come obiettivo la progettazione e realizzazione di un sistema che semplifica la creazione, sviluppo e distribuzione di questi file, creando un ambiente di sviluppo unificato.
-Esso consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti. Una volta definite tutte le _feature_, esegue il programma per ottenere un progetto pronto per l'uso.
+Esso consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti. Una volta definite tutte le _feature_, viene eseguito il programma per ottenere un progetto pronto per l'uso.
 
 Il risultato è un ambiente di sviluppo più coerente e accessibile, che permette di integrare _feature_ di Java in questa DSL, per facilitare la scrittura e gestione dei file.
 
-Nel prossimo capitolo verrà presentata la struttura generale del sistema, descrivendone gli elementi principali e il loro funzionamento. In seguito verrà fatta un'analisi delle principali problematiche e limitazioni del sistema, insieme a una rassegna delle soluzioni proposte nello stato dell'arte. Successivamente sarà illustrata la struttura e implementazione della mia libreria, accompagnata da un _working example_ volto a mostrare in modo concreto il funzionamento del progetto. L'ultimo capitolo sarà dedicato all'analisi dei risultati ottenuti e delle possibili evoluzioni future.
+Nel prossimo capitolo verrà presentata la struttura generale del sistema, descrivendone gli elementi principali e il loro funzionamento. In seguito verrà esposta un'analisi delle principali problematiche e limitazioni del sistema, insieme a una rassegna delle soluzioni proposte nello stato dell'arte. Successivamente sarà illustrata la struttura e l'implementazione della mia libreria, accompagnata da un _working example_ volto a mostrare in modo concreto il funzionamento del progetto. L'ultimo capitolo sarà dedicato all'analisi dei risultati ottenuti e delle possibili evoluzioni future.
 
 = Struttura e Funzionalità di un Pack
 
@@ -68,7 +68,7 @@ Come i progetti Java hanno la cartella `resources`@java-resource, anche #glos.mc
 Con l'eccezione di #glos.tex e suoni, i quali permettono l'estensione `png`@png e `ogg`@ogg rispettivamente, tutti gli altri file sono in formato #glos.json.\
 Le #glos.rp sono state concepite e rilasciate prima dei #glos.dp, con lo scopo di dare ai giocatori un modo di sovrascrivere le #glos.tex e altri _asset_@assets del videogioco. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare #glos.rp per definire le risorse che il progetto da loro sviluppato avrebbe richiesto.
 
-Una significativa differenze tra queste due cartelle è che le #glos.rp sono disponibili indipendentemente dal _save file_, ovvero mondo, che si sta utilizzando. Le cartelle #glos.dp invece, devono essere inserite nei mondi in cui devono essere utilizzate.\
+Una significativa differenza tra queste due cartelle è che le #glos.rp sono disponibili indipendentemente dal _save file_, ovvero mondo, che si sta utilizzando. Le cartelle #glos.dp invece, devono essere inserite nei mondi in cui devono essere utilizzate.\
 Quindi nella cartella radice di minecraft, `.minecraft/`, #glos.rp si troveranno in `.minecraft/resourcepacks`, mentre i #glos.dp in `.minecraft/saves/<world name>/datapacks`.
 
 L'insieme di #glos.dp e #glos.rp è chiamato #glos.pack. Questo, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java, e sarà poi la cartella che verrà pubblicata o condivisa.
@@ -112,7 +112,7 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
 )
 
 Anche se l'estensione non lo indica, il file `pack.mcmeta` è in realtà scritto in formato #glos.json e definisce l'intervallo delle versioni (chiamate _format_) supportate dalla cartella, che con ogni aggiornamento di #glos.mc variano, e non corrispondono all'effettiva _game version_.\
-Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88 e quello delle #glos.rp è 69. Queste possono cambiare anche settimanalmente, se si stanno venendo rilasciati degli _snapshot_@snapshot.
+Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88 e quello delle #glos.rp è 69. Queste possono cambiare anche settimanalmente, nel caso stiano venendo rilasciati degli _snapshot_@snapshot.
 
 Ancora più rilevanti sono le cartelle al di sotto di `data` e `assets`, chiamate #glos.ns@namespace. Se i progetti Java seguono la seguente struttura `com.package.author`, allora i #glos.ns possono essere visti come la sezione `package`.\
 
@@ -122,13 +122,13 @@ Ancora più rilevanti sono le cartelle al di sotto di `data` e `assets`, chiamat
     [This isn't a new concept, but I thought I should reiterate what a "namespace" is. Most things in the game has a namespace, so that if we add `something` and a mod (or map, or whatever) adds `something`, they're both different `something`s. Whenever you're asked to name something, for example a loot table, you're expected to also provide what namespace that thing comes from. If you don't specify the namespace, we default to `minecraft`. This means that `something` and `minecraft:something` are the same thing.],
 )
 
-I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro. Per questo, in genere i #glos.ns o sono abbreviazioni o coincidono con il nome stesso progetto che si sta sviluppando, e si usa lo stesso per #glos.dp e #glos.rp.\
+I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro. Per questo, in genere i #glos.ns o sono abbreviazioni o coincidono con il nome stesso del progetto che si sta sviluppando, e si usa lo stesso per #glos.dp e #glos.rp.\
 Tuttavia, si vedrà come operare in #glos.ns distinti è sia sufficiente a garantire l'assenza di conflitti tra i diversi #glos.pack, poiché questi vengono spesso installati dagli utenti in gruppo.
 
 Il namespace `minecraft` è riservato alle risorse native del gioco: sovrascriverle comporta il rischio di rimuovere funzionalità originali o di alterare il comportamento previsto del gioco. È interessante notare che anche gli sviluppatori di #glos.mc stessi fanno uso dei #glos.dp per definire e organizzare molti comportamenti del gioco, come definire le risorse che si possono ottenere da un baule, o gli ingredienti necessari per creare un certo oggetto. In altre parole, i #glos.dp non sono solo uno strumento a disposizione dei giocatori per personalizzare l'esperienza, ma costituiscono anche il *meccanismo interno attraverso cui il gioco stesso struttura e gestisce alcune delle sue funzionalità principali*.\
-Bisogna specificare che i domandi e file `.mcfunction` non sono utilizzati in alcun modo dagli sviluppatori di #glos.mc per implementare funzionalità del videogioco. Come precedentemente citato, tutta la logica è dettata da codice Java.
+Bisogna specificare che i comandi e file `.mcfunction` non sono utilizzati in alcun modo dagli sviluppatori di #glos.mc per implementare funzionalità del videogioco. Come precedentemente citato, tutta la logica è dettata da codice Java.
 
-All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno: se metto un file #glos.json che il compilatore riconosce come `loot_table` nella cartella `recipe`, il questo segnalerà un errore e il file non sarà disponibile nella sessione di gioco.
+All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno: se metto un file #glos.json che il compilatore riconosce come `loot_table` nella cartella `recipe`, questo segnalerà un errore e il file non sarà disponibile nella sessione di gioco.
 
 In `function` si trovano file e sottodirectory con testo in formato #glos.mcf. Questi si occupano di far comunicare tutte le parti di un #glos.pack tra loro tramite una serie di funzioni contenenti comandi.
 
@@ -208,7 +208,7 @@ Questi comandi definiscono la stringa `My Cat` nello #glos.str, successivamente 
 
 === Execute
 `execute` consente di eseguire un altro comando cambiando valori quali l'entità esecutrice e la posizione. Questi elementi definiscono il contesto di esecuzione, ossia l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito. Si usa il selettore `@s` per fare riferimento all'entità del contesto di esecuzione corrente.\
-Tramite `execute` è anche possibile specificare condizioni preliminari e salvare il risultato dell'esecuzione. Dispone inoltre di 14 sottocomandi, o istruzioni, che posso essere raggruppate in 4 categorie:
+Tramite `execute` è anche possibile specificare condizioni preliminari e salvare il risultato dell'esecuzione. Dispone inoltre di 14 sottocomandi, o istruzioni, che possono essere raggruppate in 4 categorie:
 - modificatori: cambiano il contesto di esecuzione;
 - condizionali: controllano se certe condizioni sono rispettate;
 - contenitori: salvano i valori di output di un comando in una #glos.score, o in un contenitore di NBT;
@@ -228,7 +228,7 @@ Questo comando sta definendo una serie di passi da fare;
 + per ogni entità (`execute as @e`);
 + sposta l'esecuzione alla loro posizione attuale (`at @s`);
 + salva l'esito nello score `on_stone` di quell'entità;
-+ del controllo che, nella posizione corrente del contesto di esecuzione, il blocco sottostante sia di tipo `stone`.
++ del comando che controlla se nella posizione corrente del contesto di esecuzione, il blocco sottostante sia di tipo `stone`.
 Al termine dell'esecuzione, la #glos.score `on_stone` di ogni entità sarà 1 se si trovava su un blocco di pietra, 0 altrimenti.
 
 == Funzioni
@@ -330,7 +330,7 @@ Di seguito viene mostrato come l'espressione `int x = (y*2)/4-2` si calcola in #
 )<scoreboard_set_const>
 Qualora non fossero stati impostati i valori di `#2` e `#4`, il compilatore li avrebbe valutati con valore 0 e l'espressione non sarebbe stata corretta.
 
-Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore viene poi assegnato a $x$. Di conseguenza, sia `#x` che `#y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ dovrebbe rimanere invariato.
+Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore viene poi assegnato a $x$. Di conseguenza, sia `$x` che `$y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ dovrebbe rimanere invariato.
 Per evitare questo effetto collaterale, è necessario eseguire l'assegnazione $x = y$ prima delle altre operazioni aritmetiche.
 #codly(
     annotations: (
@@ -513,7 +513,7 @@ In entrambi i casi, `@e[tag=has_timer]` seleziona lo stesso insieme di entità. 
 
 Dunque, come per i nomi delle #glos.score, è buona norma prefissare i _tag_ con il #glos.ns del proprio progetto.
 
-In conclusione, è buona pratica utilizzare prefissi anche per i nomi di #glos.str, #glos.score e _tag_, nonostante i #glos.dp compilano correttamente anche senza di essi.
+In conclusione, è buona pratica utilizzare prefissi anche per i nomi di #glos.str, #glos.score e _tag_, nonostante i #glos.dp compilino correttamente anche senza di essi.
 
 == Assenza di Code Blocks
 
@@ -623,7 +623,7 @@ Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di 
 == Organizzazione e Complessità della Struttura dei File
 I problemi mostrati fin'ora sono prettamente legati alla sintassi dei comandi e ai limiti delle funzioni, tuttavia non sono da trascurare il quantitativo di file di un progetto.
 
-Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`. Tuttavia, operare su queste due cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra i due sistemi. Lavorare direttamente dalla directory radice `.minecraft/` invece inoltre poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
+Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`. Tuttavia, operare su queste due cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra i due sistemi. Lavorare direttamente dalla directory radice `.minecraft/` risulta poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
 
 Una possibile soluzione consiste nel creare una directory che contenga sia il #glos.dp sia il #glos.rp e, successivamente, utilizzare _symlink_ o _junction_@symlink per creare riferimenti dalle rispettive cartelle verso i percorsi in cui il compilatore si aspetta di trovarli.\
 I _symlink_ (collegamenti simbolici) e le _junction_ sono riferimenti a file o directory che consentono di accedere a un percorso diverso come se fosse locale, evitando la duplicazione dei contenuti.
@@ -689,7 +689,7 @@ Alla luce delle numerose limitazioni di questo sistema, sono state rapidamente s
 
 In primo luogo, gli stessi sviluppatori di #glos.mc dispongono di strumenti interni che automatizzano la generazione dei file #glos.json necessari al corretto funzionamento di determinate _feature_. Durante lo sviluppo, tali file vengono creati automaticamente tramite codice Java eseguito in parallelo alla scrittura del codice sorgente, evitando così la necessità di definirli manualmente.
 
-Un esempio lampante è il file `sounds.json`, che registra i suoni definisce quali file `.ogg` utilizzare. Questo contiene quasi 25.000 righe di codice, creato tramite software che viene eseguito ogni volta che viene inserita una nuova _feature_ che richiede un nuovo suono.
+Un esempio lampante è il file `sounds.json`, che registra i suoni e definisce quali file `.ogg` utilizzare. Questo contiene quasi 25.000 righe di codice, creato tramite software che viene eseguito ogni volta che viene inserita una nuova _feature_ che richiede un nuovo suono.
 
 Tuttavia, questo software non è disponibile al pubblico, e anche se lo fosse, semplificherebbe la creazione solo dei file #glos.json, non #glos.mcf. Dunque, sviluppatori indipendenti hanno realizzato dei propri precompilatori, progettati per generare automaticamente #glos.dp e #glos.rp a partire da linguaggi o formati più intuitivi.
 
@@ -908,7 +908,7 @@ L'interfaccia dispone anche di due metodi `default` per indicare quando si vuole
     caption: [Metodi dell'interfaccia #c.ci.],
 )
 Invocando `enter()`, si sta aggiungendo l'oggetto che implementa #c.ci in cima allo `stack` del contesto, indicando che è la cartella in cui verranno aggiunti tutti i prossimi #c.fso. Per rimuovere l'oggetto dalla cima dello `stack`, si chiama il metodo `exit()`.\
-Con questo sistema, il programmatore può spostarsi tra diversi livelli della struttura del _filesystem_ in modo e controllato, senza dover passare manualmente riferimenti ai vari contenitori.
+Con questo sistema, il programmatore può spostarsi tra diversi livelli della struttura del _filesystem_ in modo rapido e controllato, senza dover passare manualmente riferimenti ai vari contenitori.
 
 === Utilizzo delle Factory
 Come fa un oggetto che estende #c.fso a sapere in quale #c.ci deve essere inserito?
@@ -930,7 +930,7 @@ Questo risulta particolarmente utile nel nostro contesto, in quanto si vuole dar
     caption: [Interfaccia `FileFactory`.],
 )
 L'utente può specificare manualmente il nome del file da costruire, oppure lasciare che sia la libreria a generarlo automaticamente in modo casuale. Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, dal momento che, quando l'oggetto viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca il riferimento alla sua resource location.\
-Gli oggetti passati parametro _variable arguments_@varargs (_varargs_) `Object... args` sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
+Gli oggetti passati come parametro _variable arguments_@varargs (_varargs_) `Object... args` sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
 
 === Classi File Astratte
 
@@ -1019,7 +1019,7 @@ Quest'ultimo risulta particolarmente utile nei casi di dipendenze circolari, in 
     caption: [Diagramma del sistema progettato fino a questo punto.],
 )
 
-Nella struttura riportata non sono ancora stati definiti metodi o classi specifiche per l'implementazione di un #glos.pack. Ritengo che questo livello potenzialmente applicabile anche in altri contesti, in quanto permette di generare in modo sistematico più file a partire da un'unica definizione di riferimento. Questo approccio potrebbe risultare particolarmente utile anche in altre DSL caratterizzate da vincoli strutturali, dove la generazione automatizzata di file correlati è un requisito per la scalabilità e la manutenibilità del codice.
+Nella struttura riportata non sono ancora stati definiti metodi o classi specifiche per l'implementazione di un #glos.pack. Ritengo che questo livello di astrazione sia potenzialmente applicabile anche in altri contesti, in quanto permette di generare in modo sistematico più file a partire da un'unica definizione di riferimento. Questo approccio potrebbe risultare particolarmente utile anche in altre DSL caratterizzate da vincoli strutturali, dove la generazione automatizzata di file correlati è un requisito per la scalabilità e la manutenibilità del codice.
 
 Di seguito invece si esporranno elementi caratterizzanti dei pack.
 
@@ -1040,7 +1040,7 @@ Le classi astratte #c.dj e #c.aj sono sottoclassi di #c.jf, e hanno il compito d
 
 Queste classi saranno poi ereditate dalle classi concrete dei file che compongono un #glos.pack.
 
-Unica eccezione è la classe #c.fn. Questa estende #c.tf, indicando la propria estensione (`.mcfunction`) con #glos.or del metodo `getExtension()`, e anche il proprio tipo come visto nel esempio sopra con #c.dj. Dato che #c.tf non dispone di una #glos.f per file di testo non in formato #glos.json, sarà  la #glos.f di #c.fn stessa a estendere `PlainFile.Factory`, definendo come parametro per il contenuto del file #c.sb, e come oggetto istanziato #c.fn.
+Unica eccezione è la classe #c.fn. Questa estende #c.tf, indicando la propria estensione (`.mcfunction`) con #glos.or del metodo `getExtension()`, e anche il proprio tipo come visto nell'esempio sopra con #c.dj. Dato che #c.tf non dispone di una #glos.f per file di testo non in formato #glos.json, sarà  la #glos.f di #c.fn stessa a estendere `PlainFile.Factory`, definendo come parametro per il contenuto del file #c.sb, e come oggetto istanziato #c.fn.
 
 Le classi rappresentanti file di alto livello sono dotate di attributo statico e pubblico di tipo `JsonFileFactory<...>`, parametrizzato per la classe specifica che istanzia. Queste classi sono 39 in totale, e ognuna corrisponde a un specifico oggetto utile al funzionamento di un #glos.dp o #glos.rp (30 e 9 rispettivamente). Dal momento che ognuna di queste classi deve disporre di una #glos.f, un costruttore, e un #glos.or al metodo `getFolderName()`, ho scelto di usare una libreria per generare il loro codice Java.
 
@@ -1056,7 +1056,7 @@ Un'alternativa possibile sarebbe potuta consistere nel definire un metodo static
 Tuttavia è evidente che non risulta comodo per l'utente finale dover specificare tutti questi parametri ogni volta che si vuole usare la #glos.f.\
 Dunque ho scritto una classe di utilità `CodeGen` che sfrutta la libreria _JavaPoet_@javapoet per creare le classi e i metodi al loro interno. In questo modo per creare un modello si può semplicemente scrivere `Model.f.of(json)`.
 
-Sono disponibili anche classi rappresentanti file binari. Queste non ereditano la #c.af di #c.pf, ma usano #glos.f proprie per istanziare #c.t e #c.s.
+Sono disponibili anche classi rappresentanti file binari. Queste non ereditano la #c.f di #c.pf, ma usano #glos.f proprie per istanziare #c.t e #c.s.
 
 L'oggetto #c.t estende un #c.af che ha come contenuto una #c.bi@bufferedimage. Se viene passata una stringa al suo metodo `of()`, verrà convertita in un path che punta alla cartella `resources/texture` del progetto Java. Si può anche passare direttamente una #c.bi, creata tramite codice Java.
 
@@ -1073,7 +1073,7 @@ In questo modo si garantisce che l'esecuzione di ciascun modulo avvenga in manie
 
 === Namespace, Project
 
-La classi concrete vengono raccolte dai #c.ns. Come i `Folder`,  dispongono di un `Set` che contiene i figli, ed implementa le interfacce #c.b e #c.ci. Quest'ultima viene utilizzata perché un #c.p può essere composto da più #glos.ns, quindi bisogna tenere traccia di quello corrente in cui si aggiungono i #c.fso appena creati.\
+Le classi concrete vengono raccolte dai #c.ns. Come i `Folder`,  dispongono di un `Set` che contiene i figli, ed implementa le interfacce #c.b e #c.ci. Quest'ultima viene utilizzata perché un #c.p può essere composto da più #glos.ns, quindi bisogna tenere traccia di quello corrente in cui si aggiungono i #c.fso appena creati.\
 I _children_ di #c.ns possono essere di natura _data_ o _assets_, dunque prima che vengano scritti su file sarà necessario dividerli nelle cartelle corrispondenti.
 
 La classe presenta una particolarità nel suo metodo `exit()`, usato per dichiarare quando non si vogliono più creare file su questo #glos.ns. Oltre a indicare all'oggetto #c.c di chiamare `pop()` sul suo `stack` interno, viene anche chiamato il metodo `addNamespace()` di #c.p  che verrà mostrato in seguito.
@@ -1095,7 +1095,7 @@ Dopo aver definito questi valori, il progetto saprà la posizione esatta del _fi
 Un altro _design pattern_ creazionale applicato a #c.p è _singleton_, il cui scopo è garantire che una classe abbia una sola istanza in tutto il programma e che sia facilmente accessibile da qualunque punto del codice. Questo viene implementato tramite una variabile statica e privata di tipo #c.p all'interno della classe stessa. Un riferimento ad essa è ottenuto con il metodo `getInstance()`, che solleva un errore nel caso il progetto non sia ancora stato costruito con il `Builder`.
 
 Un #c.p dispone al suo interno di attributi di tipo #c.dp e #c.rp. Questi hanno il compito di contenere i file che saranno scritti su memoria rigida ed estendono la classe astratta #c.gp.\
-#c.gp implementa le interfacce #c.b e `Versionable`. Quest'ultima fornisce i metodi per ottenere i _pack format_ corrispettivi dalla versione dal progetto.\
+#c.gp implementa le interfacce #c.b e `Versionable`. Quest'ultima fornisce i metodi per ottenere i _pack format_ corrispettivi alla versione del progetto.\
 Fornisce inoltre l'attributo `namespaces` di tipo `Map`@map, nel quale verranno salvati i corrispettivi #c.ns.
 Tramite il suo metodo `makeMcMeta()` viene generata la struttura #glos.json che specifica il format (_minor_ e _major_) della cartella e la sua descrizione.\
 Eseguendo l'#glos.or del metodo `build()`, itera su tutti i valori del dizionario `namespaces` per costruire anch'essi.
@@ -1112,7 +1112,7 @@ Con gli oggetti descritti fin'ora è possibile costruire un #glos.pack a partire
 === Trova o Crea File
 
 Il metodo `find()`, descritto precedentemente (@find), è impiegato in metodi di utilità che permettono di inserire progressivamente i contenuti di oggetti rappresentanti file, in particolare quelli soggetti a modifiche continue.
-Ad esempio, i file _lang_ che contengono le traduzioni devono essere continuamente aggiornati con nuove voci; similmente, ogni nuovo suono essere registrato nel file `sounds.json`. Come accennato in precedenza, quando questi file di risorse vengono utilizzati dagli sviluppatori di #glos.mc, non vengono compilati manualmente, ma generati automaticamente tramite codice Java proprietario.
+Ad esempio, i file _lang_ che contengono le traduzioni devono essere continuamente aggiornati con nuove voci; similmente, ogni nuovo suono deve essere registrato nel file `sounds.json`. Come accennato in precedenza, quando questi file di risorse vengono utilizzati dagli sviluppatori di #glos.mc, non vengono compilati manualmente, ma generati automaticamente tramite codice Java proprietario.
 
 Poiché questi file non sono stati concepiti per essere modificati manualmente, ho deciso di implementare nella classe `Util` metodi dedicati per aggiungere elementi alle risorse in modo programmatico, accessibili da qualunque parte del progetto.\
 Ho prima scritto una funzione che permette di ottenere un riferimento all'oggetto ricercato, o di crearne uno nuovo qualora non fosse trovato.
@@ -1166,7 +1166,7 @@ In questo esempio viene aggiunta una nuova traduzione per un determinato #c.l@lo
 Il metodo ottiene il contenuto JSON del file lang corrispondente al #c.l richiesto. Successivamente vi aggiunge la coppia chiave-valore.
 Nel caso in cui il file non esista ancora (ad esempio, alla prima esecuzione per quel #c.l), esso viene creato tramite la factory, garantendo comunque l'esistenza del file di traduzione prima dell'inserimento dei dati.
 
-Un'altra applicazione simile sono le funzioni `setOnTick()` e `setOnLoad()`, che permettono di aggiungere o un intera `Function` o una stringa contenenti comandi alla lista di funzioni da eseguire ogni _tick_ o ad ogni caricamento dei file.
+Un'altra applicazione simile sono le funzioni `setOnTick()` e `setOnLoad()`, che permettono di aggiungere o un'intera `Function` o una stringa contenenti comandi alla lista di funzioni da eseguire ogni _tick_ o ad ogni caricamento dei file.
 
 #e stato precedentemente menzionato che nel `Builder` di #c.p, in base alla versione specificata si ottiene il _pack format_ di #glos.dp e #glos.rp.
 Questi valori sono memorizzati in un `Record`@record chiamato `VersionInfo`.
@@ -1176,7 +1176,7 @@ Questi valori sono memorizzati in un `Record`@record chiamato `VersionInfo`.
 Quando il `Builder` chiama `VersionUtils.getVersionInfo(String versionKey)`, dove `versionKey` rappresenta il nome della versione (ad esempio `25w05a`), esegue i seguenti passi:
 + controlla che sia presente in `resources/_generated` un file #glos.json contenente tutte le versioni e i format associati (`versions.json`);
 + controlla che sia passato più di un giorno dall'ultima volta che è stato scritto `versions.json`;
-+ Se il file non è presente oppure è passato più di un giorno dall'ultima volta che è stata eseguita la generazione del file, e dunque c'è la possibilità che sia stato pubblicata una nuova versione o _snapshot_, si ricrea il file.
++ Se il file non è presente oppure è passato più di un giorno dall'ultima volta che è stata eseguita la generazione del file, e dunque c'è la possibilità che sia stata pubblicata una nuova versione o _snapshot_, si ricrea il file.
 + si carica il file come #c.jo
 + se `versionKey=="latest"`, vuol dire che si sta cercando la versione più recente,
     + si crea un `Iterator`#footnote[Dato che un `Set` non è ordinato, non dispone di un metodo `getFirst()`, e dunque si ricorre all'`Iterator`.] di #c.jo e si ottiene il valore del primo elemento;
@@ -1218,7 +1218,7 @@ In seguito si dichiara il #glos.ns del progetto:
 var namespace = Namespace.of("esempio");
 ```)
 
-Viene creato il modulo `Munizioni`, che si occuperà di definire il codice e risorse degli oggetti che saranno consumati. L'_item_ munizione non ha comportamenti propri, tuttavia dispone di una ricetta per poter essere creato a partire da altri _item_. Dunque, ho scritto un metodo `make()` che in base ai parametri passati crea le 3 munizioni diverse.
+Viene creato il modulo `Munizioni`, che si occuperà di definire il codice e le risorse degli oggetti che saranno consumati. L'_item_ munizione non ha comportamenti propri, tuttavia dispone di una ricetta per poter essere creato a partire da altri _item_. Dunque, ho scritto un metodo `make()` che in base ai parametri passati crea le 3 munizioni diverse.
 #figure(```java
 @Override
     protected void content() {
@@ -1288,7 +1288,7 @@ Item.f.ofName(id,"""
 ```)
 La funzione `makeData()` invece, si occupa di creare la _recipe_, ovvero il file #glos.json che indica come ottenere la munizione e le sue proprietà, tra cui la distanza dell'onda. Oltre alla _recipe_, è creato un _advancement_ che si è soliti usare per rilevare quando un giocatore possiede uno degli ingredienti richiesti, e dunque comunica che la ricetta è disponibile tramite un messaggio sullo schermo.
 
-Il modulo `MostraRaggio` si occupa di modificare un `carrot_on_a_stick`#footnote[`carrot_on_a_stick` è l'unico _item_ che possiede una #glos.score in grado di rilevare quando è cliccato con il tasto destro.], per renderlo i grado di consumare le munizioni sopra create e mostrare l'onda.
+Il modulo `MostraRaggio` si occupa di modificare un `carrot_on_a_stick`#footnote[`carrot_on_a_stick` è l'unico _item_ che possiede una #glos.score in grado di rilevare quando è cliccato con il tasto destro.], per renderlo in grado di consumare le munizioni sopra create e mostrare l'onda.
 
 Viene inizialmente invocata una funzione che crea la _lookup table_ che contiene i valori necessari per creare un onda ottenendo i valori da 0 a 360 della funzione seno, moltiplicata per 10 per rendere l'onda ancora più evidente.
 #figure(```java
@@ -1315,9 +1315,9 @@ private void makeSinLookup() {
 Successivamente si creano gli #glos.score utili al funzionamento del progetto. `click` aumenterà di 1 ogni volta che il giocatore clicca il tasto destro del mouse, mentre `var` è usato per le operazioni matematiche.
 #figure(```java
 Util.setOnLoad(Function.f.of("""
-                scoreboard objectives add $ns$.click minecraft.used:minecraft.warped_fungus_on_a_stick
-                scoreboard objectives add $ns$.var dummy
-                """));
+  scoreboard objectives add $ns$.click minecraft.used:minecraft.warped_fungus_on_a_stick
+  scoreboard objectives add $ns$.var dummy
+  """));
 ```)
 
 Il comportamento dell'_item_ è implementato con una catena di funzioni annidate. Alla radice c'è una funzione che ogni _tick_ esegue la funzione (@ex-1) che sarà passata come `varargs` della factory, e sostituirà `%s`.
@@ -1365,15 +1365,13 @@ Questo metodo genera una #c.f che controlla i 36 _slot_ del giocatore, arrestand
 #figure(
     ```java
     private String getSlot() {
-            var slots = new StringBuilder();
-            for (int i = 0; i <= 35; i++) {
-                slots.append("""
-                        execute if items entity @s container.%1$s *[minecraft:custom_data~{$ns$:{ammo:1b}}] run return run data modify storage $ns$:storage item set from entity @s Inventory[{Slot:%1$sb}]
-                        """.formatted(i)
-                );
-            }
-            return slots.toString();
+      var slots = new StringBuilder();
+        for (int i = 0; i <= 35; i++) {
+          slots.append("""
+            execute if items entity @s container.%1$s *[minecraft:custom_data~{$ns$:{ammo:1b}}] run return run data modify storage $ns$:storage item set from entity @s Inventory[{Slot:%1$sb}]""".formatted(i));
         }
+        return slots.toString();
+    }
     ```,
     caption: [],
 ) <ex-3>
@@ -1382,7 +1380,7 @@ Vengono eseguiti i seguenti comandi:
 + @ex-4:2: salva la distanza associata alla munizione in una #glos.score;
 + @ex-4:3: viene riprodotto un suono. Tramite il metodo di utilità `addSound()` questo è aggiunto al dizionario di `sounds.json` e `Sound.of()` si occupa di prelevare il file `.ogg` al path indicato;
 + @ex-4:4 chiama una funzione _macro_ che elimina la munizione trovata dallo _slot_ del nm   giocatore;
-+ @ex-4:4 sposta l'esecuzione della funzione all'altezza degli occhi del giocatore, ed invoca @ex-5.
++ @ex-4:4 sposta l'esecuzione della funzione all'altezza degli occhi del giocatore, e invoca @ex-5.
 #figure(
     ```java
     Function.f.of("""
@@ -1420,7 +1418,7 @@ Viene invocata un'ultima macro (@ex-7) con il valore corrispondente a $sin("amou
 #figure(
     ```java
     Function.f.of("""
-    $function %s with storage esempio:storage sin[$(amount)]
+      $function %s with storage esempio:storage sin[$(amount)]
     """
     ```,
     caption: [],
@@ -1431,7 +1429,7 @@ Questo valore è usato per determinare l'offset verticale della _particle_, dand
 #figure(
     ```java
     Function.f.of("""
-    $particle end_rod ^ ^$(value) ^
+      $particle end_rod ^ ^$(value) ^
     """)
     ```,
     caption: [],
@@ -1467,13 +1465,13 @@ Il codice sorgente dispone invece dei seguenti file Java#footnote[I valori ripor
     [*Classe*], [*Righe di codice*],
     [`Main.java`], [30],
     [`MostraRaggio.java`], [90],
-    [`Munizione`], [100],
+    [`Munizione.java`], [100],
 ))
 Per un totale di 220 righe di codice in 3 file.
 Confrontando i due valori, si nota che il numero di file generati è pari a oltre dieci volte quello dei file sorgente.
 Il numero di righe di codice prodotte rappresenta circa il 140% delle righe sorgente, con un incremento del 40% rispetto al codice scritto manualmente.
 
-Prendendo come riferimento un esempio più articolato, tratto da un progetto personale che implementa nuove piante, sono presenti seguenti file:
+Prendendo come riferimento un esempio più articolato, tratto da un progetto personale che implementa nuove piante, sono presenti i seguenti file:
 #figure(table(
     columns: (1fr,) * 2,
     [*Classe*], [*Righe di codice*],
@@ -1490,7 +1488,7 @@ Prendendo come riferimento un esempio più articolato, tratto da un progetto per
 
 Eseguendo il programma, a partire da 9 file contenenti complessivamente 1360 righe di codice, vengono generati 137 file per un totale di 2451 righe.
 
-Il seguente grafico mette in relazione il numero di righe e file prodotte per il _working example_ ($P_1$), e il progetto appena citato ($P_2$).
+Il seguente grafico mette in relazione il numero di righe e file prodotti per il _working example_ ($P_1$) con il progetto appena citato ($P_2$).
 
 #figure(
     cetz.canvas({
@@ -1532,6 +1530,6 @@ Si può osservare come la linea blu relativa alla libreria presenti una pendenza
 Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale, in cui è necessario implementare metodi specifici per il progetto in questione, diventa possibile sfruttare la libreria per automatizzare il flusso di lavoro. Questo è evidenziato dalla distanza dei punti $P_2^o$ e $P_2^t$ nel grafico.
 
 Ciò risulta evidente se si considera la distanza tra i punti corrispondenti al progetto scritto con la libreria e quello compilato, che rappresenta il vantaggio tratto dall'aver utilizzato la libreria.
-#let pit(p1x,p2x,p1y,p2y) = $sqrt((p1x+p2x)^2+(p1y+p2y)^2)$
-Per un progetto piccolo come $P_1$, $d_1=pit(3,31,220,307)=528$.\
-Per $P_2$ invece, $d_2=pit(9,37,1360,2451)=3818$, più di 7 volte rispetto a $d_1$.
+#let pit(p1x, p2x, p1y, p2y) = $sqrt((p1x+p2x)^2+(p1y+p2y)^2)$
+Per un progetto piccolo come $P_1$, $d_1=pit(3, 31, 220, 307)=528$.\
+Per $P_2$ invece, $d_2=pit(9, 37, 1360, 2451)=3818$, più di 7 volte rispetto a $d_1$.
