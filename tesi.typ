@@ -1282,7 +1282,9 @@ Item.f.ofName(id,"""
         		"layer0": "%s"
         	}
         }
-        """, Texture.of("item/"+id)));
+        """, Texture.of("item/"+id)
+    )
+);
 ```)
 La funzione `makeData()` invece, si occupa di creare la _recipe_, ovvero il file #glos.json che indica come ottenere la munizione e le sue proprietà, tra cui la distanza dell'onda. Oltre alla _recipe_, è creato un _advancement_ che si è soliti usare per rilevare quando un giocatore possiede uno degli ingredienti richiesti, e dunque comunica che la ricetta è disponibile tramite un messaggio sullo schermo.
 
@@ -1434,4 +1436,102 @@ Questo valore è usato per determinare l'offset verticale della _particle_, dand
     ```,
     caption: [],
 ) <ex-7>
+
+Successivamente vengono registrati i due moduli:
+#figure(```java
+Module.register(
+  MostraRaggio.class,
+  Munizioni.class
+);
+```)
+
+Uscendo dal #glos.ns corrente, esso viene aggiunto indirettamente al progetto.
+Quest'ultimo viene costruito e generato in formato `.zip`:
+
+#figure(```java
+namespace.exit();
+myProject.buildZip();
+```)
+
+Sarà dunque possibile creare una _repository_ e creare una _release_. In seguito una _GitHub action_ eseguirà il progetto per generare le due cartelle compresse e nominate correttamente. In questo caso si chiameranno
+`datapack-esempio-1.0.0.zip` e `resourcepack-esempio-1.0.0.zip`.
+
 = Conclusione
+
+Per misurare concretamente l'efficienza della libreria, ho scritto una classe `Metrics`, che si occupa di registrare il numero di righe e di file generati.
+Dopo aver eseguito il programma, si nota che il numero di file prodotti è 31, con un totale di 307 righe di codice.
+
+Il codice sorgente dispone invece dei seguenti file Java#footnote[I valori riportati sono arrotondati al multiplo di dieci inferiore, al fine di escludere eventuali righe vuote o commenti.]:
+#figure(table(
+    columns: (1fr,) * 2,
+    [*Classe*], [*Righe di codice*],
+    [`Main.java`], [30],
+    [`MostraRaggio.java`], [90],
+    [`Munizione`], [100],
+))
+Per un totale di 220 righe di codice in 3 file.
+Confrontando i due valori, si nota che il numero di file generati è pari a oltre dieci volte quello dei file sorgente.
+Il numero di righe di codice prodotte rappresenta circa il 140% delle righe sorgente, con un incremento del 40% rispetto al codice scritto manualmente.
+
+Prendendo come riferimento un esempio più articolato, tratto da un progetto personale che implementa nuove piante, sono presenti seguenti file:
+#figure(table(
+    columns: (1fr,) * 2,
+    [*Classe*], [*Righe di codice*],
+    [`Main.java`], [170],
+    [`Seeds.java`], [140],
+    [`Misc.java`], [20],
+    [`Interaction.java`], [100],
+    [`Heal.java`], [90],
+    [`BloomingBulb.java`], [290],
+    [`Bloomguard.java`], [90],
+    [`EtchedVase.java`], [300],
+    [`Blocks.java`], [160],
+))
+
+Eseguendo il programma, a partire da 9 file contenenti complessivamente 1360 righe di codice, vengono generati 137 file per un totale di 2451 righe.
+
+Il seguente grafico mette in relazione il numero di righe e file prodotte per il _working example_ ($P_1$), e il progetto appena citato ($P_2$).
+
+#figure(
+    cetz.canvas({
+        import cetz.draw: *
+        plot.plot(
+            size: (10, 6),
+            x-label: [file],
+            y-label: [linee],
+            x-tick-step: 20,
+            y-tick-step: 200,
+            axis-style: "school-book",
+            {
+                plot.add(((3, 220), (9, 1360)), label: [Libreria _OOPACK_])
+                plot.add(((31, 307), (137, 2451)), label: [Approccio tradizionale])
+                plot.add(((3, 220), (31, 307)), style: (stroke: (paint: black, thickness: 1pt, dash: "dashed")))
+                plot.add(((9, 1360), (137, 2451)), style: (stroke: (paint: black, thickness: 1pt, dash: "dashed")))
+
+                plot.annotate({
+                    circle((3, 220))
+                    circle((9, 1360))
+                    circle((31, 307))
+                    circle((137, 2451))
+                    content((10, 300))[$P_1^o$]
+                    content((12, 1500))[$P_2^o$]
+                    content((30, 500))[$P_1^t$]
+                    content((140, 2600))[$P_2^t$]
+
+                    content((70, 2050))[$d_2$]
+                    content((20, 370))[$d_1$]
+                })
+            },
+        )
+    }),
+    caption: [Numero di righe e file richiesti a confronto.],
+)
+
+Si può osservare come la linea blu relativa alla libreria presenti una pendenza maggiore, evidenziando come il singolo file contenga molte più righe di codice.
+
+Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale, in cui è necessario implementare metodi specifici per il progetto in questione, diventa possibile sfruttare la libreria per automatizzare il flusso di lavoro. Questo è evidenziato dalla distanza dei punti $P_2^o$ e $P_2^t$ nel grafico.
+
+Ciò risulta evidente se si considera la distanza tra i punti corrispondenti al progetto scritto con la libreria e quello compilato, che rappresenta il vantaggio tratto dall'aver utilizzato la libreria.
+#let pit(p1x,p2x,p1y,p2y) = $sqrt((p1x+p2x)^2+(p1y+p2y)^2)$
+Per un progetto piccolo come $P_1$, $d_1=pit(3,31,220,307)=528$.\
+Per $P_2$ invece, $d_2=pit(9,37,1360,2451)=3818$, più di 7 volte rispetto a $d_1$.
