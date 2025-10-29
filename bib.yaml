@@ -306,3 +306,18 @@ release:
     type: web
     title: Release
     url: https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository
+
+http:
+    type: web
+    title: HTTP
+    url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview
+
+api:
+    type: web
+    title: API
+    url: https://aws.amazon.com/what-is/api/
+
+pom:
+    type: web
+    title: pom.xml
+    url: https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#What_is_a_POM.3F
