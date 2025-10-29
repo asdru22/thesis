@@ -1334,7 +1334,7 @@ Il funzionamento dell'_item_ è implementato con una catena di funzioni annidate
     caption: [],
 )
 
-Questa funzione invoca @ex-2 se il giocatore ha cliccato l'_item_, e in seguito azzera il valore dello #glos.score per evitare che nel prossimo _tick_ venga eseguita nuovamente la funzioen anche se l'_item_ non è stato usato.
+Questa funzione invoca @ex-2 se il giocatore ha cliccato l'_item_, e in seguito azzera il valore dello #glos.score per evitare che nel prossimo _tick_ venga eseguita nuovamente la funzione anche se l'_item_ non è stato usato.
 
 #figure(
     ```java
