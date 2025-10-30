@@ -1498,7 +1498,7 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
         plot.plot(
             size: (10, 6),
             x-label: [file],
-            y-label: [linee],
+            y-label: [righe],
             x-tick-step: 20,
             y-tick-step: 200,
             axis-style: "school-book",
@@ -1534,7 +1534,11 @@ Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei prog
 Se si considera la distanza come il vantaggio tratto dall'utilizzo della libreria, è evidente che automatizzare lo sviluppo sia vantaggioso per i progetti di scala maggiore.
 #let pit(p1x, p2x, p1y, p2y) = $sqrt((p1x+p2x)^2+(p1y+p2y)^2)$
 Per un progetto piccolo come $P_1$, $d_1=pit(3, 31, 220, 307)=528$.\
-Per $P_2$ invece, $d_2=pit(9, 37, 1360, 2451)=3818$, più di 7 volte rispetto a $d_1$.
+Per $P_2$ invece, $d_2=pit(9, 37, 1360, 2451)=3818$.
+
+Se si misura la densità di codice per file come il rapporto tra righe totali e file totali, si vedrà che $p(P_1)=73,7$ e $p(P_2)=151,1$.
+Quindi, un raddoppio della densità del codice implica che il beneficio dell'automazione aumenta di oltre 7 volte. Dunque si può affermare che l'efficienza della libreria cresce in modo non lineare rispetto alla dimensione del progetto.
+
 
 Devo tuttavia ammettere che, dopo aver iniziato a utilizzare questa libreria, è stato necessario un notevole sforzo mentale per lavorare con due linguaggi diversi contemporaneamente e sfruttarne appieno le potenzialità.
 
