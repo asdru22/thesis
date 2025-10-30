@@ -19,7 +19,8 @@
     course: "Corso di Laurea in Informatica per il Management",
     session: "Dicembre",
     academic_year: "2024/2025",
-    dedication: [],
+    dedication: [Desidero ringraziare il professor Padovani per la disponibilità e il prezioso supporto a me offerto durante questo percorso. Lo ringrazio anche per avermi dato l'opportunità di approfondire e lavorare con tecnologie a me particolarmente care.
+    ],
     abstract: [
         In questo documento tratterò del mio lavoro svolto sotto la supervisione del prof. Padovani nello sviluppare un sistema software che agevola l'utilizzo della _Domain Specific Language_ del videogioco #glos.mc.\
         Inizialmente verranno illustrate la struttura e i principali componenti di questa DSL, evidenziandone gli aspetti sintattici e strutturali che ne determinano le principali criticità.
@@ -27,7 +28,7 @@
         Attraverso un _working example_ verrà poi mostrato come questa libreria consenta di ridurre la complessità nello sviluppo dei punti più critici, mettendola a confronto con l'approccio tradizionale.\
         Infine, mostrerò la differenza in termini di righe di codice e file creati tra i due sistemi, con l'intento di affermare l'efficienza della mia libreria.
     ],
-    final: false,
+    final: true,
     locale: "it",
     bibliography_file: "bib.yaml",
 )
@@ -929,7 +930,8 @@ Questo risulta particolarmente utile nel nostro contesto, in quanto si vuole dar
     ```,
     caption: [Interfaccia `FileFactory`.],
 )
-L'utente può specificare manualmente il nome del file da costruire, oppure lasciare che sia la libreria a generarlo automaticamente in modo casuale. Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, dal momento che, quando l'oggetto viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca il riferimento alla sua _resource location_.\
+L'utente può specificare manualmente il nome del file da costruire, oppure lasciare che sia la libreria a generare un nome casuale.
+Se il nome contiene uno o più `/`, verranno letti come cartelle.\ Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, dal momento che, quando l'oggetto viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca il riferimento alla sua _resource location_.\
 Gli oggetti passati come parametro _variable arguments_@varargs (_varargs_, `Object... args`) sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
 
 === Classi File Astratte
@@ -1533,3 +1535,8 @@ Se si considera la distanza come il vantaggio tratto dall'utilizzo della libreri
 #let pit(p1x, p2x, p1y, p2y) = $sqrt((p1x+p2x)^2+(p1y+p2y)^2)$
 Per un progetto piccolo come $P_1$, $d_1=pit(3, 31, 220, 307)=528$.\
 Per $P_2$ invece, $d_2=pit(9, 37, 1360, 2451)=3818$, più di 7 volte rispetto a $d_1$.
+
+Devo tuttavia ammettere che, dopo aver iniziato a utilizzare questa libreria, è stato necessario un notevole sforzo mentale per lavorare con due linguaggi diversi contemporaneamente e sfruttarne appieno le potenzialità.
+
+Non nego anche che ci sia la possibilità di aggiungere altri metodi di utilità, magari più specifici ma che potrebbero comunque ridurre la mole di lavoro a carico dello sviluppatore.
+Ad esempio un metodo che prende in input uno o più interi e crea la funzione contenente i comandi #glos.score che si occupano di inizializzare le costanti.
