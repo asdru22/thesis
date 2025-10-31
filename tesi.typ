@@ -1496,11 +1496,14 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
     cetz.canvas({
         import cetz.draw: *
         plot.plot(
+            name: "plot",
             size: (10, 6),
+            x-min:0,
+            y-min:0,
             x-label: [file],
             y-label: [righe],
-            x-tick-step: 20,
-            y-tick-step: 200,
+            x-tick-step: 10,
+            y-tick-step: 250,
             axis-style: "school-book",
             {
                 plot.add(((3, 220), (9, 1360)), label: [Libreria _OOPACK_])
@@ -1508,21 +1511,22 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
                 plot.add(((3, 220), (31, 307)), style: (stroke: (paint: black, thickness: 1pt, dash: "dashed")))
                 plot.add(((9, 1360), (137, 2451)), style: (stroke: (paint: black, thickness: 1pt, dash: "dashed")))
 
-                plot.annotate({
-                    circle((3, 220))
-                    circle((9, 1360))
-                    circle((31, 307))
-                    circle((137, 2451))
-                    content((10, 300))[$P_1^o$]
-                    content((12, 1500))[$P_2^o$]
-                    content((30, 500))[$P_1^t$]
-                    content((140, 2600))[$P_2^t$]
 
-                    content((70, 2050))[$d_2$]
-                    content((20, 370))[$d_1$]
-                })
+                plot.add-anchor("p1o", (3, 220))
+                plot.add-anchor("p1t", (31, 307))
+                plot.add-anchor("p2o", (9, 1360))
+                plot.add-anchor("p2t", (137, 2451))
+
             },
         )
+        circle("plot.p1o", radius: 0.02, fill: black, name: "p1o")
+        content("p1o.end", [$P_1^o$], anchor: "north", padding: .1)
+        circle("plot.p1t", radius: 0.02, fill: black, name: "p1t")
+        content("p1t.end", [$P_1^t$], anchor: "south", padding: .1)
+        circle("plot.p2o", radius: 0.02, fill: black, name: "p2o")
+        content("p2o.end", [$P_2^0$], anchor: "south", padding: .1)
+        circle("plot.p2t", radius: 0.02, fill: black, name: "p2o")
+        content("p2o.end", [$P_2^t$], anchor: "south", padding: .1)
     }),
     caption: [Numero di righe e file richiesti a confronto.],
 )
@@ -1539,8 +1543,10 @@ Per $P_2$ invece, $d_2=pit(9, 37, 1360, 2451)=3818$.
 Se si misura la densità di codice per file come il rapporto tra righe totali e file totali, si vedrà che $p(P_1)=73,7$ e $p(P_2)=151,1$.
 Quindi, un raddoppio della densità del codice implica che il beneficio dell'automazione aumenta di oltre 7 volte. Dunque si può affermare che l'efficienza della libreria cresce in modo non lineare rispetto alla dimensione del progetto.
 
-
 Devo tuttavia ammettere che, dopo aver iniziato a utilizzare questa libreria, è stato necessario un notevole sforzo mentale per lavorare con due linguaggi diversi contemporaneamente e sfruttarne appieno le potenzialità.
 
 Non nego anche che ci sia la possibilità di aggiungere altri metodi di utilità, magari più specifici ma che potrebbero comunque ridurre la mole di lavoro a carico dello sviluppatore.
 Ad esempio un metodo che prende in input uno o più interi e crea la funzione contenente i comandi #glos.score che si occupano di inizializzare le costanti.
+
+Oltre alle conoscenze tecniche acquisite, ritengo che lo sviluppo di questo progetto in un arco di tempo prolungato mi abbia permesso di riconsiderare alcune mie scelte implementative, andando oltre il semplice obiettivo di produrre software funzionante. Ho avuto l'opportunità di migliorare parti di codice che nonostante funzionassero correttamente, non rappresentavano la soluzione più efficiente o l'approccio più comodo per l'utente finale.\
+Questo processo di revisione mi ha aiutato a maturare un metodo di lavoro più critico alla qualità complessiva del software, ponendo particolare attenzione alla manutenibilità del codice e all'esperienza d'uso.
