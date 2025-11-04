@@ -32,6 +32,13 @@
         numbering: none,
     )
 
+    show outline: set heading(outlined: true)
+    show outline.entry.where(level: 1): it => {
+        show repeat: none
+        v(0.4cm)
+        strong(it)
+    }
+
     set text(
         font: "Libertinus Serif",
         lang: locale,
@@ -198,13 +205,16 @@
 
         show: codly-init.with()
 
-        codly(languages: codly-languages, annotation-format: none)
 
         codly(
-            zebra-fill: rgb("#F0F0F0"),
-            languages: (
-                python: (name: "Python", icon: "", color: rgb("#3572A5")),
-            ),
+            display-icon: false,
+            languages: codly-languages,
+            annotation-format: none,
+            zebra-fill: none,
+            number-format: none,
+            header-transform: x => {
+                strong(x)
+            },
         )
 
         show: setup-lovelace
