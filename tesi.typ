@@ -22,11 +22,11 @@
     dedication: [Desidero ringraziare il professor Padovani per la disponibilità e il prezioso supporto a me offerto durante questo percorso. Lo ringrazio anche per avermi dato l'opportunità di approfondire e lavorare con tecnologie a me particolarmente care.
     ],
     abstract: [
-        In questo documento tratterò del mio lavoro svolto sotto la supervisione del prof. Padovani nello sviluppare un sistema software che agevola l'utilizzo della _Domain Specific Language_ del videogioco #glos.mc.\
-        Inizialmente verranno illustrate la struttura e i principali componenti di questa DSL, evidenziandone gli aspetti sintattici e strutturali che ne determinano le principali criticità.
-        Successivamente sarà presentato l'approccio adottato per mitigare tali problematiche, utilizzando una libreria Java sviluppata durante il tirocinio. Tale libreria è stata progettata con l'obiettivo di semplificare le operazioni più ripetitive e onerose, sfruttando i costrutti di un linguaggio ad alto livello, permettendo anche di definire più oggetti all'interno di un unico file, favorendo così uno sviluppo più coerente e strutturato.\
-        Attraverso un _working example_ verrà poi mostrato come questa libreria consenta di ridurre la complessità nello sviluppo dei punti più critici, mettendola a confronto con l'approccio tradizionale.\
-        Infine, mostrerò la differenza in termini di righe di codice e file creati tra i due sistemi, con l'intento di affermare l'efficienza della mia libreria.
+      La _domain specific language_ (DSL) di Minecraft, denominata #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati "#glos.pack", in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e mancano costrutti di programmazione come variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
+
+      Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf e giungendo alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto fornisce validazione in fase di compilazione, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate da soluzioni alternative.
+
+      Un _working example_ valida l'approccio: il #glos.pack di esempio richiede il 40% di codice in meno, consolidando 31 file in 3 file sorgenti, e dimostra miglioramenti significativi in termini di densità del codice e manutenibilità del progetto.
     ],
     final: true,
     locale: "it",
@@ -1015,10 +1015,10 @@ Di seguito invece si esporranno elementi e funzionalità definite appositamente 
 Le classi astratte #c.dj e #c.aj sono sottoclassi di #c.jf, e hanno il compito di eseguire un #glos.or del metodo `collectByType()` di #c.fso per indicare se il file che rappresentano appartiene alla categoria #glos.dp o #glos.rp.
 #figure(
     ```java
-   @Override
-    public void collectByType(Namespace data,Namespace assets) {
-        data.add(this);
-    }
+    @Override
+     public void collectByType(Namespace data,Namespace assets) {
+         data.add(this);
+     }
     ```,
     caption: [metodo `collectByType()` di #c.dj.],
 )
