@@ -11,7 +11,9 @@ A working example will present how the library is used through the development o
 Finally, a comparative analysis between the Java-based implementation and the conventional method will demonstrate significant improvements: the example project required 40% fewer lines of code and consolidated 31 files into 3 manageable source files.\
 
 = Abstract 2
-This project addresses the verbosity and architectural constraints of _mcfunction_, Minecraft's domain-specific language (DSL) for creating custom game mechanics known as"_packs_". This document presents a Java library that models mcfunction files and resources as Java objects, enabling developers to programmatically assemble, edit, and generate pack content with significantly improved conciseness and maintainability.
+This project addresses the verbosity and architectural constraints of _mcfunction_, Min
+
+ecraft's domain-specific language (DSL) for creating custom game mechanics known as"_packs_". This document presents a Java library that models mcfunction files and resources as Java objects, enabling developers to programmatically assemble, edit, and generate pack content with significantly improved conciseness and maintainability.
 
 The first section outlines the structure and key components of mcfunction, establishing the foundational concepts of the language and its file ecosystem. The following section analyzes the language's core limitations: lack of variable support, mandatory file-per-function architecture, and verbose command syntax that hinders productivity in large-scale projects.
 
