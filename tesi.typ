@@ -34,8 +34,8 @@
 )
 
 = Introduzione
-Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo con cubi in un mondo tridimensionale, si è rivelato presto essere il luogo dove per anni ho scritto ed eseguito i miei primi frammenti di codice.\
-Motivato dalla mia abilità nel saper programmare in questo linguaggio non banale, ho perseguito una carriera di studio in informatica.
+Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo con cubi in un mondo tridimensionale, si è rivelato presto essere il luogo dove per anni ho scritto ed eseguito i miei primi frammenti di codice tramite il suo sistema di comandi.\
+Motivato dalla mia abilità nel saper programmare con questo linguaggio di scripting non convenzionale, ho perseguito una carriera di studio in informatica.
 
 Pubblicato nel 2012 dall'azienda svedese Mojang~@mojang, #glos.mc è un videogioco appartenente al genere _sandbox_~@sandbox, famoso per l'assenza di una trama predefinita, in cui è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
 Come suggerisce il nome, le attività principali consistono nello scavare per ottenere risorse e utilizzarle per creare nuovi oggetti o strutture. Il tutto avviene all'interno di un ambiente tridimensionale virtualmente infinito.
@@ -43,27 +43,30 @@ Come suggerisce il nome, le attività principali consistono nello scavare per ot
 Proprio a causa dell'assenza di regole predefinite, fin dal suo rilascio #glos.mc era dotato di un insieme rudimentale di comandi~@command che consentiva ai giocatori di aggirare le normali meccaniche di gioco, ad esempio ottenendo risorse istantaneamente o spostandosi liberamente nel mondo.\
 Con il tempo, tale meccanismo è diventato un articolato linguaggio di configurazione e scripting, basato su file testuali, che costituisce una _Domain Specific Language_~@dsl (DSL) attraverso la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
 
-Con _Domain Specific Language_ si intende un linguaggio di programmazione meno complesso e più astratto rispetto a uno _general purpose_, concepito per essere utilizzato solo in una specifica area di sviluppo. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
+Con _Domain Specific Language_ si intende un linguaggio di programmazione progettato per un ambito applicativo specifico, caratterizzato da un livello di astrazione più elevato e una sintassi semplificata rispetto ai linguaggi _general purpose_#footnote[Un linguaggio _general purpose_ (o "a scopo generale") è progettato per risolvere un'ampia varietà di problemi in diversi domini applicativi.]. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
 #quote(
-    attribution: [JetBrains#footnote[JetBrains è un'azienda specializzata nello sviluppo di ambienti di sviluppo integrati (IDE).]],
+    attribution: [JetBrains],
     block: true,
-)[ In many cases, DSLs are intended to be used not by software people, but instead by non-programmers who are fluent in the domain the DSL addresses.]
+)[In many cases, DSLs are intended to be used not by software people, but instead by non-programmers who are fluent in the domain the DSL addresses.]
 
-#glos.mc è sviluppato in Java~@java-book, ma questa DSL, chiamata #glos.mcf~@mc-function, adotta un paradigma completamente diverso. Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente: le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi, interpretati dal motore interno di #glos.mc (e non dal compilatore Java), ed eseguiti solo al verificarsi di determinate condizioni. In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
-Negli ultimi anni, grazie all'introduzione e all'evoluzione di una serie di file in formato #glos.json~@json, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché gran parte della logica continua a essere definita e gestita attraverso i file #glos.mcf.
+Questa definizione fornita dagli sviluppatori di JetBrains, azienda specializzata nello sviluppo di ambienti di sviluppo integrati (IDE), descrive perfettamente chi sono gli utilizzatori della _domain specific language_ di #glos.mc.
 
-Il tirocinio ha avuto come obiettivo la progettazione e realizzazione di un sistema che semplifica lo sviluppo e la distribuzione di questi file tramite un ambiente di sviluppo unificato.
-Esso consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti. Una volta definite tutte le _feature_, viene eseguito il programma per ottenere un progetto pronto per l'uso.
+#glos.mc è sviluppato in Java~@java-book, ma questa DSL, chiamata #glos.mcf~@mc-function, adotta un paradigma completamente diverso. Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente del gioco. Le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi testuali, interpretati dal motore interno di #glos.mc (e non dal compilatore Java) ed eseguiti solo al verificarsi di determinate condizioni.
+In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
+Negli ultimi anni, grazie all'introduzione e all'evoluzione di file in formato #glos.json~@json in grado di modificare componenti precedentemente inaccessibili, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché una parte sostanziale della logica continua a essere implementata attraverso i file #glos.mcf.
 
-Si ottiene così uno sviluppo più coerente e accessibile, che permette di integrare _feature_ di Java in questa DSL, per facilitare la scrittura e gestione dei file.
+Il tirocinio ha avuto come obiettivo la progettazione e realizzazione di un framework che semplifica lo sviluppo e la distribuzione di questi file tramite un ambiente di sviluppo unificato.
+Esso consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti. Una volta definite tutte le _feature_, viene eseguito il programma per ottenere un progetto pronto per essere utilizzato.
 
-Nel prossimo capitolo verrà presentata la struttura generale del sistema, descrivendone gli elementi principali e il loro funzionamento. In seguito verrà esposta un'analisi delle principali problematiche e limitazioni del sistema, insieme a una rassegna delle soluzioni proposte nello stato dell'arte. Successivamente sarà illustrata la struttura e l'implementazione della mia libreria, accompagnata da un _working example_ volto a mostrare in modo concreto il funzionamento del progetto. L'ultimo capitolo sarà dedicato all'analisi dei risultati ottenuti.
+In questo modo lo sviluppo risulta più coerente e accessibile, permettendo di integrare _feature_ di Java in questa DSL, per facilitare la scrittura e gestione dei file.
+
+Nel capitolo successivo viene presentata la struttura generale del sistema di #glos.pack, descrivendone gli elementi che lo costituiscono e come essi funzionano. Segue un'analisi sistematica delle principali problematiche e limitazioni tecniche dell'infrastruttura, corredata da una rassegna critica delle soluzioni proposte nello stato dell'arte. Viene quindi illustrata la progettazione e l'implementazione della libreria sviluppata, accompagnata da un caso d'uso concreto (_working example_) che ne dimostra l'applicazione pratica. Il lavoro si conclude con un'analisi quantitativa e qualitativa dei risultati ottenuti, evidenziando i benefici dell'approccio proposto in termini di riduzione della complessità e miglioramento della manutenibilità del codice.
 
 = Struttura e Funzionalità di un Pack
 
 == Cos'è un Pack
-I file #glos.json e #glos.mcf devono trovarsi in specifiche cartelle per poter essere riconosciuti dal compilatore di #glos.mc ed essere integrati nel videogioco. La cartella radice che contiene questi file si chiama #glos.dp~@datapack.\
-Un #glos.dp può essere visto come la cartella `java` di un progetto Java: contiene la parte che detta i comportamenti dell'applicazione.
+Affinché i file #glos.json e #glos.mcf vengano riconosciuti dal compilatore di #glos.mc e integrati nel videogioco, è necessario che siano collocati in specifiche _directory_ predefinite.\
+Un #glos.dp può essere visto come la cartella `java` di un progetto Java: contiene la parte che detta la logica dell'applicazione.
 
 Come i progetti Java hanno la cartella `resources`~@java-resource, anche #glos.mc dispone di una cartella in cui inserire le risorse. Questa si chiama #glos.rp~@resourcepack, e contiene principalmente font, modelli 3D, #glos.tex~@game-texture, traduzioni e suoni.\
 Con l'eccezione di #glos.tex e suoni, i quali permettono l'estensione `png`~@png e `ogg`~@ogg rispettivamente, tutti gli altri file sono in formato #glos.json.\
@@ -178,7 +181,7 @@ Sebbene non disponga delle funzionalità tipiche dei linguaggi di programmazione
 
 A seguire si descriveranno i comandi che più si avvicinano a concetti tipici di programmazione.
 === Scoreboard
-`scoreboard` permette di creare dizionari di tipo `<Entità, Objective>`. Un `objective` rappresenta un valore intero a cui è associata una condizione (_criteria_) che ne determina la variazione. Il _criteria_ `dummy` corrisponde ad una condizione vuota, irrealizzabile. Su questi valori è possibile eseguire operazioni aritmetiche semplici, come la somma o sottrazione di un valore prefissato, oppure le quattro operazioni di base#footnote[Le operazioni aritmetiche di base sono somma, sottrazione, divisione e moltiplicazione.] con altri `objective`. Dunque una #glos.score può essere meglio vista come un dizionario `<Entità,<Intero, Condizione>>`.\
+Il comando `scoreboard` permette di creare dizionari di tipo `<Entità, Objective>`. Un `objective` rappresenta un valore intero a cui è associata una condizione (_criteria_) che ne determina la variazione. Il _criteria_ `dummy` corrisponde ad una condizione vuota, irrealizzabile. Su questi valori è possibile eseguire operazioni aritmetiche semplici, come la somma o sottrazione di un valore prefissato, oppure le quattro operazioni di base#footnote[Le operazioni aritmetiche di base sono somma, sottrazione, divisione e moltiplicazione.] con altri `objective`. Dunque una #glos.score può essere meglio vista come un dizionario `<Entità,<Intero, Condizione>>`.\
 Prima di poter eseguire qualsiasi operazione su di essa, una #glos.score deve essere creata. Questo viene fatto con il comando\ `scoreboard objectives add <objective> <criteria>`.\
 Per eseguire operazioni che non dipendono da alcuna entità, si usano i cosiddetti _fakeplayer_.  Al posto di usare nomi di giocatori o selettori, si prefiggono i nomi con caratteri illegali, quali `$` e `#`. In questo modo ci si assicura che un valore non sia associato ad un vero utente, e quindi sia sempre disponibile.
 #figure(
@@ -194,7 +197,7 @@ Per eseguire operazioni che non dipendono da alcuna entità, si usano i cosiddet
 Dunque, il sistema delle #glos.score permette di creare ed eseguire operazioni semplici esclusivamente su interi, con _scope_ globale, se e solo se fanno parte di una #glos.score.
 
 === Data
-`data` consente di ottenere, modificare e combinare i dati #glos.nbt associati a entità, blocchi e #glos.str.
+Questo comando è utilizzato per ottenere, modificare e combinare i dati #glos.nbt associati a entità, blocchi e #glos.str.
 Come menzionato in precedenza, il formato #glos.nbt, una volta compresso, viene utilizzato per la persistenza dei dati di gioco. Oltre alle informazioni relative a entità e blocchi, in questo formato vengono salvati anche gli #glos.str. Questi sono un modo efficiente di immagazzinare dati arbitrari senza dover dipendere dall'esistenza di un certo blocco o entità. Per prevenire i conflitti, ogni #glos.str dispone di una _resource location_, che convenzionalmente coincide con il #glos.ns. Vengono dunque salvati come `command_storage_<namespace>.dat`.
 
 #figure(
@@ -502,9 +505,9 @@ In conclusione, la convenzione vuole che si utilizzino prefissi anche per i nomi
 
 == Assenza di Code Blocks
 
-Nei linguaggi come C o Java, i blocchi di codice che devono essere eseguiti condizionalmente o all'interno di un ciclo vengono racchiusi tra parentesi graffe. In Python, invece, la stessa funzione è ottenuta tramite l'indentazione del codice.
+Nei linguaggi di alto livello quali C o Java, i blocchi di codice che devono essere eseguiti condizionalmente o all'interno di un ciclo vengono racchiusi tra parentesi graffe. In Python, invece, la stessa funzione è ottenuta tramite l'indentazione del codice.
 
-In una funzione #glos.mcf, questo non si può fare. Se si vuole eseguire una serie di comandi condizionalmente, è necessario creare un altro file che li contenga, oppure ripetere la stessa condizione su più righe. Quest'ultima opzione comporta maggiore _overhead_, specialmente quando il comando viene eseguito in più _tick_.
+In una funzione #glos.mcf, questo costrutto non è supportato. Per eseguire una serie di comandi condizionalmente, è necessario creare un altro file che li contenga, oppure ripetere la stessa condizione su più righe. Quest'ultima opzione comporta maggiore _overhead_, specialmente quando il comando viene eseguito in più _tick_.
 
 Di seguito viene riportato un esempio di come si può scrivere un blocco `if-else`, o `switch`, sfruttando il comando `return` per interrompere il flusso di esecuzione del codice nella funzione corrente.
 
@@ -1450,6 +1453,8 @@ Sarà dunque possibile creare una _repository_ e pubblicare una _release_. In se
 `datapack-esempio-1.0.0.zip` e `resourcepack-esempio-1.0.0.zip`.
 
 = Conclusione
+
+#todo[iniziare il capitolo con un riassunto del problema affrontato e della soluzione proposta.]
 
 Per misurare concretamente l'efficienza della libreria ho scritto una classe `Metrics` che si occupa di registrare il numero di righe e di file generati.
 Dopo aver eseguito il progetto associato al _working example_, si nota che il numero di file prodotti è 31, con un totale di 307 righe di codice.
