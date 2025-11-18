@@ -22,11 +22,11 @@
     dedication: [Desidero ringraziare il professor Padovani per la disponibilità e il prezioso supporto a me offerto durante questo percorso. Lo ringrazio anche per avermi dato l'opportunità di approfondire e lavorare con tecnologie a me particolarmente care.
     ],
     abstract: [
-      La _domain specific language_ (DSL) di Minecraft, denominata #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati "#glos.pack", in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e mancano costrutti di programmazione come variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
+        La _domain specific language_ (DSL) di Minecraft, denominata #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati "#glos.pack", in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e mancano costrutti di programmazione come variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
 
-      Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf e giungendo alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto fornisce validazione in fase di compilazione, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate da soluzioni alternative.
+        Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf e giungendo alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto fornisce validazione in fase di compilazione, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate da soluzioni alternative.
 
-      Un _working example_ valida l'approccio: il #glos.pack di esempio richiede il 40% di codice in meno, consolidando 31 file in 3 file sorgenti, e dimostra miglioramenti significativi in termini di densità del codice e manutenibilità del progetto.
+        Un _working example_ valida l'approccio: il #glos.pack di esempio richiede il 40% di codice in meno, consolidando 31 file in 3 file sorgenti, e dimostra miglioramenti significativi in termini di densità del codice e manutenibilità del progetto.
     ],
     final: true,
     locale: "it",
@@ -66,16 +66,14 @@ Nel capitolo successivo viene presentata la struttura generale del sistema di #g
 
 == Cos'è un Pack
 Affinché i file #glos.json e #glos.mcf vengano riconosciuti dal compilatore di #glos.mc e integrati nel videogioco, è necessario che siano collocati in specifiche _directory_ predefinite.\
-Un #glos.dp può essere visto come la cartella `java` di un progetto Java: contiene la parte che detta la logica dell'applicazione.
+Un #glos.dp può essere paragonato alla cartella `java` di un progetto Java. Esso contiene la parte che detta la logica dell'applicazione.
 
-Come i progetti Java hanno la cartella `resources`~@java-resource, anche #glos.mc dispone di una cartella in cui inserire le risorse. Questa si chiama #glos.rp~@resourcepack, e contiene principalmente font, modelli 3D, #glos.tex~@game-texture, traduzioni e suoni.\
-Con l'eccezione di #glos.tex e suoni, i quali permettono l'estensione `png`~@png e `ogg`~@ogg rispettivamente, tutti gli altri file sono in formato #glos.json.\
-Le #glos.rp sono state concepite e rilasciate prima dei #glos.dp, con lo scopo di dare ai giocatori un modo di sovrascrivere le #glos.tex e altri _asset_~@assets del videogioco. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare #glos.rp per definire le risorse che loro il progetto avrebbe richiesto.
-
-Una significativa differenza tra queste due cartelle è che le #glos.rp sono disponibili indipendentemente dal _save file_, ovvero del mondo che si sta utilizzando. Le cartelle #glos.dp invece, devono essere inserite nei mondi in cui devono essere utilizzate.\
-Quindi nella cartella radice di minecraft, `.minecraft/`, #glos.rp si troveranno nella directory `.minecraft/resourcepacks`, mentre i #glos.dp in `.minecraft/saves/<world name>/datapacks`.
-
-L'insieme di #glos.dp e #glos.rp è chiamato #glos.pack. Questo, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java, e sarà poi la cartella che verrà pubblicata o condivisa.
+I progetti Java sono dotati di una cartella `resources`~@java-resource. Similmente, #glos.mc dispone di una cartella in cui dichiarare le risorse. Questa si chiama #glos.rp~@resourcepack, e contiene principalmente font, modelli 3D, #glos.tex~@game-texture, traduzioni e suoni.\
+Con l'eccezione di #glos.tex e suoni, i quali richiedono l'estensione `png`~@png e `ogg`~@ogg rispettivamente, tutti gli altri file sono in formato #glos.json.\
+Le #glos.rp sono state concepite e rilasciate prima dei #glos.dp, con lo scopo di dare ai giocatori un modo di sovrascrivere le #glos.tex e altri _asset_~@assets del videogioco per renderle più affine ai propri gusti. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare #glos.rp per definire le risorse che loro il progetto avrebbe richiesto.
+I #glos.rp hanno portata globale e vengono applicati a tutti i _save file_, ovvero su ogni mondo attualmente in uso. Le cartelle #glos.dp, invece, devono essere collocate nella directory `datapack` dei singoli mondi nei quali si desidera utilizzarle.\
+Pertanto, partendo dalla cartella radice di #glos.mc (`.minecraft/`), i #glos.rp si trovano nella directory `.minecraft/resourcepacks`, mentre i #glos.dp sono posizionati in `.minecraft/saves/<world name>/datapacks`.\
+L'insieme di #glos.dp e #glos.rp è chiamato #glos.pack. Questo, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java, e sarà poi la cartella che lo sviluppatore pubblicherà.
 
 == Struttura e Componenti di Datapack e Resourcepack
 
@@ -115,8 +113,8 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
     caption: [#glos.dp e #glos.rp a confronto.],
 )
 
-Anche se l'estensione non lo indica, il file `pack.mcmeta` è in realtà scritto in formato #glos.json e definisce l'intervallo delle versioni (chiamate _format_) supportate dalla cartella. Queste ad ogni aggiornamento di #glos.mc variano, e non corrispondono all'effettiva _game version_.\
-Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88 e quello delle #glos.rp è 69. Queste possono cambiare anche settimanalmente, nel caso stiano venendo rilasciati degli _snapshot_~@snapshot.
+Nonostante l'estensione non lo indichi, il file `pack.mcmeta` è scritto in formato #glos.json e definisce l'intervallo delle versioni (denominate _format_) supportate dalla cartella. Tali versioni variano ad ogni aggiornamento di #glos.mc e non corrispondono alla _game version_ effettiva.\
+Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88, mentre quello delle #glos.rp è 69. Questi valori possono variare anche settimanalmente durante il rilascio degli _snapshot_~@snapshot, ovvero versioni preliminari di sviluppo che introducono nuove funzionalità e modifiche prima del rilascio ufficiale di un aggiornamento.
 
 Ancora più rilevanti sono le cartelle contenute in `data` e `assets`, chiamate #glos.ns~@namespace. Se i progetti Java seguono la struttura `com.package.author`, allora i #glos.ns possono essere visti come la sezione `package`.\
 
@@ -126,21 +124,22 @@ Ancora più rilevanti sono le cartelle contenute in `data` e `assets`, chiamate 
     [This isn't a new concept, but I thought I should reiterate what a "namespace" is. Most things in the game has a namespace, so that if we add `something` and a mod (or map, or whatever) adds `something`, they're both different `something`s. Whenever you're asked to name something, for example a loot table, you're expected to also provide what namespace that thing comes from. If you don't specify the namespace, we default to `minecraft`. This means that `something` and `minecraft:something` are the same thing.],
 )
 
-I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro. Per questo, in genere i #glos.ns o sono abbreviazioni o coincidono con il nome stesso del progetto che si sta sviluppando, e si usa lo stesso tra #glos.dp e #glos.rp.\
+I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro. Per questa ragione in genere i #glos.ns o sono abbreviazioni o coincidono con il nome stesso del progetto che si sta sviluppando, e si usa lo stesso tra #glos.dp e #glos.rp.\
 Tuttavia, si vedrà come operare in #glos.ns distinti non sia sufficiente a garantire l'assenza di conflitti tra #glos.pack installati contemporaneamente.
 
-Il namespace `minecraft` è riservato alle risorse native del gioco: sovrascriverle comporta il rischio di rimuovere funzionalità originali o di alterare il comportamento previsto del gioco. È interessante notare che anche gli sviluppatori di #glos.mc stessi fanno uso dei #glos.dp per definire e organizzare molti comportamenti del gioco, come la definizione di risorse ottenibili da un baule, o gli ingredienti necessari per creare un certo oggetto. In altre parole, i #glos.dp non sono solo uno strumento a disposizione dei giocatori per personalizzare l'esperienza, costituiscono anche il meccanismo interno attraverso cui il gioco stesso struttura e gestisce alcune delle sue funzionalità principali.\
+Il namespace `minecraft` è riservato alle risorse native del gioco: sovrascriverle comporta il rischio di rimuovere funzionalità originali o di alterare il comportamento previsto del gioco. È interessante notare come anche gli sviluppatori di #glos.mc stessi facciano uso dei #glos.dp per definire e organizzare molti comportamenti del gioco, come la dichiarazione delle risorse ottenibili da un baule, o gli ingredienti necessari per creare un certo oggetto. In altre parole, i #glos.dp non sono solo uno strumento a disposizione dei giocatori per personalizzare l'esperienza, ma costituiscono anche il meccanismo interno attraverso cui il gioco stesso struttura e gestisce alcune delle sue funzionalità principali.\
 Bisogna specificare che i comandi e file `.mcfunction` non sono utilizzati in alcun modo dagli sviluppatori di #glos.mc per implementare funzionalità del videogioco. Come precedentemente citato, tutta la logica è dettata da codice Java.
 
-All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno: se è presente un file #glos.json che il compilatore riconosce come `loot_table` nella cartella `recipe`, questo solleverà un errore e il file non sarà disponibile nella sessione di gioco.
+All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno. Se è presente un file #glos.json nella cartella `recipe`, che non possiede una struttura comune a tutte le ricette, il compilatore solleverà un errore e il file non sarà disponibile nella sessione di gioco.
 
-In `function` si trovano file e sottodirectory con file di testo in formato #glos.mcf. Questi si occupano di far comunicare tutte le parti di un #glos.pack tra loro tramite funzioni che contengono comandi.
+In `function` si trovano file e sottodirectory contenenti file di testo in formato #glos.mcf. Questi si occupano di far comunicare le parti di un #glos.pack tra loro tramite funzioni contenenti comandi.
 
 == Comandi
 
-Prima di spiegare cosa fanno i comandi, bisogna definire gli elementi basilari su cui essi agiscono.\
-In #glos.mc, si possono creare ed esplorare mondi generati in base a un _seed_~@seed casuale. Ogni mondo è composto da _chunk_~@chunk, colonne dalla base di 16x16 cubi, e altezza di 320.\
-L'unità più piccola in questa griglia è il blocco, la cui forma coincide con quella di un cubo di lato unitario. Ogni blocco in un mondo è dotato di collisione ed individuabile tramite coordinate dello spazio tridimensionale.
+Prima di spiegare cosa fanno i comandi, è necessario definire gli elementi basilari su cui essi agiscono.\
+#glos.mc permette di creare ed esplorare mondi generati a partire da un _seed_~@seed casuale. Ogni mondo è composto da _chunk_~@chunk, sezioni colonnari aventi base di $16 times 16$ unità e altezza di 320 unità.\
+L'unità più piccola all'interno di questa griglia è il blocco, la cui forma corrisponde a quella di un cubo di lato unitario.
+Ogni blocco è dotato di collisione, ed individuabile in un mondo tramite coordinate dello spazio tridimensionale.
 Si definiscono entità invece tutti gli oggetti dinamici che si spostano in un mondo: sono dotate di una posizione, rotazione e velocità.
 
 I dati persistenti di blocchi ed entità sono compressi e memorizzati in una struttura dati ad albero chiamata _Named Binary Tags_~@nbt (#glos.nbt). Il formato "stringificato", `SNBT` è accessibile agli utenti e si presenta come una struttura molto simile a #glos.json, formata da coppie di chiave e valori.\
@@ -176,14 +175,14 @@ Un comando è un'istruzione testuale che Minecraft interpreta per eseguire una s
     ```,
     caption: [Esempio di comando che tra tutte le entità (`@e`), stampa quelle di tipo giocatore.],
 )
-
-Sebbene non disponga delle funzionalità tipiche dei linguaggi di programmazione di alto livello come cicli `for` e `while`, strutture dati complesse o variabili generiche, il sistema dei comandi fornisce comunque strumenti che consentono di riprodurre alcuni di questi comportamenti in forma limitata.
-
-A seguire si descriveranno i comandi che più si avvicinano a concetti tipici di programmazione.
+Sebbene il sistema dei comandi sia privo delle funzionalità tipiche dei linguaggi di programmazione di alto livello, quali cicli `for` e `while`, strutture dati complesse o variabili generiche, esso fornisce comunque strumenti che consentono di emulare alcuni di questi comportamenti in forma limitata.
+Di seguito verranno illustrati i comandi che più si avvicinano a concetti tipici di programmazione.
 === Scoreboard
-Il comando `scoreboard` permette di creare dizionari di tipo `<Entità, Objective>`. Un `objective` rappresenta un valore intero a cui è associata una condizione (_criteria_) che ne determina la variazione. Il _criteria_ `dummy` corrisponde ad una condizione vuota, irrealizzabile. Su questi valori è possibile eseguire operazioni aritmetiche semplici, come la somma o sottrazione di un valore prefissato, oppure le quattro operazioni di base#footnote[Le operazioni aritmetiche di base sono somma, sottrazione, divisione e moltiplicazione.] con altri `objective`. Dunque una #glos.score può essere meglio vista come un dizionario `<Entità,<Intero, Condizione>>`.\
-Prima di poter eseguire qualsiasi operazione su di essa, una #glos.score deve essere creata. Questo viene fatto con il comando\ `scoreboard objectives add <objective> <criteria>`.\
-Per eseguire operazioni che non dipendono da alcuna entità, si usano i cosiddetti _fakeplayer_.  Al posto di usare nomi di giocatori o selettori, si prefiggono i nomi con caratteri illegali, quali `$` e `#`. In questo modo ci si assicura che un valore non sia associato ad un vero utente, e quindi sia sempre disponibile.
+Il comando `scoreboard` permette di creare dizionari di tipo `<Entità, Objective>`. Un `objective` rappresenta un valore intero a cui è associata una condizione (_criteria_) che ne determina la variazione. Il _criteria_ `dummy` corrisponde ad una condizione vuota, irrealizzabile.
+Su questi valori è possibile eseguire operazioni aritmetiche semplici, quali la somma o la sottrazione di un valore prefissato, oppure le quattro operazioni aritmetiche fondamentali#footnote[Le operazioni aritmetiche fondamentali sono somma, sottrazione, moltiplicazione e divisione.] con altri `objective`.
+Dunque una #glos.score può essere meglio vista come un dizionario `<Entità,<Intero, Condizione>>`.\
+Prima di poter eseguire qualsiasi operazione su di essa, una #glos.score deve essere creata tramite il comando\ `scoreboard objectives add <objective> <criteria>`.\
+Per eseguire operazioni che non dipendono da alcuna entità si usano i cosiddetti _fakeplayer_.  Al posto di usare nomi di giocatori o selettori, si prefiggono i nomi con caratteri illegali, quali `$` e `#`. In questo modo ci si assicura che un valore non sia associato ad un vero utente, e quindi sia sempre disponibile.
 #figure(
     ```mcfunction
     scoreboard objectives add my_scoreboard dummy
@@ -194,11 +193,14 @@ Per eseguire operazioni che non dipendono da alcuna entità, si usano i cosiddet
     caption: [Esempio di operazioni su una #glos.score, equivalente a `int val = 100; val /= 20;`],
 )
 
-Dunque, il sistema delle #glos.score permette di creare ed eseguire operazioni semplici esclusivamente su interi, con _scope_ globale, se e solo se fanno parte di una #glos.score.
+Dunque, il sistema delle #glos.score permette di creare ed eseguire operazioni semplici esclusivamente su interi, con _scope_ globale, se e solo se fanno parte di una #glos.score dichiarata.
 
 === Data
-Questo comando è utilizzato per ottenere, modificare e combinare i dati #glos.nbt associati a entità, blocchi e #glos.str.
-Come menzionato in precedenza, il formato #glos.nbt, una volta compresso, viene utilizzato per la persistenza dei dati di gioco. Oltre alle informazioni relative a entità e blocchi, in questo formato vengono salvati anche gli #glos.str. Questi sono un modo efficiente di immagazzinare dati arbitrari senza dover dipendere dall'esistenza di un certo blocco o entità. Per prevenire i conflitti, ogni #glos.str dispone di una _resource location_, che convenzionalmente coincide con il #glos.ns. Vengono dunque salvati come `command_storage_<namespace>.dat`.
+Per ottenere, modificare e combinare i dati #glos.nbt associati a entità, blocchi e #glos.str si usa il comando `data`.
+Come precedentemente citato, il formato #glos.nbt, una volta compresso, viene utilizzato per la persistenza dei dati di gioco.
+Oltre alle informazioni relative a entità e blocchi, in questo formato vengono salvati anche gli #glos.str.
+Essi sono un modo efficiente di immagazzinare dati arbitrari senza dover dipendere dall'esistenza di un certo blocco o entità.
+Per prevenire i conflitti, ogni #glos.str dispone di una _resource location_, che convenzionalmente coincide con il #glos.ns. Vengono dunque salvati nel file `command_storage_<namespace>.dat` come dizionario #glos.nbt.
 
 #figure(
     ```mcfunction
@@ -211,8 +213,8 @@ Come menzionato in precedenza, il formato #glos.nbt, una volta compresso, viene 
 Questi comandi definiscono la stringa `My Cat` nello #glos.str, successivamente impostano il valore dallo #glos.str al campo nome dell'entità gatto più vicina, e infine eliminano i dati dallo #glos.str.
 
 === Execute
-Il comando `execute` consente di eseguire un altro comando cambiando valori quali l'entità esecutrice e la posizione. Questi elementi definiscono il contesto di esecuzione, ossia l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito. Si usa il selettore `@s` per fare riferimento all'entità del contesto di esecuzione corrente.\
-Tramite `execute` è possibile specificare condizioni preliminari e salvare il risultato dell'esecuzione. Dispone inoltre di 14 sottocomandi, che possono essere raggruppati in 4 categorie:
+Il comando `execute` consente di eseguire un altro comando cambiando valori quali l'entità esecutrice e la posizione. Questi elementi definiscono il contesto di esecuzione: l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito. Si usa il selettore `@s` per fare riferimento all'entità del contesto di esecuzione corrente.\
+Tramite `execute` è possibile specificare condizioni preliminari e salvare il risultato dell'esecuzione. Dispone di 14 sottocomandi, raggruppati in 4 categorie:
 - modificatori: cambiano il contesto di esecuzione;
 - condizionali: controllano se certe condizioni sono rispettate;
 - contenitori: salvano i valori di output di un comando in una #glos.score, o in un contenitore di NBT;
@@ -231,23 +233,25 @@ Tutti questi sottocomandi possono essere concatenati e usati più volte all'inte
 Questo comando sta definendo quattro istruzioni da svolgere:
 + per ogni entità (`execute as @e`);
 + sposta l'esecuzione alla loro posizione attuale (`at @s`);
-+ salva l'esito della prossima istruzione nello score `on_stone` di quell'entità;
-+ controlla se nella posizione corrente del contesto di esecuzione, il blocco sottostante sia di tipo `stone`.
-Al termine dell'esecuzione, la #glos.score `on_stone` di ogni entità sarà 1 se si trovava su un blocco di pietra, 0 altrimenti.
++ salva l'esito della prossima istruzione nello _score_ `on_stone` di quell'entità;
++ controlla se nella posizione del contesto di esecuzione corrente, il blocco sottostante sia di tipo `stone`.
+Al termine dell'esecuzione, lo _score_ `on_stone` di ogni entità sarà 1 se si trovava su un blocco di pietra, 0 altrimenti.
 
 == Funzioni
-Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf, una funzione non può esistere se non in un file `.mcfunction`. A differenza di quanto il nome possa suggerire, non prevedono inerentemente valori di input o di output, ma contengono uno o più comandi che vengono eseguiti in ordine.\
-Le funzioni possono essere invocate in vari modi da altri file di un datapack:
-
-- tramite comandi: `function namespace:function_name` esegue la funzione subito, mentre `schedule namespace:function_name <delay>` la esegue dopo un certo tempo specificato.
-- da _function tag_: una _function tag_ è una lista in formato #glos.json di riferimenti a funzioni. #glos.mc ne fornisce due nelle quali inserire le funzioni da eseguire rispettivamente ogni _game loop_~@tick(`tick.json`)#footnote[Il _game loop_ di #glos.mc viene eseguito 20 volte al secondo; di conseguenza, anche le funzioni incluse nel tag `tick.json` vengono eseguite con la stessa frequenza.], e ogni volta che si ricarica da disco il datapack (`load.json`). Queste due _function tag_ sono riconosciute dal compilatore di #glos.mc solo se nel namespace `minecraft`.
-- Altri oggetti di un #glos.dp quali `Advancement` (obiettivi) e `Enchantment` (incantesimi).
-
-Le funzioni vengono eseguite durante un _game loop_, completando tutti i comandi che contengono, inclusi quelli invocati altre funzioni. Le funzioni usano il contesto di esecuzione dell'entità che le sta invocando (se presente). Quando un comando `execute` altera il contesto di esecuzione, la modifica non influenza i comandi successivi, ma viene propagata alle funzioni chiamate a partire da quel punto.
+Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf. Una funzione non può esistere se non in un file con estensione`.mcfunction`. A differenza di quanto il nome possa suggerire, non prevedono valori di input o di output, ma contengono uno o più comandi che vengono eseguiti in ordine.\
 
 In base alla complessità del branching e alle operazioni eseguite dalle funzioni, il compilatore (o più precisamente, il motore di esecuzione dei comandi) deve allocare una certa quantità di risorse per svolgere tutte le istruzioni durante un singolo _tick_. Il tempo di elaborazione aggiuntivo richiesto per l'esecuzione di un comando o di una funzione è definito _overhead_.
 
-Le funzioni possono includere linee _macro_: comandi, che preceduti dal carattere `$`, hanno parte o l'intero corpo sostituito al momento dell'invocazione da un oggetto #glos.nbt indicato dal comando invocante.
+Ci sono più modi in cui le funzioni possono essere invocate da altri file di un datapack:
+
+- tramite comandi: `function namespace:function_name` esegue la funzione immediatamente, mentre `schedule namespace:function_name <delay>` la esegue dopo un intervallo di tempo specificato;
+- da _function tag_: una _function tag_ è una lista in formato #glos.json contenente riferimenti a funzioni. #glos.mc ne fornisce due nelle quali inserire le funzioni da eseguire rispettivamente ogni _game loop_~@tick(`tick.json`)#footnote[Il _game loop_ di #glos.mc viene eseguito 20 volte al secondo; di conseguenza, anche le funzioni incluse nel tag `tick.json` vengono eseguite con la stessa frequenza.], e ogni volta che si ricarica da disco il datapack (`load.json`). Queste due _function tag_ sono riconosciute dal compilatore di #glos.mc solo se nel namespace `minecraft`;
+- altre risorse di un #glos.dp quali ricompense di `Advancement` (obiettivi) e effetti di `Enchantment` (incantesimi).
+
+Le funzioni vengono eseguite durante un _game loop_, completando tutti i comandi che contengono, inclusi quelli invocati altre funzioni.
+Quando un comando `execute` altera il contesto di esecuzione, la modifica non influenza i comandi successivi, ma viene propagata alle funzioni chiamate a partire da quel punto.
+
+Le funzioni possono includere linee _macro_: comandi che, preceduti dal carattere `$`, dispongono di una o più sezioni delimitate da `$(...)`, le quali vengono sostituite al momento dell'invocazione con oggetti #glos.nbt specificati nel comando invocante.
 
 #figure(
     {
@@ -273,7 +277,7 @@ Il primo comando di `main.mcfunction` stamperà `my value is bar`, il secondo `m
 
 L'esecuzione dei comandi di una funzione può essere interrotta dal comando `return`. Funzioni che non contengono questo comando possono essere considerate di tipo `void`. Tuttavia il comando return può solamente restituire la parola chiave `fail` o un valore intero fisso.
 
-Una funzione può essere richiamata ricorsivamente, anche modificando il contesto in cui viene eseguita. Questo comporta il rischio di creare chiamate senza fine, qualora la funzione si invochi senza alcuna condizione di arresto. È quindi responsabilità del programmatore definire i vincoli alla chiamata ricorsiva.
+Una funzione può essere richiamata ricorsivamente, anche modificando il contesto in cui viene eseguita. Questo comporta il rischio di creare chiamate senza fine, qualora la funzione sia invocata senza alcuna condizione di arresto. È quindi responsabilità del programmatore definire i vincoli alla chiamata ricorsiva.
 
 #codly(
     header: [iterate.mcfunction],
@@ -286,14 +290,16 @@ Una funzione può essere richiamata ricorsivamente, anche modificando il contest
     caption: [Esempio di funzione ricorsiva che crea una scia lunga 10 blocchi nella direzione dove il giocatore sta guardando.],
 ) <funzione_ricorsiva>
 
-Questa funzione ogni volta che viene chiamata istanzierà una piccola #glos.tex intangibile e temporanea~@particle (_particle_) alla posizione in cui è invocata la funzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo si sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, la funzione non sarà più eseguita.
+Ogni volta che viene chiamata, questa funzione istanzia una piccola #glos.tex intangibile e temporanea(_particle_~@particle) alla posizione associata al contesto di esecuzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, ovvero non c'è nessun giocatore nel raggio di 10 blocchi, la funzione non sarà più eseguita.
 
 Un linguaggio di programmazione si definisce Turing completo~@turing-complete se soddisfa tre condizioni fondamentali:
-- Presenta rami condizionali: deve poter eseguire istruzioni diverse in base a una condizione logica. Nel caso di #glos.mcf, ciò è realizzabile tramite il sotto-comando `if`.
-- #e dotato di iterazione o ricorsione: deve consentire la ripetizione di operazioni. In questo linguaggio, tale comportamento è ottenuto attraverso l'utilizzo di funzioni ricorsive.
-- Permette la memorizzazione di dati: deve poter gestire una quantità arbitraria di informazioni. In #glos.mcf, ciò avviene tramite la manipolazione dei dati all'interno dei #glos.str.
++ Presenta rami condizionali: deve poter eseguire istruzioni diverse in base a una condizione logica. Nel caso di #glos.mcf, ciò è realizzabile tramite il sotto-comando `if`.
++ #e dotato di iterazione o ricorsione: deve consentire la ripetizione di operazioni. In questo linguaggio, tale comportamento è ottenuto attraverso l'utilizzo di funzioni ricorsive.
++ Permette la memorizzazione di dati: deve poter gestire una quantità arbitraria di informazioni. In #glos.mcf, ciò avviene tramite la manipolazione dei dati all'interno dei #glos.str.
 
-Pertanto, #glos.mcf può essere considerato a tutti gli effetti un linguaggio Turing completo. Tuttavia, come verrà illustrato nella sezione successiva, sia il linguaggio stesso sia il sistema di file su cui si basa presentano diverse limitazioni e inefficienze. In particolare, l'esecuzione di operazioni relativamente semplici richiede un numero considerevole di righe di codice e di file, che in un linguaggio di più alto livello potrebbero essere realizzate in modo molto più conciso.
+Pertanto, #glos.mcf può essere considerato a tutti gli effetti un linguaggio Turing completo. Tuttavia, come verrà illustrato nella sezione successiva, sia il linguaggio stesso sia il sistema di file su cui si basa presentano diverse limitazioni e inefficienze.
+
+In particolare, l'implementazione di funzionalità relativamente semplici richiede un numero considerevole di righe di codice e di file, che in un linguaggio di più alto livello potrebbero essere realizzate in maniera molto più coincisa.
 
 = Problemi Pratici e Limiti Tecnici
 

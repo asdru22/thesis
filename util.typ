@@ -1,3 +1,4 @@
+#import "@preview/big-todo:0.2.0": *
 #let r(content) = raw(content)
 
 #let glos = (
@@ -10,7 +11,7 @@
     "moj": [_Mojang_],
     "pack": [_pack_],
     "ns": [_namespace_],
-    "score":[_scoreboard_],
+    "score": [_scoreboard_],
     "nbt": [NBT],
     "str": [_storage_],
     "tag": [_tag_],
@@ -19,33 +20,34 @@
 )
 
 #let c = (
-  "fso": `FileSystemObject`,
-  "af": `AbstractFile`,
-  "b": `Buildable`,
-  "afo": `AbstractFolder`,
-  "ci": `ContextItem`,
-  "ns": `Namespace`,
-  "pf": `PlainFile`,
-  "tf": `TextFile`,
-  "jf": `JsonFile`,
-  "f": `Factory`,
-  "dj": `DataJson`,
-  "aj": `AssetsJson`,
-  "fn": `Function`,
-  "sb": `StringBuilder`,
-  "p": `Project`,
-  "c": `Context`,
-  "dp": `Datapack`,
-  "rp": `Resourcepack`,
-  "gp": `GenericPack`,
-  "t": `Texture`,
-  "s": `Sound`,
-  "bi": `BufferedImage`,
-  "m": `Module`,
-  "o": `Optional`,
-  "l": `Locale`,
-  "jo": `JsonObject`
+    "fso": `FileSystemObject`,
+    "af": `AbstractFile`,
+    "b": `Buildable`,
+    "afo": `AbstractFolder`,
+    "ci": `ContextItem`,
+    "ns": `Namespace`,
+    "pf": `PlainFile`,
+    "tf": `TextFile`,
+    "jf": `JsonFile`,
+    "f": `Factory`,
+    "dj": `DataJson`,
+    "aj": `AssetsJson`,
+    "fn": `Function`,
+    "sb": `StringBuilder`,
+    "p": `Project`,
+    "c": `Context`,
+    "dp": `Datapack`,
+    "rp": `Resourcepack`,
+    "gp": `GenericPack`,
+    "t": `Texture`,
+    "s": `Sound`,
+    "bi": `BufferedImage`,
+    "m": `Module`,
+    "o": `Optional`,
+    "l": `Locale`,
+    "jo": `JsonObject`,
 )
 
 #let e = [È]
-#let ex = $triangle$
+#let fix(content) = block(stroke: orange + 5pt, inset: 10pt, content)
+
