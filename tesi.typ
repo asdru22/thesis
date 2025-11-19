@@ -618,25 +618,28 @@ In questa funzione, la ricerca viene interrotta da `return` appena si trova un d
 Il @esempio_macro illustra come l'impiego delle _macro_ imponga la definizione di una funzione dedicata: tale funzione deve essere in grado di accettare parametri esterni e di sostituirli nei comandi contrassegnati dal simbolo `$`. Si tratta verosimilmente dell'unico caso in cui la creazione di una nuova funzione risulta genuinamente giustificata e non causata da vincoli di #glos.mcf.
 
 Dunque, programmando in #glos.mcf, è richiesto creare una funzione, ovvero un file, ogni volta che si necessita di:Dunque, programmando in #glos.mcf, è richiesto creare una funzione, ovvero un file, ogni volta che si necessita di:
-
 - un blocco `if-else` che esegua più comandi;
 - un ciclo;
-- utilizzare una _macro_.
+- definire una funzione _macro_.
 
 Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di codice. Tuttavia, ci sono altre problematiche relative alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
 
 == Organizzazione e Complessità della Struttura dei File
-I problemi mostrati fin'ora sono prettamente legati alla sintassi dei comandi e ai limiti delle funzioni, tuttavia non sono da trascurare il quantitativo di file di un progetto.
+I problemi mostrati fin'ora sono principalmente legati alla sintassi dei comandi e ai limiti delle funzioni, tuttavia non è da trascurare l'organizzazione e la struttura di un progetto.
 
-Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`. Tuttavia, operare su queste due cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra i due sistemi. Lavorare direttamente dalla directory radice `.minecraft/` risulta poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
+Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`.
+Tuttavia, operare su queste cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra le due. Lavorare direttamente dalla directory radice `.minecraft/` risulta poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
 
 Una possibile soluzione consiste nel creare una directory che contenga sia il #glos.dp sia il #glos.rp e, successivamente, utilizzare _symlink_ o _junction_~@symlink per creare riferimenti dalle rispettive cartelle verso i percorsi in cui il compilatore si aspetta di trovarli.\
 I _symlink_ (collegamenti simbolici) e le _junction_ sono riferimenti a file o directory che consentono di accedere a un percorso diverso come se fosse locale, evitando la duplicazione dei contenuti.
 
-Disporre di un'unica cartella radice contenente #glos.dp e #glos.rp semplifica notevolmente la gestione del progetto. In particolare, consente di creare una sola _repository_~@repository Git~@git, facilitando così il versionamento del codice, il tracciamento delle modifiche e la collaborazione tra più sviluppatori.\
-Attraverso il sistema delle _release_ di GitHub~@github è possibile ottenere un link diretto a #glos.dp e #glos.rp pubblicati, che può poi essere utilizzato nei principali siti di hosting. Queste piattaforme, essendo spesso gestite da piccoli team di sviluppo, tendono ad affidarsi a servizi esterni per la memorizzazione dei file, come GitHub o altri provider.
+Disporre di un'unica cartella radice contenente #glos.dp e #glos.rp semplifica notevolmente la gestione del progetto.
+In particolare, consente di creare una sola _repository_~@repository Git~@git, facilitando così il versionamento del codice, il tracciamento delle modifiche e la collaborazione tra più sviluppatori.\
+Attraverso il sistema delle _release_ di GitHub~@github è possibile ottenere un link diretto a #glos.dp e #glos.rp pubblicati, che può poi essere utilizzato nei principali siti di hosting.
+Queste piattaforme, essendo spesso gestite da piccoli team di sviluppo, tendono ad affidarsi a servizi esterni per la memorizzazione dei file, come GitHub o altri provider.
 
-Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrato in precedenza, viene presentato un esempio di struttura rappresentante i file necessari per introdurre un nuovo _item_~@item (oggetto). Sebbene l'_item_ costituisca una delle funzionalità più semplici da implementare, la sua integrazione richiede comunque un numero non trascurabile di file.
+Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrato in precedenza, viene presentato un esempio di struttura rappresentante i file necessari per introdurre un nuovo _item_~@item (oggetto).
+Nonostante l'_item_ costituisca una delle funzionalità più semplici da implementare, la sua integrazione richiede comunque un numero non trascurabile di file.
 #figure(
     grid(
         columns: 2,
@@ -677,9 +680,12 @@ Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrat
     caption: [File necessari per implementare un semplice _item_.],
 )
 
-Nella sezione _data_, che determina la logica e i contenuti, _loot\_table_ e _recipe_ definiscono rispettivamente attributi dell'oggetto, e come questo può essere creato. L'_advancement_ `use_my_item` serve a rilevare quando un giocatore usa l'oggetto, e chiama la funzione `on_item_use` che produrrà un suono.
+Nella sezione _data_, che determina la logica e i contenuti del gioco, _loot\_table_ e _recipe_ definiscono rispettivamente gli attributi
+dell'oggetto e la modalità con cui questo può essere creato.
+L'_advancement_ `use_my_item` è usato per rilevare quando un giocatore usa l'oggetto, chiamando la funzione `on_item_use` che in questo esempio riprodurrà un suono.
 
-I suoni devono essere collocati all'interno degli _assets_. Per poter essere riprodotti, ciascun suono deve avere un file audio in formato `.ogg` ed essere registrato nel file `sounds.json`. Nella cartella _lang_ sono invece presenti i file responsabili della gestione delle traduzioni, organizzate come insiemi di coppie chiave-valore.\
+I suoni devono essere collocati nella directory _assets_. Affinché possano essere riprodotti, i file audio in formato `.ogg` devono essere registrati nel file `sounds.json`.
+Nella cartella _lang_ sono presenti i file responsabili della gestione delle traduzioni, organizzate come insiemi di coppie chiave-valore.\
 Per definire l'aspetto visivo dell'oggetto, si parte dalla sua _item model definition_, situata nella cartella `item`. Questa specifica il modello che l'_item_ utilizzerà. Il modello 3D, collocato in `models/item`, ne definisce la forma geometrica, mentre la #glos.tex associata al modello è contenuta nella directory `textures/item`.
 
 Si osserva quindi che, per implementare anche la _feature_ più semplice, è necessario creare sette file e modificarne due. Pur riconoscendo che ciascun file svolge una funzione distinta e che la loro presenza è giustificata, risulterebbe certamente più comodo poter definire questo tipo di risorse _inline_~@inline.
@@ -690,21 +696,22 @@ Infine, l'elevato numero di file rende l'ambiente di lavoro complesso da navigar
 
 == Stato dell'Arte delle Ottimizzazioni del Sistema
 
-Alla luce delle numerose limitazioni di questo sistema, sono state rapidamente sviluppate soluzioni volte a rendere il processo di sviluppo più efficiente e intuitiva.
+Alla luce delle numerose limitazioni di questo sistema, sono state rapidamente sviluppate soluzioni volte a rendere il processo di sviluppo più efficiente e intuitivo.
 
 In primo luogo, gli stessi sviluppatori di #glos.mc dispongono di strumenti interni che automatizzano la generazione dei file #glos.json necessari al corretto funzionamento di determinate _feature_. Durante lo sviluppo, tali file vengono creati automaticamente tramite codice Java eseguito in parallelo alla scrittura del codice sorgente, evitando così la necessità di definirli manualmente.
 
-Un esempio lampante è il file `sounds.json`, che registra i suoni e definisce quali file `.ogg` utilizzare. Questo contiene quasi 25.000 righe di codice, ed è creato e aggiornato tramite software appositi ogni volta che viene inserita una _feature_ che richiede un nuovo suono.
+Un esempio lampante è il file `sounds.json`, che registra i suoni e definisce quali file `.ogg` utilizzare. Questo contiene quasi 25.000 righe di oggetti #glos.json, ed è creato e aggiornato tramite software appositi ogni volta che viene inserita una _feature_ che richiede un nuovo suono.
 
-Tuttavia, questo software non è disponibile al pubblico, e anche se lo fosse, semplificherebbe la creazione solo dei file #glos.json, non di #glos.mcf. Dunque, sviluppatori indipendenti hanno realizzato dei propri precompilatori, progettati per generare automaticamente #glos.dp e #glos.rp tramite strumenti più intuitivi.
+Tuttavia, questo software non è disponibile al pubblico, e anche se lo fosse, semplificherebbe la creazione solo dei file #glos.json, non di #glos.mcf. Dunque, sviluppatori indipendenti hanno realizzato dei propri precompilatori, progettati per generare automaticamente #glos.dp e #glos.rp con mezzi più pratici e intuitivi.
 
 Un precompilatore è uno strumento che consente di scrivere le risorse e la logica di gioco in un linguaggio più semplice, astratto o strutturato, e di tradurle automaticamente nei numerosi file #glos.json, #glos.mcf e cartelle richieste dal gioco.\
 Il precompilatore al momento più completo e potente si chiama _beet_~@beet, e si basa sulla sintassi di Python, integrata con comandi di #glos.mc.\
 Questo precompilatore, come molti altri, presenta due criticità principali:
 - Elevata barriera d'ingresso: solo gli sviluppatori con una buona padronanza di Python sono in grado di sfruttarne appieno le potenzialità;
-- Assenza di documentazione: la mancanza di una guida ufficiale rende il suo utilizzo accessibile quasi esclusivamente a chi è in grado di interpretare direttamente il codice sorgente di _beet_.
+- Assenza di documentazione: la mancanza di una guida ufficiale rende il suo utilizzo accessibile quasi esclusivamente a chi è in grado di comprendere direttamente il codice sorgente di _beet_.
 
-Altri precompilatori forniscono un'interfaccia più intuitiva e un utilizzo più immediato al costo di  completezza delle funzionalità, limitandosi dunque a produrre solo una parte delle componenti che costituiscono l'ecosistema dei #glos.pack. Spesso, inoltre, la sintassi di questi linguaggi risulta più verbosa rispetto a quella dei comandi originali, poiché essi offrono esclusivamente un approccio programmatico alla composizione dei comandi senza portare ad alcun incremento nella loro velocità di scrittura.
+Altri precompilatori forniscono un'interfaccia più intuitiva e un utilizzo più immediato al costo di  completezza delle funzionalità, limitandosi dunque a produrre solo una parte delle componenti che costituiscono l'ecosistema dei #glos.pack.
+Spesso, inoltre, la sintassi di questi linguaggi risulta più verbosa rispetto a quella dei comandi originali, poiché essi offrono esclusivamente un approccio programmatico alla composizione dei comandi senza portare ad alcun incremento nella loro velocità di scrittura.
 
 #figure(
     [```java
