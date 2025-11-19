@@ -32,7 +32,7 @@
     locale: "it",
     bibliography_file: "bib.yaml",
 )
-
+#todo[Chiarire resource location, versionamento]
 = Introduzione
 Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo con cubi in un mondo tridimensionale, si è rivelato presto essere il luogo dove per anni ho scritto ed eseguito i miei primi frammenti di codice tramite il suo sistema di comandi.\
 Motivato dalla mia abilità nel saper programmare con questo linguaggio di scripting non convenzionale, ho perseguito una carriera di studio in informatica.
@@ -303,21 +303,23 @@ In particolare, l'implementazione di funzionalità relativamente semplici richie
 
 = Problemi Pratici e Limiti Tecnici
 
-Il linguaggio #glos.mcf non è stato originariamente concepito come un linguaggio di programmazione Turing completo. Ad esempio, nel 2012, prima dell'introduzione dei #glos.dp, il comando `scoreboard` veniva utilizzato unicamente per monitorare statistiche dei giocatori, come il tempo di gioco o il numero di blocchi scavati. Gli sviluppatori di #glos.mc osservarono come questo e altri comandi venivano impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, e hanno dunque aggiornato progressivamente il sistema, fino ad arrivare, nel 2017 alla nascita dei #glos.dp.
+Il linguaggio #glos.mcf non è stato originariamente concepito come un linguaggio di programmazione Turing completo.
+Infatti, negli anni antecedenti dell'introduzione dei #glos.dp, il comando `scoreboard` veniva utilizzato secondo l'uso previsto dagli sviluppatori, ossia per monitorare le statistiche dei giocatori, quali il tempo di gioco o il numero di blocchi scavati.
+Gli sviluppatori di #glos.mc osservarono come questo e altri comandi venivano impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, e hanno dunque aggiornato progressivamente il sistema, fino ad arrivare, nel 2017 alla nascita dei #glos.dp.
 
-Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono nuove funzionalità o ne modificano di già esistenti. Tuttavia, il sistema presenta ancora diverse limitazioni di natura tecnica, riconducibili al fatto che non era stato originariamente progettato per supportare logiche di programmazione complesse o essere utilizzato in progetti di grandi dimensioni.
+Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono nuove funzionalità o ne aggiornano di già esistenti.
+Tuttavia, questo ambiente presenta ancora diverse limitazioni di natura tecnica, riconducibili al fatto che non era stato originariamente concepito per supportare logiche di programmazione complesse o per essere impiegato in progetti di grandi dimensioni.
 
 == Limitazioni di Scoreboard
-Come è stato precedentemente citato, `scoreboard` è usato per eseguire operazioni su interi. Tuttavia, l'utilizzo di questo comando presenta numerosi problemi.
+Come è stato precedentemente citato, `scoreboard` è usato per eseguire operazioni su interi. Tuttavia, questo comando presenta numerosi vincoli.
 
-Dopo che un _objective_ è stato creato, è necessario impostare le costanti che si utilizzeranno, qualora si volessero eseguire operazioni di moltiplicazione e divisione. Inoltre, un singolo comando `scoreboard` prevede una sola operazione.
+Dopo aver creato un _objective_, è necessario impostare le costanti da utilizzare per le eventuali operazioni di moltiplicazione e divisione.
+Inoltre, è ammessa una sola operazione per comando `scoreboard`.
 
 Di seguito viene mostrato come l'espressione `int x = (y*2)/4-2` si calcola in #glos.mcf. Le variabili saranno prefissate da `$`, e le costanti da `#`.
 
-
 #figure(
     local(
-        number-format: numbering.with("1"),
         annotations: (
             (
                 start: 4,
@@ -343,12 +345,12 @@ Di seguito viene mostrato come l'espressione `int x = (y*2)/4-2` si calcola in #
 )<scoreboard_set_const>
 Qualora non fossero stati impostati i valori di `#2` e `#4`, il compilatore li avrebbe valutati con valore 0 e l'espressione non sarebbe stata corretta.
 
-Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore viene poi assegnato a $x$. Di conseguenza, sia `$x` che `$y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ dovrebbe rimanere invariato.
+Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore risultante viene successivamente assegnato a $x$.
+Di conseguenza, sia `$x` che `$y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ rimane invariato.
 Per evitare questo effetto collaterale, è necessario eseguire l'assegnazione $x = y$ prima delle altre operazioni aritmetiche.
 
 #figure(
     local(
-        number-format: numbering.with("1"),
         annotations: (
             (
                 start: 4,
@@ -377,7 +379,7 @@ La soluzione è quindi semplice, ma mette in evidenza come in questo contesto no
 
 Un ulteriore caso in cui l'ordine di esecuzione delle operazioni e il dominio ristretto agli interi assumono particolare rilevanza riguarda il rischio di errori di arrotondamento nelle operazioni che coinvolgono valori prossimi allo zero.
 
-Si supponga si voglia calcolare il $5%$ di 40. Con un linguaggio di programmazione di alto livello si ottiene 2 calcolando `40/100*5` e `40*5/100`. Scomponendo queste operazioni in comandi `scoreboard` si ottiene rispettivamente:
+Si supponga di voler calcolare il $5%$ di 40. In un linguaggio di programmazione di alto livello, entrambe le espressioni `40/100*5` e `40*5/100` restituiscono correttamente il valore 2. Scomponendo queste operazioni in comandi `scoreboard` si ottiene rispettivamente:
 
 #figure(
     [```mcfunction
@@ -396,13 +398,12 @@ Si supponga si voglia calcolare il $5%$ di 40. Con un linguaggio di programmazio
 )
 
 Nel primo caso, poiché $40 / 100 = 0$ nel dominio degli interi, il risultato finale sarà 0: nella riga 3, infatti, viene eseguita l'operazione $0 times 5$.\
-Nel secondo caso invece, si ottiene il risultato corretto pari a 2, poiché le operazioni vengono eseguite nell'ordine $40 times 5 = 200$ e successivamente $200 / 100 = 2$.
+Nel secondo caso, invece, si ottiene il risultato corretto pari a 2, poiché le operazioni vengono eseguite nell'ordine $40 times 5 = 200$ e successivamente $200 / 100 = 2$.
 
 == Assenza di Funzioni Matematiche
+Poiché tramite gli #glos.score è possibile eseguire esclusivamente le quattro operazioni aritmetiche fondamentali, il calcolo di funzioni più complesse, quali logaritmi, esponenziali, radici quadrate o funzioni trigonometriche, risulta particolarmente difficile da implementare.
 
-Poiché tramite #glos.score è possibile eseguire esclusivamente le quattro operazioni aritmetiche di base, il calcolo di funzioni più complesse quali logaritmi, esponenziali, radici quadrate o funzioni trigonometriche risulta particolarmente difficile da implementare.
-
-Bisogna inoltre considerare il fatto che queste operazioni saranno ristrette al dominio dei numeri naturali. Si può dunque cercare un algoritmo che approssimi queste funzioni, oppure creare una _lookup table_~@lookup-table.
+Occorre inoltre considerare che tali operazioni sono limitate al dominio dei numeri interi. È dunque richiesto implementare un algoritmo che approssimi queste funzioni, oppure utilizzare una _lookup table_~@lookup-table.
 
 #figure(
     [```mcfunction
@@ -423,7 +424,7 @@ Bisogna inoltre considerare il fatto che queste operazioni saranno ristrette al 
 
 La scrittura di algoritmi di questo tipo è impegnativa, e spesso richiede di gestire un input moltiplicato per $10^n$ il cui output è un intero dove sia assume che le ultime $n$ cifre siano decimali#footnote[Solitamente $n=3$.]. Inoltre, questo approccio può facilmente provocare problemi di _integer overflow_.
 
-Dunque, in seguito all'introduzione delle _macro_, si sono iniziate ad utilizzare le _lookup table_. Una _lookup table_ consiste in un _array_ salvato in uno #glos.str che contiene tutti gli output di una funzione in un intervallo prefissato.
+In seguito all'introduzione delle _macro_, si è dunque iniziato a utilizzare le _lookup table_. Una _lookup table_ consiste in un _array_ memorizzato in uno #glos.str che contiene tutti gli output di una funzione per un intervallo prefissato di input.
 
 Ipotizziamo mi serva la radice quadrata con precisione decimale di tutti gli interi tra 0 e 100. Si può creare uno #glos.str che contiene i valori $sqrt(i) space forall i in [0,100] inter NN$.
 
@@ -446,7 +447,7 @@ Ipotizziamo mi serva la radice quadrata con precisione decimale di tutti gli int
 )
 Dunque, data `get storage my_storage sqrt[4]` restituirà il quinto elemento dell'array, ovvero $2.0$, l'equivalente di $sqrt(4)$.
 
-Dato che sono richiesti gli output di decine, se non centinaia di queste funzioni, i comandi per creare le _lookup table_ vengono generati con script Python~@python-book, ed eseguiti da #glos.mc solamente quando si ricarica il #glos.dp. Poiché queste strutture non sono soggette ad operazioni di scrittura, ma solo di lettura, non c'è il rischio che vengano modificate durante la sessione di gioco.
+Dato che sono richiesti gli output di decine, se non centinaia di queste funzioni, i comandi per creare le _lookup table_ sono generati con script Python~@python-book, ed eseguiti da #glos.mc solamente quando il #glos.dp è inizializzato (tramite `load.json`). Poiché queste strutture non sono soggette ad operazioni di scrittura, ma solo di lettura, non c'è il rischio che vengano modificate durante la sessione di gioco.
 
 == Alto Rischio di Conflitti
 
@@ -454,11 +455,12 @@ Nella sezione precedente è stato modificato lo #glos.str `my_storage` per inser
 
 Qualora un mondo contenesse due #glos.dp sviluppati da autori diversi, ed entrambi modificassero `my_storage` senza indicare esplicitamente un #glos.ns, potrebbero verificarsi conflitti.\
 
-Un'altra situazione che può portare a conflitti è quando due #glos.dp sovrascrivono la stessa risorsa nel #glos.ns `minecraft`. Se entrambi modificano `minecraft/loot_table/blocks/stone.json`, che determina gli oggetti si possono ottenere da un blocco di pietra, il compilatore utilizzerà il file del #glos.dp che è stato caricato per ultimo.
+Un'altra situazione che può generare conflitti si verifica quando due #glos.dp sovrascrivono la stessa risorsa nel #glos.ns `minecraft`. Se entrambi modificano `minecraft/loot_table/blocks/stone.json`, che determina gli oggetti ottenibili da un blocco di pietra, il compilatore utilizzerà il file del #glos.dp caricato per ultimo.
 
 Il rischio di sovrascrivere o utilizzare in modo improprio risorse appartenenti ad altri #glos.dp non riguarda solo file che prevedono una _resource location_, ma si estende anche a componenti come #glos.score e #glos.tag.
 
-In questo esempio sono presenti due #glos.dp, sviluppati da autori diversi, con lo stesso obiettivo: eseguire una funzione sull'entità chiamante (`@s`) al termine di un determinato intervallo di tempo. In entrambi i casi, le funzioni incaricate dell'aggiornamento del timer vengono eseguite ogni _tick_, ovvero venti volte al secondo.
+Nell'esempio seguente vengono presentati due frammenti di codice tratti da #glos.dp sviluppati da autori diversi, aventi il medesimo obiettivo: eseguire una funzione sull'entità chiamante (`@s`) al termine di un determinato intervallo di tempo.
+In entrambi i casi, le funzioni deputate all'aggiornamento del timer vengono eseguite a ogni _tick_, ossia venti volte al secondo.
 
 #figure(
     {
@@ -481,11 +483,13 @@ In questo esempio sono presenti due #glos.dp, sviluppati da autori diversi, con 
     caption: [Due funzioni che aggiornano un timer.],
 )
 
-Le due funzioni modificano lo stesso _fakeplayer_ all'interno dello stesso #glos.score. Poiché `timer_a` incrementa `timer` e `timer_b` lo decrementa, al termine di un _tick_ il valore rimane invariato. Se invece entrambe variassero `timer` nello stesso verso, ad esempio incrementandolo, la durata effettiva del timer risulterebbe dimezzata. Questo è uno dei motivi per cui il nome di una _scoreboard_ deve essere prefissato con un #glos.ns, ad esempio `a.timer`#footnote[Come separatore si usa `.` e non `:` in quanto quest'ultimo è un carattere supportato nel nome di una #glos.score.].
+Le due funzioni modificano il medesimo _fakeplayer_ all'interno dello stesso #glos.score. Poiché `timer_a` incrementa `timer` mentre `timer_b` lo decrementa, al termine di un _tick_ il valore rimane invariato.
+Qualora entrambe modificassero `timer` nella stessa direzione, ad esempio incrementandolo, la durata effettiva del timer risulterebbe dimezzata.
+Questo costituisce uno dei motivi per cui il nome di una _scoreboard_ deve essere prefissato con un #glos.ns, ad esempio `a.timer`#footnote[Come separatore si utilizza `.` anziché `:` in quanto quest'ultimo è un carattere ammesso nel nome di una #glos.score.].
 
-Tra le varie condizioni per cui i selettori possono filtrare entità, ci sono i _tag_, ovvero stringhe memorizzate in un array nell'#glos.nbt di un entità.
+Tra le varie condizioni in base alle quali i selettori possono filtrare entità, vi sono i _tag_, stringhe memorizzate in un array nell'#glos.nbt di un'entità.
 
-Di conseguenza, se nell'esempio precedente gli sviluppatori necessitano che la funzione `timer` venga eseguita esclusivamente dalle entità contrassegnate da un determinato _tag_, ad esempio `has_timer`, i comandi per invocare `timer_a` e `timer_b` risulteranno i seguenti:
+Dunque, se nell'esempio precedente gli sviluppatori necessitano che la funzione `timer` venga eseguita esclusivamente dalle entità contrassegnate da un determinato _tag_, ad esempio `has_timer`, i comandi per invocare `timer_a` e `timer_b` risulteranno i seguenti:
 
 #figure({
     codly(
@@ -513,20 +517,23 @@ In conclusione, la convenzione vuole che si utilizzino prefissi anche per i nomi
 
 Nei linguaggi di alto livello quali C o Java, i blocchi di codice che devono essere eseguiti condizionalmente o all'interno di un ciclo vengono racchiusi tra parentesi graffe. In Python, invece, la stessa funzione è ottenuta tramite l'indentazione del codice.
 
-In una funzione #glos.mcf, questo costrutto non è supportato. Per eseguire una serie di comandi condizionalmente, è necessario creare un altro file che li contenga, oppure ripetere la stessa condizione su più righe. Quest'ultima opzione comporta maggiore _overhead_, specialmente quando il comando viene eseguito in più _tick_.
+Nelle funzioni #glos.mcf questo costrutto non è supportato. Per eseguire condizionalmente una serie di comandi, è necessario creare un file separato che li contenga, oppure ripetere la medesima condizione su ciascuna riga. Quest'ultima soluzione comporta un maggiore _overhead_, in particolare quando il comando viene eseguito ripetutamente nel corso di più _tick_.
 
-Di seguito viene riportato un esempio di come si può scrivere un blocco `if-else`, o `switch`, sfruttando il comando `return` per interrompere il flusso di esecuzione del codice nella funzione corrente.
+Di seguito viene illustrato un esempio di implementazione di un blocco `if-else` o `switch`, mediante l'utilizzo del comando `return` per interrompere il flusso di esecuzione nella funzione corrente.
 
 #figure(
-    [```mcfunction
+    local(
+        number-format: numbering.with("1"),
+
+        ```mcfunction
         execute if entity @s[type=cow] run return run say I'm a cow
         execute if entity @s[type=cat] run return run say I'm a cat
         say I'm neither a cow or a cat
-        ```
-    ],
+        ```,
+    ),
     caption: [Funzione che in base all'entità esecutrice, stampa un messaggio diverso.],
 )
-In questa funzione, i comandi dalla riga 2 in poi non verranno mai eseguiti se il tipo dell'entità è cow. Se la condizione alla riga 1 risulta falsa, l'esecuzione invece procede alla riga successiva, dove viene effettuato un nuovo controllo sul tipo dell'entità; anche in questo caso, se la condizione è soddisfatta, l'esecuzione si interrompe.
+In questa funzione, i comandi dalla riga 2 in avanti non verranno eseguiti qualora il tipo dell'entità sia `cow`. Se la condizione alla riga 1 risulta falsa, l'esecuzione procede alla riga successiva, dove viene effettuato un nuovo controllo sul tipo dell'entità. Anche in questo caso, qualora la condizione sia soddisfatta, l'esecuzione si interrompe.
 #figure(
     [```
         switch(entity){
@@ -542,7 +549,9 @@ In questa funzione, i comandi dalla riga 2 in poi non verranno mai eseguiti se i
 La funzione è abbastanza intuitiva, e corrisponde a qualcosa che si vedrebbe in un linguaggio di programmazione di alto livello. Ipotizziamo ora che si vogliano eseguire due o più comandi in base all'entità.
 
 #figure(
-    [```mcfunction
+    local(
+        number-format: numbering.with("1"),
+        ```mcfunction
         execute if entity @s[type=cow] run return run say I'm a cow
         execute if entity @s[type=cow] run return run say moo
 
@@ -550,8 +559,8 @@ La funzione è abbastanza intuitiva, e corrisponde a qualcosa che si vedrebbe in
         execute if entity @s[type=cat] run return run say meow
 
         say I'm neither a cow or a cat
-        ```
-    ],
+        ```,
+    ),
     caption: [Funzione errata per eseguire più comandi data una certa condizione.],
 )
 
@@ -582,12 +591,14 @@ say I'm a cat
 say meow
 ```
 
-Considerando che i #glos.dp si basano sull'esecuzione di funzioni in base a eventi già esistenti, sono numerosi i casi in cui ci si trova a creare più file che contengono un numero ridotto, purché significativo, di comandi.
+Considerando che i #glos.dp si basano sull'esecuzione condizionale di funzioni in base a eventi naturalmente occorrenti nel gioco, sono numerosi i casi in cui ci si trova a creare più file che contengono un numero ridotto, purché significativo, di comandi.
 
 Per quanto riguarda i cicli, come mostrato in @funzione_ricorsiva, l'unico modo per ripetere gli stessi comandi più volte è attraverso la ricorsione. Di conseguenza, ogni volta che è necessario implementare un ciclo, è indispensabile creare almeno una funzione dedicata.
-Se è invece necessario un contatore per tenere traccia dell'iterazione corrente (il classico indice `i` dei cicli `for`), è possibile utilizzare funzioni ricorsive che si richiamano passando come parametro una _macro_, il cui valore viene aggiornato all'interno del corpo della funzione. In alternativa, si possono scrivere esplicitamente i comandi necessari a gestire ciascun valore possibile, in modo analogo a quanto avviene con le _lookup table_.
+Se è invece richiesto un contatore per tenere traccia dell'iterazione corrente (il classico indice `i` dei cicli `for`), è possibile utilizzare funzioni ricorsive che si richiamano passando come parametro una _macro_, il cui valore viene aggiornato all'interno del corpo della funzione. In alternativa, si possono scrivere esplicitamente i comandi necessari a gestire ciascun valore possibile, in modo analogo a quanto avviene con le _lookup table_.
 
-Ipotizziamo si voglia determinare in quale _slot_ dell'inventario del giocatore si trovi l'oggetto `diamond`. Una possibile soluzione è utilizzare una funzione che iteri da 0 a 35 (un giocatore può tenere fino a 36 oggetti diversi), dove il parametro della _macro_ indica lo _slot_ che si vuole controllare, ma questo approccio comporta un overhead maggiore rispetto alla verifica diretta, caso per caso, dei valori da 0 a 35.
+Un entità giocatore dispone di 36 slot che possono contenere oggetti.
+Ipotizziamo si voglia determinare in quale _slot_ dell'inventario del giocatore si trovi l'oggetto `diamond`.
+Una possibile soluzione consiste nell'utilizzare una funzione che iteri da 0 a 35, dove il parametro della _macro_ indica lo _slot_ da controllare. Tuttavia, questo approccio comporta un _overhead_ maggiore rispetto alla verifica esplicita di ciascuno dei 36 _slot_.
 
 #figure(
     local(
@@ -604,10 +615,10 @@ Ipotizziamo si voglia determinare in quale _slot_ dell'inventario del giocatore 
 
 In questa funzione, la ricerca viene interrotta da `return` appena si trova un diamante, ed è stato provato che abbia un _overhead_ minore della ricorsione. Come nel caso delle _lookup table_, i file che fanno controlli di questo genere sono solitamente creati con script Python.
 
+Il @esempio_macro illustra come l'impiego delle _macro_ imponga la definizione di una funzione dedicata: tale funzione deve essere in grado di accettare parametri esterni e di sostituirli nei comandi contrassegnati dal simbolo `$`. Si tratta verosimilmente dell'unico caso in cui la creazione di una nuova funzione risulta genuinamente giustificata e non causata da vincoli di #glos.mcf.
 
-Infine, @esempio_macro dimostra che, per utilizzare una _macro_, è sempre necessario creare una funzione capace di ricevere i parametri di un'altra funzione e applicarli a uno o più comandi indicati con `$`. Questa è probabilmente una delle ragioni più valide per cui sia richiesto scrivere una nuova funzione. Tuttavia, va comunque considerata tra file la cui creazione non è necessaria in un linguaggio di programmazione ad alto livello.
+Dunque, programmando in #glos.mcf, è richiesto creare una funzione, ovvero un file, ogni volta che si necessita di:Dunque, programmando in #glos.mcf, è richiesto creare una funzione, ovvero un file, ogni volta che si necessita di:
 
-Dunque, programmando in #glos.mcf è necessario creare una funzione, ovvero un file, ogni volta che si necessita di:
 - un blocco `if-else` che esegua più comandi;
 - un ciclo;
 - utilizzare una _macro_.
