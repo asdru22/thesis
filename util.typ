@@ -17,6 +17,7 @@
     "tag": [_tag_],
     "f": [_factory_],
     "or": [_override_],
+    "dep":[_design pattern_]
 )
 
 #let c = (
