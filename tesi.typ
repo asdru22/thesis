@@ -19,7 +19,14 @@
     course: "Corso di Laurea in Informatica per il Management",
     session: "Dicembre",
     academic_year: "2024/2025",
-    dedication: [Desidero ringraziare il professor Padovani per la disponibilità e il prezioso supporto a me offerto durante questo percorso. Lo ringrazio anche per avermi dato l'opportunità di approfondire e lavorare con tecnologie a me particolarmente care.
+    dedication: [
+        Desidero innanzitutto ringraziare il prof. Padovani per la disponibilità e il prezioso supporto durante questo percorso, e per avermi dato l'opportunità di approfondire e lavorare con tecnologie a me care.
+
+        Ringrazio l'Alma Mater Studiorum Università di Bologna per tutto ciò che ho imparato in questi anni e per la formazione ricevuta.
+
+        Un ringraziamento speciale va a mia zia Lalli, che mi ha accolto in casa sua per tre anni, offrendomi non solo un tetto ma anche un ambiente sereno in cui potermi dedicare agli studi.
+
+        Infine, un grazie di cuore ai miei amici Giovanni, Alessio, Daniele, Jacopo e Luca per le infinite ore di studio passate insieme e per aver reso questo percorso più leggero.
     ],
     abstract: [
         La _domain specific language_ (DSL) di Minecraft, denominata #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati "#glos.pack", in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e mancano costrutti di programmazione come variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
@@ -1429,7 +1436,7 @@ Se l'_item_ è stato trovato, vengono eseguiti i seguenti comandi:
         )
         ```,
     ),
-  caption: [],
+    caption: [],
 )<ex-4>
 
 La seguente funzione rappresenta il nucleo della logica ricorsiva per creare l'onda.
@@ -1437,16 +1444,17 @@ Si decrementa lo _score_ `distance`, e si memorizza l'esito di questa operazione
 @ex-5\-4 invoca la funzione @ex-6, passando l'indice dell'iterazione corrente come parametro.
 
 #figure(
-   local(
+    local(
         number-format: numbering.with("1"),
-    ```java
-    Function.f.of("""
-      scoreboard players remove $distance $ns$.var 1
-      execute store result storage $ns$:storage distance.amount int 1 run scoreboard players get $distance $ns$.var
-      function %s with storage $ns$:storage distance
-      execute if score $distance $ns$.var matches 1.. positioned ^ ^ ^0.1 run function $ns$:$name$
-    """)
-    ```),
+        ```java
+        Function.f.of("""
+          scoreboard players remove $distance $ns$.var 1
+          execute store result storage $ns$:storage distance.amount int 1 run scoreboard players get $distance $ns$.var
+          function %s with storage $ns$:storage distance
+          execute if score $distance $ns$.var matches 1.. positioned ^ ^ ^0.1 run function $ns$:$name$
+        """)
+        ```,
+    ),
     caption: [],
 ) <ex-5>
 
@@ -1493,10 +1501,15 @@ Sarà dunque possibile creare una _repository_ e pubblicare una _release_. In se
 
 = Conclusione
 
-#todo[iniziare il capitolo con un riassunto del problema affrontato e della soluzione proposta.]
+Il presente lavoro di tesi ha affrontato le criticità intrinseche allo sviluppo di contenuti per #glos.mc tramite la _Domain Specific Language_ nativa, #glos.mcf.
+L'analisi preliminare ha evidenziato come questo linguaggio, pur consentendo la modularità, imponga severi vincoli strutturali e sintattici: l'assenza di costrutti di programmazione di alto livello, unita alla necessità di definire ogni funzione in un file separato, comporta la produzione di codice prolisso, frammentato e di difficile manutenibilità.
 
-Per misurare concretamente l'efficienza della libreria ho scritto una classe `Metrics` che si occupa di registrare il numero di righe e di file generati.
-Dopo aver eseguito il progetto associato al _working example_, si nota che il numero di file prodotti è 31, con un totale di 307 righe di codice.
+Per superare tali limitazioni, è stata progettata e implementata una libreria Java (_OOPACK_) che introduce un approccio orientato agli oggetti per consentire la meta-programmazione di #glos.pack.
+La soluzione proposta astrae la struttura di #glos.dp e #glos.rp in un albero di oggetti tipizzati, consentendo agli sviluppatori di definire molteplici risorse all'interno di un unico contesto e di sfruttare la sintassi di un linguaggio _general purpose_.
+Attraverso l'automazione della generazione del _boilerplate_ e la validazione a tempo di compilazione, il framework riduce drasticamente la complessità di gestione dei file e aumenta la densità di codice, offrendo un ambiente di sviluppo più robusto e scalabile rispetto agli strumenti tradizionali.
+
+Al fine di misurare concretamente l'efficienza della libreria, è stata sviluppata una classe `Metrics` con il compito di registrare il numero di righe e di file generati.
+Eseguendo il progetto Java associato al _working example_, si nota che il numero di file prodotti è 31, con un totale di 307 righe di codice.
 
 Il codice sorgente dispone invece dei seguenti file Java#footnote[I valori riportati sono arrotondati al multiplo di dieci inferiore, al fine di escludere eventuali righe vuote o commenti.]:
 #figure(table(
@@ -1510,7 +1523,7 @@ Per un totale di 220 righe di codice in 3 file.
 Confrontando i due valori, si nota che il numero di file generati è pari a oltre dieci volte quello dei file sorgente.
 Le righe prodotte sono il 40% in più di quelle dei file sorgente.
 
-Prendendo come riferimento un esempio più articolato, tratto da un progetto personale che implementa nuove piante, sono presenti i seguenti file:
+Prendendo come riferimento un esempio più articolato, tratto da un progetto personale che mira a inserire nuove piante nel gioco, sono presenti i seguenti file:
 #figure(table(
     columns: (1fr,) * 2,
     [*Classe*], [*Righe di codice*],
@@ -1548,6 +1561,8 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
                 plot.add(((3, 220), (31, 307)), style: (stroke: (paint: black, thickness: 1pt, dash: "dashed")))
                 plot.add(((9, 1360), (137, 2451)), style: (stroke: (paint: black, thickness: 1pt, dash: "dashed")))
 
+                plot.add-anchor("d1", (17, 300))
+                plot.add-anchor("d2", (60, 1800))
 
                 plot.add-anchor("p1o", (3, 220))
                 plot.add-anchor("p1t", (31, 307))
@@ -1563,27 +1578,29 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
         content("p2o.end", [$P_2^0$], anchor: "south", padding: .1)
         circle("plot.p2t", radius: 0.02, fill: black, name: "p2o")
         content("p2o.end", [$P_2^t$], anchor: "south", padding: .1)
+        content("plot.d1", [$d_1$], anchor: "south", padding: .1)
+        content("plot.d2", [$d_2$], anchor: "south", padding: .1)
     }),
     caption: [Numero di righe e file richiesti a confronto.],
 )
 
-Si può osservare come la linea blu relativa alla libreria presenti una pendenza maggiore, evidenziando come il singolo file contenga molte più righe di codice.
+Si può osservare come la linea blu relativa ai progetti sviluppati con la libreria presenti una pendenza maggiore, evidenziando come il singolo file contenga molte più righe di codice.
 
-Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale in cui è necessario implementare metodi specifici per il progetto in questione, diventa immediato sfruttare la libreria per automatizzare la creazione di file simili.
+Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale in cui è necessario implementare metodi specifici per il progetto in questione, diventa immediato sfruttare la libreria per automatizzare la creazione di file con contenuti affini.
 
 Se si considera la distanza come il vantaggio tratto dall'utilizzo della libreria, è evidente che automatizzare lo sviluppo sia vantaggioso per i progetti di scala maggiore.
 #let pit(p1x, p2x, p1y, p2y) = $sqrt((p1x+p2x)^2+(p1y+p2y)^2)$
 Per un progetto piccolo come $P_1$, $d_1=pit(3, 31, 220, 307)=528$.\
 Per $P_2$ invece, $d_2=pit(9, 37, 1360, 2451)=3818$.
 
-Se si misura la densità di codice per file come il rapporto tra righe totali e file totali, si vedrà che $p(P_1)=73,7$ e $p(P_2)=151,1$.
-Quindi, un raddoppio della densità del codice implica che il beneficio dell'automazione aumenta di oltre 7 volte. Dunque si può affermare che l'efficienza della libreria cresce in modo non lineare rispetto alla dimensione del progetto.
+Se si misura la densità di codice per file come il rapporto tra righe totali e file totali, si vedrà che $p(P_1)=73.7$ e $p(P_2)=151.1$.
+Quindi, un raddoppio della densità del codice implica che il beneficio dell'automazione aumenta di oltre 7 volte. Si può dunque affermare che l'efficienza della libreria cresce in modo non lineare con la dimensione del progetto.
 
-Devo tuttavia ammettere che, dopo aver iniziato a utilizzare questa libreria, è stato necessario un notevole sforzo mentale per lavorare con due linguaggi diversi contemporaneamente e sfruttarne appieno le potenzialità.
+Va tuttavia rilevato che l'utilizzo della libreria richiede un considerevole sforzo cognitivo, dovuto alla necessità di operare simultaneamente con due linguaggi diversi per sfruttarne appieno le potenzialità.
 
-Non nego anche che ci sia la possibilità di aggiungere altri metodi di utilità, magari più specifici ma che potrebbero comunque ridurre la mole di lavoro a carico dello sviluppatore.
-Ad esempio un metodo che prende in input uno o più interi e crea la funzione contenente i comandi #glos.score che si occupano di inizializzare le costanti.
+Si riconosce inoltre la possibilità di estendere la libreria con ulteriori metodi di utilità, potenzialmente più specifici ma comunque in grado di ridurre il carico di lavoro per lo sviluppatore.
+Per esempio, potrebbe essere implementato un metodo che, dati uno o più valori costanti in input, generi automaticamente la funzione contenente i comandi #glos.score necessari per l'inizializzazione delle costanti #glos.score.
 
-Oltre alle conoscenze tecniche acquisite, ritengo che lo sviluppo di questo progetto in un arco di tempo prolungato mi abbia permesso di riconsiderare alcune mie scelte implementative, andando oltre il semplice obiettivo di produrre software funzionante. Ho avuto l'opportunità di migliorare parti di codice che nonostante funzionassero correttamente, non rappresentavano la soluzione più efficiente o l'approccio più comodo per l'utente finale.\
-Questo processo di revisione mi ha aiutato a maturare un metodo di lavoro più critico alla qualità complessiva del software, ponendo particolare attenzione alla manutenibilità del codice e all'esperienza d'uso.
-
+Oltre alle conoscenze tecniche acquisite, lo sviluppo del progetto in un arco temporale prolungato ha consentito di riconsiderare alcune scelte implementative, andando oltre il semplice obiettivo di produrre software funzionante.
+Si è avuta l'opportunità di ottimizzare porzioni di codice che, pur funzionando correttamente, non rappresentavano la soluzione più efficiente né l'approccio più agevole per l'utente finale.\
+Tale processo di revisione ha favorito lo sviluppo di un'analisi più critica verso la qualità complessiva del software, ponendo particolare attenzione alla manutenibilità del codice e all'esperienza d'uso.
