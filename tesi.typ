@@ -20,35 +20,35 @@
     session: "Dicembre",
     academic_year: "2024/2025",
     dedication: [
-        Desidero innanzitutto ringraziare il prof. Padovani per la disponibilità e il prezioso supporto durante questo percorso, e per avermi dato l'opportunità di approfondire e lavorare con tecnologie a me care.
+        Desidero innanzitutto ringraziare il prof. Padovani dell'_Alma Mater Studiorum_ Università di Bologna per la disponibilità e il prezioso supporto durante questo percorso, e per avermi dato l'opportunità di approfondire e lavorare con tecnologie di mio particolare interesse.
 
-        Ringrazio l'Alma Mater Studiorum Università di Bologna per tutto ciò che ho imparato in questi anni e per la formazione ricevuta.
 
-        Un ringraziamento speciale va a mia zia Lalli, che mi ha accolto in casa sua per tre anni, offrendomi non solo un tetto ma anche un ambiente sereno in cui potermi dedicare agli studi.
+        Ringrazio la mia famiglia per avermi sempre incoraggiato e sostenuto durante tutto il mio percorso formativo.
+        Un ringraziamento speciale va a mia zia Lalli, che mi ha accolto in casa sua per tre anni, offrendomi un ambiente sereno in cui potermi dedicare agli studi.
 
-        Infine, un grazie di cuore ai miei amici Giovanni, Alessio, Daniele, Jacopo e Luca per le infinite ore di studio passate insieme e per aver reso questo percorso più leggero.
+        Infine, un grazie di cuore ai miei cari amici Alessio, Daniele, Giovanni, Jacopo e Luca per le infinite ore di studio trascorse insieme e per aver reso questo importante periodo della mia vita più leggero.
     ],
     abstract: [
-        La _domain specific language_ (DSL) di Minecraft, denominata #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati "#glos.pack", in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e mancano costrutti di programmazione come variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
+        La _domain specific language_ (DSL) del videogioco svedese Minecraft, denominata #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati #glos.pack, in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e non dispone di costrutti quali variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
 
-        Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf e giungendo alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto fornisce validazione in fase di compilazione, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate da soluzioni alternative.
+        Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico che, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf, giunge alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto sfrutta il sistema di tipi di Java per fornire validazione statica, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate in soluzioni alternative.
 
-        Un _working example_ valida l'approccio: il #glos.pack di esempio richiede il 40% di codice in meno, consolidando 31 file in 3 file sorgenti, e dimostra miglioramenti significativi in termini di densità del codice e manutenibilità del progetto.
+        Un _working example_ conferma l'approccio scelto: nel #glos.pack di esempio il codice scritto è ridotto del 40%, consolidando 31 file in 3 file sorgente, mostrando miglioramenti significativi in termini di densità del codice e manutenibilità del progetto.
     ],
     final: true,
     locale: "it",
     bibliography_file: "bib.yaml",
 )
-#todo[Chiarire resource location, versionamento]
+
 = Introduzione
-Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo con cubi in un mondo tridimensionale, si è rivelato presto essere il luogo dove per anni ho scritto ed eseguito i miei primi frammenti di codice tramite il suo sistema di comandi.\
-Motivato dalla mia abilità nel saper programmare con questo linguaggio di scripting non convenzionale, ho perseguito una carriera di studio in informatica.
+Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo in un mondo tridimensionale fatto di cubi, si è rivelato presto essere l'ambiente dove per anni ho scritto ed eseguito i miei primi frammenti di codice utilizzando il suo sistema di comandi.\
+Motivato dalla mia acquisita abilità nel saper programmare con questo linguaggio di scripting non convenzionale, ho intrapreso con entusiasmo un percorso di studi in informatica.
 
-Pubblicato nel 2012 dall'azienda svedese Mojang~@mojang, #glos.mc è un videogioco appartenente al genere _sandbox_~@sandbox, famoso per l'assenza di una trama predefinita, in cui è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
-Come suggerisce il nome, le attività principali consistono nello scavare per ottenere risorse e utilizzarle per creare nuovi oggetti o strutture. Il tutto avviene all'interno di un ambiente tridimensionale virtualmente infinito.
+Pubblicato nel 2012 dall'azienda svedese Mojang~@mojang, #glos.mc è un famoso videogioco appartenente al genere _sandbox_~@sandbox, caratterizzato dall'assenza di una trama predefinita, in quanto è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
+Come suggerisce il nome, le attività principali consistono nello "scavare" per ottenere risorse impiegate nella creazione di nuovi oggetti o strutture. Il tutto avviene all'interno di un ambiente tridimensionale virtualmente infinito.
 
-Proprio a causa dell'assenza di regole predefinite, fin dal suo rilascio #glos.mc era dotato di un insieme rudimentale di comandi~@command che consentiva ai giocatori di aggirare le normali meccaniche di gioco, ad esempio ottenendo risorse istantaneamente o spostandosi liberamente nel mondo.\
-Con il tempo, tale meccanismo è diventato un articolato linguaggio di configurazione e scripting, basato su file testuali, che costituisce una _Domain Specific Language_~@dsl (DSL) attraverso la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
+Fin dalle sue origini, #glos.mc è stato dotato di un insieme di comandi~@command che consentono ai giocatori di aggirare le normali meccaniche di gioco, ad esempio ottenendo risorse istantaneamente o spostandosi liberamente nel mondo.\
+Con il tempo, tale sistema si è evoluto in un articolato linguaggio di configurazione e scripting basato su file testuali, costituendo di fatto una _Domain Specific Language_~@dsl (DSL) mediante la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
 
 Con _Domain Specific Language_ si intende un linguaggio di programmazione progettato per un ambito applicativo specifico, caratterizzato da un livello di astrazione più elevato e una sintassi semplificata rispetto ai linguaggi _general purpose_#footnote[Un linguaggio _general purpose_ (o "a scopo generale") è progettato per risolvere un'ampia varietà di problemi in diversi domini applicativi.]. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
 #quote(
@@ -140,6 +140,9 @@ Bisogna specificare che i comandi e file `.mcfunction` non sono utilizzati in al
 All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno. Se è presente un file #glos.json nella cartella `recipe`, che non possiede una struttura comune a tutte le ricette, il compilatore solleverà un errore e il file non sarà disponibile nella sessione di gioco.
 
 In `function` si trovano file e sottodirectory contenenti file di testo in formato #glos.mcf. Questi si occupano di far comunicare le parti di un #glos.pack tra loro tramite funzioni contenenti comandi.
+
+Per identificare univocamente le risorse all'interno di #glos.dp e #glos.rp si utilizzano le _resource location_. La loro struttura è composta da due parti separate dal carattere `:`: il #glos.ns, seguito dal percorso della risorsa. Rispetto a un _path_ completo, la _resource location_ omette la cartella funzionale che categorizza il tipo di risorsa.\
+Ad esempio, per riferirsi alla ricetta situata nel percorso `foo/recipe/my_item.json`, si utilizza la _resource location_ `foo:my_item`, dove `foo` è il namespace e `my_item` è l'identificatore della risorsa. La cartella `recipe`, che indica la tipologia della risorsa, non compare nella _resource location_ poiché il compilatore determina automaticamente il tipo di risorsa in base al contesto d'uso: se la _resource location_ viene letta in un contesto che richiede una ricetta, il compilatore cercherà il file nella cartella `recipe`; se invece il contesto richiede una funzione, cercherà nella cartella `function`.
 
 == Comandi
 
