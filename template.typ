@@ -23,6 +23,7 @@
     locale: "it",
     bibliography_file: "./bibliography.bib",
     body,
+    leading: 0.75em
 ) = {
     set document(author: author, title: title)
 
@@ -137,7 +138,7 @@
     set page(margin: 2.5cm)
     show link: underline
 
-    set par(justify: true, leading: 0.75em)
+    set par(justify: true, leading: leading)
 
     show raw.where(block: false): box.with(
         stroke: (paint: gray, thickness: .5pt),

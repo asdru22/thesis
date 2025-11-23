@@ -26,14 +26,14 @@
         Ringrazio la mia famiglia per avermi sempre incoraggiato e sostenuto durante tutto il mio percorso formativo.
         Un ringraziamento speciale va a mia zia Lalli, che mi ha accolto in casa sua per tre anni, offrendomi un ambiente sereno in cui potermi dedicare agli studi.
 
-        Infine, un grazie di cuore ai miei cari amici Alessio, Daniele, Giovanni, Jacopo e Luca per le infinite ore di studio trascorse insieme e per aver reso questo importante periodo della mia vita più leggero.
+        Infine, un grazie di cuore ai miei cari amici Alessio, Daniele, Giovanni, Jacopo e Luca per le tante ore di studio trascorse insieme e per aver reso la mia vita universitaria più leggera.
     ],
     abstract: [
-        La _domain specific language_ (DSL) del videogioco svedese Minecraft, denominata #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati #glos.pack, in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e non dispone di costrutti quali variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
+        La _Domain Specific Language_ (_DSL_) del videogioco svedese Minecraft, #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati #glos.pack, in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e non dispone di costrutti quali variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
 
         Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico che, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf, giunge alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto sfrutta il sistema di tipi di Java per fornire validazione statica, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate in soluzioni alternative.
 
-        Un _working example_ conferma l'approccio scelto: nel #glos.pack di esempio il codice scritto è ridotto del 40%, consolidando 31 file in 3 file sorgente, mostrando miglioramenti significativi in termini di densità del codice e manutenibilità del progetto.
+        Un _working example_ conferma l'approccio scelto: nel #glos.pack di esempio il codice scritto è ridotto del 40%, consolidando 31 file in 3 file sorgente, con miglioramenti significativi in termini di densità del codice e manutenibilità del progetto.
     ],
     final: true,
     locale: "it",
@@ -41,46 +41,54 @@
 )
 
 = Introduzione
-Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo in un mondo tridimensionale fatto di cubi, si è rivelato presto essere l'ambiente dove per anni ho scritto ed eseguito i miei primi frammenti di codice utilizzando il suo sistema di comandi.\
+Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo bizzarre strutture a cubi in un mondo virtuale, si è rivelato presto essere l'ambiente dove per anni ho scritto ed eseguito i miei primi frammenti di codice utilizzando il suo sistema di comandi.\
 Motivato dalla mia acquisita abilità nel saper programmare con questo linguaggio di scripting non convenzionale, ho intrapreso con entusiasmo un percorso di studi in informatica.
 
-Pubblicato nel 2012 dall'azienda svedese Mojang~@mojang, #glos.mc è un famoso videogioco appartenente al genere _sandbox_~@sandbox, caratterizzato dall'assenza di una trama predefinita, in quanto è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
-Come suggerisce il nome, le attività principali consistono nello "scavare" per ottenere risorse impiegate nella creazione di nuovi oggetti o strutture. Il tutto avviene all'interno di un ambiente tridimensionale virtualmente infinito.
+Creato nel 2009 dallo svedese Markus Persson e sviluppato nel 2011 dall'azienda Mojang Studios~@mojang #glos.mc è un famoso videogioco tridimensionale appartenente al genere _sandbox_~@sandbox, cioè caratterizzato dall'assenza di una trama predefinita, dove è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
+Il gioco presenta un mondo composto da cubi formati da _voxel_ (controparte tridimensionale del pixel) generati proceduralmente, dove i giocatori possono raccogliere risorse, costruire strutture, creare oggetti e affrontare creature ostili.
 
-Fin dalle sue origini, #glos.mc è stato dotato di un insieme di comandi~@command che consentono ai giocatori di aggirare le normali meccaniche di gioco, ad esempio ottenendo risorse istantaneamente o spostandosi liberamente nel mondo.\
-Con il tempo, tale sistema si è evoluto in un articolato linguaggio di configurazione e scripting basato su file testuali, costituendo di fatto una _Domain Specific Language_~@dsl (DSL) mediante la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
+#glos.mc è diventato il videogioco più venduto al mondo, perché non è semplicemente un prodotto di intrattenimento, ma un ambiente flessibile, accessibile, continuamente ampliato e sostenuto da una community globale che lo ha trasformato in un fenomeno culturale trasversale.
+#figure(image("assets/image.png"),caption: [Un mondo di #glos.mc.])
 
-Con _Domain Specific Language_ si intende un linguaggio di programmazione progettato per un ambito applicativo specifico, caratterizzato da un livello di astrazione più elevato e una sintassi semplificata rispetto ai linguaggi _general purpose_#footnote[Un linguaggio _general purpose_ (o "a scopo generale") è progettato per risolvere un'ampia varietà di problemi in diversi domini applicativi.]. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
+Fin dalle sue origini, i creatori di #glos.mc hanno messo a disposizione dei giocatori un insieme di comandi~@command che consentiva di aggirare gli ostacoli incontrati nella propria esperienza di gioco.\
+Con il tempo, tale sistema si è evoluto in un articolato linguaggio di configurazione e scripting basato su file testuali, costituendo di fatto una _Domain Specific Language_~@dsl (_DSL_) mediante la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
+
+Con _Domain Specific Language_ si intende un linguaggio di programmazione progettato per un ambito applicativo specifico, caratterizzato da un livello di astrazione più elevato e una sintassi semplificata rispetto ai linguaggi _general purpose_#footnote[Un linguaggio _general purpose_ (o "a scopo generale"), come Java, C++ o Python, è progettato per risolvere un'ampia varietà di problemi in diversi domini applicativi.]. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
 #quote(
     attribution: [JetBrains],
     block: true,
 )[In many cases, DSLs are intended to be used not by software people, but instead by non-programmers who are fluent in the domain the DSL addresses.]
 
-Questa definizione fornita dagli sviluppatori di JetBrains, azienda specializzata nello sviluppo di ambienti di sviluppo integrati (IDE), descrive perfettamente chi sono gli utilizzatori della _domain specific language_ di #glos.mc.
+Questa definizione fornita dagli sviluppatori di JetBrains, azienda olandese specializzata nella creazione di ambienti di sviluppo integrati (_Integrated Development Environments_, IDE), descrive perfettamente chi sono gli utilizzatori della _domain specific language_ di #glos.mc.
 
-#glos.mc è sviluppato in Java~@java-book, ma questa DSL, chiamata #glos.mcf~@mc-function, adotta un paradigma completamente diverso. Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente del gioco. Le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi testuali, interpretati dal motore interno di #glos.mc (e non dal compilatore Java) ed eseguiti solo al verificarsi di determinate condizioni.
+#glos.mc è sviluppato in Java~@java-book, ma questa DSL, chiamata #glos.mcf~@mc-function, adotta un paradigma completamente diverso.
+Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente del gioco.
+Le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi testuali, interpretati dal motore interno di #glos.mc (e non dal compilatore Java) ed eseguiti solo al verificarsi di determinate condizioni.
 In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
-Negli ultimi anni, grazie all'introduzione e all'evoluzione di file in formato #glos.json~@json in grado di modificare componenti precedentemente inaccessibili, è progressivamente diventato possibile creare esperienze di gioco quasi completamente nuove. Tuttavia, il sistema presenta ancora diverse limitazioni, poiché una parte sostanziale della logica continua a essere implementata attraverso i file #glos.mcf.
+Negli ultimi anni, grazie all'introduzione e all'evoluzione di file in formato #glos.json~@json in grado di modificare componenti precedentemente inaccessibili, è progressivamente diventato possibile creare esperienze di gioco sempre più complesse e originali.
+Tuttavia, il sistema presenta ancora diverse limitazioni, poiché una parte sostanziale della logica continua a essere implementata attraverso i file #glos.mcf, meno versatili rispetto a Java.
 
-Il tirocinio ha avuto come obiettivo la progettazione e realizzazione di un framework che semplifica lo sviluppo e la distribuzione di questi file tramite un ambiente di sviluppo unificato.
-Esso consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti. Una volta definite tutte le _feature_, viene eseguito il programma per ottenere un progetto pronto per essere utilizzato.
+Il tirocinio accademico ha avuto come obiettivo la progettazione e realizzazione di un framework che semplifica lo sviluppo e la distribuzione di gruppi di file #glos.mcf e #glos.json tramite un ambiente di sviluppo unificato.
+Tale framework consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti.
+Una volta definite tutte le funzionalità, viene eseguito il programma per ottenere una cartella "pacchetto" (#glos.pack) pronta per essere utilizzata.
+In questo modo lo sviluppo del pacchetto risulta più coerente e accessibile, permettendo di integrare _feature_ di Java in questa DSL che facilitano la scrittura e la gestione dei file.
 
-In questo modo lo sviluppo risulta più coerente e accessibile, permettendo di integrare _feature_ di Java in questa DSL, per facilitare la scrittura e gestione dei file.
-
-Nel capitolo successivo viene presentata la struttura generale del sistema di #glos.pack, descrivendone gli elementi che lo costituiscono e come essi funzionano. Segue un'analisi sistematica delle principali problematiche e limitazioni tecniche dell'infrastruttura, corredata da una rassegna critica delle soluzioni proposte nello stato dell'arte. Viene quindi illustrata la progettazione e l'implementazione della libreria sviluppata, accompagnata da un caso d'uso concreto (_working example_) che ne dimostra l'applicazione pratica. Il lavoro si conclude con un'analisi quantitativa e qualitativa dei risultati ottenuti, evidenziando i benefici dell'approccio proposto in termini di riduzione della complessità e miglioramento della manutenibilità del codice.
+Nel capitolo successivo viene presentata la struttura generale del sistema di #glos.pack, descrivendone gli elementi costitutivi e il loro funzionamento. Segue un'analisi sistematica delle principali problematiche e limitazioni tecniche dell'infrastruttura, corredata da una rassegna critica delle più recenti soluzioni proposte. Viene quindi illustrata la progettazione e l'implementazione della libreria sviluppata, accompagnata da un caso d'uso concreto (_working example_) che ne dimostra l'applicazione pratica. Il lavoro si conclude con un'analisi quantitativa e qualitativa dei risultati ottenuti, evidenziando i benefici dell'approccio proposto in termini di riduzione della complessità e miglioramento della manutenibilità del codice.
 
 = Struttura e Funzionalità di un Pack
 
 == Cos'è un Pack
 Affinché i file #glos.json e #glos.mcf vengano riconosciuti dal compilatore di #glos.mc e integrati nel videogioco, è necessario che siano collocati in specifiche _directory_ predefinite.\
-Un #glos.dp può essere paragonato alla cartella `java` di un progetto Java. Esso contiene la parte che detta la logica dell'applicazione.
+Un #glos.dp può essere paragonato alla cartella `java` di un progetto Java.
+Esso contiene la parte che detta la logica dell'applicazione.
 
-I progetti Java sono dotati di una cartella `resources`~@java-resource. Similmente, #glos.mc dispone di una cartella in cui dichiarare le risorse. Questa si chiama #glos.rp~@resourcepack, e contiene principalmente font, modelli 3D, #glos.tex~@game-texture, traduzioni e suoni.\
+I progetti Java sono dotati di una cartella `resources`~@java-resource. Similmente, #glos.mc dispone di una cartella in cui dichiarare le risorse da utilizzare.
+Questa si chiama #glos.rp~@resourcepack, e contiene principalmente font, modelli 3D, #glos.tex~@game-texture, traduzioni e suoni.\
 Con l'eccezione di #glos.tex e suoni, i quali richiedono l'estensione `png`~@png e `ogg`~@ogg rispettivamente, tutti gli altri file sono in formato #glos.json.\
-Le #glos.rp sono state concepite e rilasciate prima dei #glos.dp, con lo scopo di dare ai giocatori un modo di sovrascrivere le #glos.tex e altri _asset_~@assets del videogioco per renderle più affine ai propri gusti. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare #glos.rp per definire le risorse che loro il progetto avrebbe richiesto.
-I #glos.rp hanno portata globale e vengono applicati a tutti i _save file_, ovvero su ogni mondo attualmente in uso. Le cartelle #glos.dp, invece, devono essere collocate nella directory `datapack` dei singoli mondi nei quali si desidera utilizzarle.\
-Pertanto, partendo dalla cartella radice di #glos.mc (`.minecraft/`), i #glos.rp si trovano nella directory `.minecraft/resourcepacks`, mentre i #glos.dp sono posizionati in `.minecraft/saves/<world name>/datapacks`.\
-L'insieme di #glos.dp e #glos.rp è chiamato #glos.pack. Questo, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java, e sarà poi la cartella che lo sviluppatore pubblicherà.
+Le #glos.rp sono state concepite e rilasciate prima dei #glos.dp, con lo scopo di dare ai giocatori la possibilità di sovrascrivere le #glos.tex e altri _asset_~@assets del videogioco per renderle più affini ai propri gusti. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare #glos.rp per definire le risorse che il loro progetto avrebbe impiegato.
+Le #glos.rp hanno portata globale e vengono applicate a tutti i _save file_, ovvero su ogni mondo creato. Le cartelle #glos.dp, invece, devono essere collocate nella directory `datapack` dei mondi nei quali si desidera utilizzarle.\
+Pertanto, partendo dalla cartella radice di #glos.mc (`.minecraft/`), le #glos.rp si trovano nella directory `.minecraft/resourcepacks`, mentre i #glos.dp sono posizionati in `.minecraft/saves/<world name>/datapacks`.\
+L'insieme di #glos.dp e #glos.rp è chiamato #glos.pack. Questo, riprendendo il parallelismo precedente, corrisponde all'intero progetto Java, e sarà poi la cartella pubblicata dallo sviluppatore.
 
 == Struttura e Componenti di Datapack e Resourcepack
 
@@ -91,7 +99,7 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
         columns: 2,
         gutter: 10em,
         align(left, tree-list[
-            - #glos.dp
+            - *#glos.dp*
                 - pack.mcmeta
                 - pack.png
                 - data
@@ -104,7 +112,7 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
                         - ...
         ]),
         align(left, tree-list[
-            - #glos.rp
+            - *#glos.rp*
                 - pack.mcmeta
                 - pack.png
                 - assets
@@ -121,32 +129,36 @@ All'interno di un #glos.pack, #glos.dp e #glos.rp hanno una struttura molto simi
 )
 
 Nonostante l'estensione non lo indichi, il file `pack.mcmeta` è scritto in formato #glos.json e definisce l'intervallo delle versioni (denominate _format_) supportate dalla cartella. Tali versioni variano ad ogni aggiornamento di #glos.mc e non corrispondono alla _game version_ effettiva.\
-Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88, mentre quello delle #glos.rp è 69. Questi valori possono variare anche settimanalmente durante il rilascio degli _snapshot_~@snapshot, ovvero versioni preliminari di sviluppo che introducono nuove funzionalità e modifiche prima del rilascio ufficiale di un aggiornamento.
+Ad esempio, per la versione 1.21.10 del gioco, il `pack_format` dei #glos.dp è 88, mentre quello delle #glos.rp è 69. Questi valori possono variare anche settimanalmente durante il rilascio degli _snapshot_~@snapshot, ovvero versioni preliminari di sviluppo che introducono nuove funzionalità e modifiche prima del rilascio ufficiale di un aggiornamento del videogioco.
 
 Ancora più rilevanti sono le cartelle contenute in `data` e `assets`, chiamate #glos.ns~@namespace. Se i progetti Java seguono la struttura `com.package.author`, allora i #glos.ns possono essere visti come la sezione `package`.\
 
 #quote(
     block: true,
-    attribution: [Nathan Adams#footnote[Sviluppatore di #glos.mc parte del team che implementa _feature_ inerenti a #glos.dp.]],
+    attribution: [Nathan Adams#footnote[Sviluppatore di #glos.mc inglese, membro del team che sviluppa _feature_ inerenti a #glos.dp.]],
     [This isn't a new concept, but I thought I should reiterate what a "namespace" is. Most things in the game has a namespace, so that if we add `something` and a mod (or map, or whatever) adds `something`, they're both different `something`s. Whenever you're asked to name something, for example a loot table, you're expected to also provide what namespace that thing comes from. If you don't specify the namespace, we default to `minecraft`. This means that `something` and `minecraft:something` are the same thing.],
 )
 
-I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro. Per questa ragione in genere i #glos.ns o sono abbreviazioni o coincidono con il nome stesso del progetto che si sta sviluppando, e si usa lo stesso tra #glos.dp e #glos.rp.\
-Tuttavia, si vedrà come operare in #glos.ns distinti non sia sufficiente a garantire l'assenza di conflitti tra #glos.pack installati contemporaneamente.
+I #glos.ns sono fondamentali per evitare che i file omonimi di un #glos.pack sovrascrivano quelli di un altro.
+Per questa ragione, in genere un #glos.ns o coincide con il nome stesso del progetto che si sta sviluppando, o è una sua abbreviazione. _Datapack_ e #glos.rp adotteranno lo stesso #glos.ns.\
+Tuttavia, si vedrà che operare in #glos.ns distinti non è sufficiente a garantire l'assenza di conflitti tra #glos.pack installati contemporaneamente.
 
-Il namespace `minecraft` è riservato alle risorse native del gioco: sovrascriverle comporta il rischio di rimuovere funzionalità originali o di alterare il comportamento previsto del gioco. È interessante notare come anche gli sviluppatori di #glos.mc stessi facciano uso dei #glos.dp per definire e organizzare molti comportamenti del gioco, come la dichiarazione delle risorse ottenibili da un baule, o gli ingredienti necessari per creare un certo oggetto. In altre parole, i #glos.dp non sono solo uno strumento a disposizione dei giocatori per personalizzare l'esperienza, ma costituiscono anche il meccanismo interno attraverso cui il gioco stesso struttura e gestisce alcune delle sue funzionalità principali.\
-Bisogna specificare che i comandi e file `.mcfunction` non sono utilizzati in alcun modo dagli sviluppatori di #glos.mc per implementare funzionalità del videogioco. Come precedentemente citato, tutta la logica è dettata da codice Java.
+Il namespace `minecraft` è riservato alle risorse native del gioco: sovrascriverle comporta il rischio di rimuovere funzionalità originali o di alterarne il comportamento previsto.
+È interessante notare come anche gli sviluppatori di #glos.mc stessi facciano uso dei #glos.dp per definire e organizzare molti comportamenti del gioco, come ad esempio la dichiarazione delle risorse ottenibili dai blocchi scavati (_loot table_), o gli ingredienti necessari per creare un certo oggetto (_recipe_).
+In altre parole, i #glos.dp non sono solo uno strumento a disposizione dei giocatori per personalizzare l'esperienza, ma costituiscono anche il meccanismo interno attraverso il quale il gioco stesso struttura e gestisce alcune delle sue funzionalità principali.\
+Occorre specificare che i comandi e i file `.mcfunction` non sono utilizzati in alcun modo dagli sviluppatori di #glos.mc per implementare funzionalità del videogioco, dato che tutta la logica è dettata da codice Java.
 
-All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei contenuti al loro interno. Se è presente un file #glos.json nella cartella `recipe`, che non possiede una struttura comune a tutte le ricette, il compilatore solleverà un errore e il file non sarà disponibile nella sessione di gioco.
+All'interno dei #glos.ns si trovano directory i cui nomi identificano in maniera univoca la natura e la funzione dei file contenuti al loro interno. Se è presente un file #glos.json nella cartella `recipe`, che non possiede una struttura comune a tutte le ricette, il compilatore solleverà un errore e il file non sarà disponibile nella sessione di gioco.
 
-In `function` si trovano file e sottodirectory contenenti file di testo in formato #glos.mcf. Questi si occupano di far comunicare le parti di un #glos.pack tra loro tramite funzioni contenenti comandi.
+In `function` si trovano file e sottodirectory contenenti file di testo in formato #glos.mcf. Questi si occupano di far comunicare le parti di un #glos.pack tra loro tramite funzioni contenenti determinati comandi.
 
-Per identificare univocamente le risorse all'interno di #glos.dp e #glos.rp si utilizzano le _resource location_. La loro struttura è composta da due parti separate dal carattere `:`: il #glos.ns, seguito dal percorso della risorsa. Rispetto a un _path_ completo, la _resource location_ omette la cartella funzionale che categorizza il tipo di risorsa.\
-Ad esempio, per riferirsi alla ricetta situata nel percorso `foo/recipe/my_item.json`, si utilizza la _resource location_ `foo:my_item`, dove `foo` è il namespace e `my_item` è l'identificatore della risorsa. La cartella `recipe`, che indica la tipologia della risorsa, non compare nella _resource location_ poiché il compilatore determina automaticamente il tipo di risorsa in base al contesto d'uso: se la _resource location_ viene letta in un contesto che richiede una ricetta, il compilatore cercherà il file nella cartella `recipe`; se invece il contesto richiede una funzione, cercherà nella cartella `function`.
+Per identificare univocamente le risorse all'interno di #glos.dp e #glos.rp si utilizzano le _resource location_. La loro struttura è composta da due parti separate dal carattere `:`, il #glos.ns seguito dal percorso della risorsa. Rispetto a un _path_ completo, la _resource location_ omette la cartella funzionale che categorizza il tipo di risorsa.\
+Ad esempio, per riferirsi alla ricetta situata nel percorso `foo/recipe/my_item.json`, si utilizza la _resource location_ `foo:my_item`, dove `foo` è il namespace e `my_item` è l'identificatore della risorsa.
+La cartella `recipe`, che indica la tipologia della risorsa, non compare nella _resource location_ poiché il compilatore determina automaticamente il tipo di risorsa in base al contesto d'uso. Se la _resource location_ viene letta in un contesto che richiede una ricetta, il compilatore cercherà il file nella cartella `recipe`; se invece il contesto richiede una funzione, cercherà nella cartella `function`.
 
 == Comandi
 
-Prima di spiegare cosa fanno i comandi, è necessario definire gli elementi basilari su cui essi agiscono.\
+Prima di spiegare la funzione dei comandi, è necessario definire gli elementi basilari su cui essi agiscono.\
 #glos.mc permette di creare ed esplorare mondi generati a partire da un _seed_~@seed casuale. Ogni mondo è composto da _chunk_~@chunk, sezioni colonnari aventi base di $16 times 16$ unità e altezza di 320 unità.\
 L'unità più piccola all'interno di questa griglia è il blocco, la cui forma corrisponde a quella di un cubo di lato unitario.
 Ogni blocco è dotato di collisione, ed individuabile in un mondo tramite coordinate dello spazio tridimensionale.
