@@ -7,7 +7,7 @@
 #import cosmos.clouds: *
 #show: show-theorion
 #set text(lang: "it")
-
+#let title = [Un Framework per la  Meta-programmazione in _Minecraft_]
 // cetz and fletcher bindings for touying
 #let cetz-canvas = touying-reducer.with(reduce: cetz.canvas, cover: cetz.draw.hide.with(bounds: true))
 #let fletcher-diagram = touying-reducer.with(reduce: fletcher.diagram, cover: fletcher.hide)
@@ -18,7 +18,7 @@
     // config-common(handout: true),
     config-common(frozen-counters: (theorem-counter,)), // freeze theorem counter for animation
     config-info(
-        title: [Un Framework per la\ Meta-programmazione\ in Minecraft],
+        title: title,
         subtitle: [Libreria OOPACK],
         author: [Nanni Alessandro],
         date: datetime(
@@ -26,7 +26,8 @@
             month: 12,
             day: 16,
         ).display("[day]/[month]/[year]"),
-        institution: [Alma Mater Studiorum],
+        institution: [Alma Mater Studiorum Università di Bologna],
+        short-title: title
     ),
 )
 

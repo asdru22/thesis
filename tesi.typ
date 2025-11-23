@@ -48,7 +48,7 @@ Creato nel 2009 dallo svedese Markus Persson e sviluppato nel 2011 dall'azienda 
 Il gioco presenta un mondo composto da cubi formati da _voxel_ (controparte tridimensionale del pixel) generati proceduralmente, dove i giocatori possono raccogliere risorse, costruire strutture, creare oggetti e affrontare creature ostili.
 
 #glos.mc è diventato il videogioco più venduto al mondo, perché non è semplicemente un prodotto di intrattenimento, ma un ambiente flessibile, accessibile, continuamente ampliato e sostenuto da una community globale che lo ha trasformato in un fenomeno culturale trasversale.
-#figure(image("assets/image.png"),caption: [Un mondo di #glos.mc.])
+#figure(image("assets/image.png"), caption: [Un mondo di #glos.mc.])
 
 Fin dalle sue origini, i creatori di #glos.mc hanno messo a disposizione dei giocatori un insieme di comandi~@command che consentiva di aggirare gli ostacoli incontrati nella propria esperienza di gioco.\
 Con il tempo, tale sistema si è evoluto in un articolato linguaggio di configurazione e scripting basato su file testuali, costituendo di fatto una _Domain Specific Language_~@dsl (_DSL_) mediante la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
@@ -156,15 +156,15 @@ Per identificare univocamente le risorse all'interno di #glos.dp e #glos.rp si u
 Ad esempio, per riferirsi alla ricetta situata nel percorso `foo/recipe/my_item.json`, si utilizza la _resource location_ `foo:my_item`, dove `foo` è il namespace e `my_item` è l'identificatore della risorsa.
 La cartella `recipe`, che indica la tipologia della risorsa, non compare nella _resource location_ poiché il compilatore determina automaticamente il tipo di risorsa in base al contesto d'uso. Se la _resource location_ viene letta in un contesto che richiede una ricetta, il compilatore cercherà il file nella cartella `recipe`; se invece il contesto richiede una funzione, cercherà nella cartella `function`.
 
-== Comandi
+== I Comandi
 
 Prima di spiegare la funzione dei comandi, è necessario definire gli elementi basilari su cui essi agiscono.\
-#glos.mc permette di creare ed esplorare mondi generati a partire da un _seed_~@seed casuale. Ogni mondo è composto da _chunk_~@chunk, sezioni colonnari aventi base di $16 times 16$ unità e altezza di 320 unità.\
+#glos.mc permette di creare ed esplorare mondi generati da un _seed_~@seed casuale, ognuno diverso dagli altri. Ogni mondo è composto da _chunk_~@chunk, sezioni colonnari aventi base di $16 times 16$ unità e altezza di 320 unità.\
 L'unità più piccola all'interno di questa griglia è il blocco, la cui forma corrisponde a quella di un cubo di lato unitario.
-Ogni blocco è dotato di collisione, ed individuabile in un mondo tramite coordinate dello spazio tridimensionale.
+Ogni blocco è dotato di collisione, ed individuabile nel mondo tramite coordinate dello spazio tridimensionale.
 Si definiscono entità invece tutti gli oggetti dinamici che si spostano in un mondo: sono dotate di una posizione, rotazione e velocità.
 
-I dati persistenti di blocchi ed entità sono compressi e memorizzati in una struttura dati ad albero chiamata _Named Binary Tags_~@nbt (#glos.nbt). Il formato "stringificato", `SNBT` è accessibile agli utenti e si presenta come una struttura molto simile a #glos.json, formata da coppie di chiave e valori.\
+I dati persistenti di blocchi ed entità sono compressi e memorizzati in una struttura dati ad albero chiamata _Named Binary Tags_~@nbt (#glos.nbt). Il formato "stringificato", `SNBT`, è accessibile ai giocatori e si presenta come una struttura molto simile a #glos.json, formata da coppie di chiave e valori.\
 
 #figure(
     ```snbt
@@ -187,7 +187,7 @@ I dati persistenti di blocchi ed entità sono compressi e memorizzati in una str
     caption: [Esempio di `SNBT`.],
 )
 
-Un comando è un'istruzione testuale che Minecraft interpreta per eseguire una specifica azione, come assegnare oggetti al giocatore, modificare l'ora del giorno o creare entità. Molti comandi usano selettori per individuare l'entità su cui essere applicati o eseguiti.\
+Un comando è un'istruzione testuale che #glos.mc interpreta per eseguire una specifica azione, come assegnare oggetti al giocatore, modificare l'ora del giorno o creare entità. Molti comandi richiedono selettori per individuare l'entità su cui essere applicati o eseguiti.\
 
 #figure(
     ```mcfunction
@@ -197,14 +197,14 @@ Un comando è un'istruzione testuale che Minecraft interpreta per eseguire una s
     ```,
     caption: [Esempio di comando che tra tutte le entità (`@e`), stampa quelle di tipo giocatore.],
 )
-Sebbene il sistema dei comandi sia privo delle funzionalità tipiche dei linguaggi di programmazione di alto livello, quali cicli `for` e `while`, strutture dati complesse o variabili generiche, esso fornisce comunque strumenti che consentono di emulare alcuni di questi comportamenti in forma limitata.
+Nonostante il sistema dei comandi sia privo delle funzionalità tipiche dei linguaggi di programmazione di alto livello, quali cicli `for` e `while`, strutture dati complesse o variabili generiche, esso fornisce comunque strumenti che consentono di emulare alcuni di questi comportamenti in forma limitata.
 Di seguito verranno illustrati i comandi che più si avvicinano a concetti tipici di programmazione.
 === Scoreboard
-Il comando `scoreboard` permette di creare dizionari di tipo `<Entità, Objective>`. Un `objective` rappresenta un valore intero a cui è associata una condizione (_criteria_) che ne determina la variazione. Il _criteria_ `dummy` corrisponde ad una condizione vuota, irrealizzabile.
-Su questi valori è possibile eseguire operazioni aritmetiche semplici, quali la somma o la sottrazione di un valore prefissato, oppure le quattro operazioni aritmetiche fondamentali#footnote[Le operazioni aritmetiche fondamentali sono somma, sottrazione, moltiplicazione e divisione.] con altri `objective`.
-Dunque una #glos.score può essere meglio vista come un dizionario `<Entità,<Intero, Condizione>>`.\
+Il comando `scoreboard` permette di creare dizionari di tipo `<Entità, Objective>`. Un `objective` rappresenta un valore intero associato ad una condizione (_criteria_) che ne determina la variazione. Il _criteria_ `dummy` corrisponde ad una condizione vuota, irrealizzabile.
+Su questi valori è possibile eseguire operazioni aritmetiche semplici, quali la somma o la sottrazione di un valore prefissato, oppure calcolare il risultato delle quattro operazioni aritmetiche fondamentali#footnote[Le operazioni aritmetiche fondamentali sono somma, sottrazione, moltiplicazione e divisione.] con altri `objective`.
+Dunque una #glos.score può essere meglio vista come un dizionario `<Entità, <Intero, Condizione>>`.\
 Prima di poter eseguire qualsiasi operazione su di essa, una #glos.score deve essere creata tramite il comando\ `scoreboard objectives add <objective> <criteria>`.\
-Per eseguire operazioni che non dipendono da alcuna entità si usano i cosiddetti _fakeplayer_.  Al posto di usare nomi di giocatori o selettori, si prefiggono i nomi con caratteri illegali, quali `$` e `#`. In questo modo ci si assicura che un valore non sia associato ad un vero utente, e quindi sia sempre disponibile.
+Per eseguire operazioni che non dipendono da alcuna entità si usano i cm  osiddetti _fakeplayer_.  Al posto di usare nomi di giocatori o selettori, si prefiggono i nomi con caratteri illegali, quali `$` e `#`. In questo modo ci si assicura che un valore non sia associato ad un vero utente, e quindi sia sempre disponibile.
 #figure(
     ```mcfunction
     scoreboard objectives add my_scoreboard dummy
@@ -218,11 +218,11 @@ Per eseguire operazioni che non dipendono da alcuna entità si usano i cosiddett
 Dunque, il sistema delle #glos.score permette di creare ed eseguire operazioni semplici esclusivamente su interi, con _scope_ globale, se e solo se fanno parte di una #glos.score dichiarata.
 
 === Data
-Per ottenere, modificare e combinare i dati #glos.nbt associati a entità, blocchi e #glos.str si usa il comando `data`.
+Per ottenere, modificare e combinare i dati #glos.nbt associati a entità, blocchi e #glos.str si utilizza il comando `data`.
 Come precedentemente citato, il formato #glos.nbt, una volta compresso, viene utilizzato per la persistenza dei dati di gioco.
 Oltre alle informazioni relative a entità e blocchi, in questo formato vengono salvati anche gli #glos.str.
 Essi sono un modo efficiente di immagazzinare dati arbitrari senza dover dipendere dall'esistenza di un certo blocco o entità.
-Per prevenire i conflitti, ogni #glos.str dispone di una _resource location_, che convenzionalmente coincide con il #glos.ns. Vengono dunque salvati nel file `command_storage_<namespace>.dat` come dizionario #glos.nbt.
+Per prevenire i conflitti, ogni #glos.str dispone di un prefisso, che convenzionalmente coincide con il #glos.ns. Vengono dunque salvati nel file `command_storage_<namespace>.dat` come dizionario #glos.nbt.
 
 #figure(
     ```mcfunction
@@ -235,8 +235,8 @@ Per prevenire i conflitti, ogni #glos.str dispone di una _resource location_, ch
 Questi comandi definiscono la stringa `My Cat` nello #glos.str, successivamente impostano il valore dallo #glos.str al campo nome dell'entità gatto più vicina, e infine eliminano i dati dallo #glos.str.
 
 === Execute
-Il comando `execute` consente di eseguire un altro comando cambiando valori quali l'entità esecutrice e la posizione. Questi elementi definiscono il contesto di esecuzione: l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito. Si usa il selettore `@s` per fare riferimento all'entità del contesto di esecuzione corrente.\
-Tramite `execute` è possibile specificare condizioni preliminari e salvare il risultato dell'esecuzione. Dispone di 14 sottocomandi, raggruppati in 4 categorie:
+Il comando `execute` permette l'esecuzione in catena di più comandi, cambiando valori quali l'entità esecutrice e la posizione. Questi e altri elementi definiscono il contesto di esecuzione: l'insieme dei parametri che determinano le modalità con cui il comando viene eseguito. Si usa il selettore `@s` per identificare l'entità del contesto di esecuzione corrente.\
+Tramite `execute` è possibile specificare condizioni preliminari e memorizzare l'esito di un comando. Dispone di 14 sottocomandi, raggruppati in 4 categorie:
 - modificatori: cambiano il contesto di esecuzione;
 - condizionali: controllano se certe condizioni sono rispettate;
 - contenitori: salvano i valori di output di un comando in una #glos.score, o in un contenitore di NBT;
@@ -257,21 +257,23 @@ Questo comando sta definendo quattro istruzioni da svolgere:
 + sposta l'esecuzione alla loro posizione attuale (`at @s`);
 + salva l'esito della prossima istruzione nello _score_ `on_stone` di quell'entità;
 + controlla se nella posizione del contesto di esecuzione corrente, il blocco sottostante sia di tipo `stone`.
-Al termine dell'esecuzione, lo _score_ `on_stone` di ogni entità sarà 1 se si trovava su un blocco di pietra, 0 altrimenti.
+Al termine dell'esecuzione, lo _score_ `on_stone` di ogni entità sarà 1 se posizionata su un blocco di pietra, 0 altrimenti.
 
 == Funzioni
-Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf. Una funzione non può esistere se non in un file con estensione`.mcfunction`. A differenza di quanto il nome possa suggerire, non prevedono valori di input o di output, ma contengono uno o più comandi che vengono eseguiti in ordine.\
+Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf. Una funzione non può esistere se non in un file con estensione`.mcfunction`.
+A differenza di quanto il nome possa suggerire, esse non prevedono valori di input o di output, ma contengono uno o più comandi eseguiti secondo l'ordine in cui sono scritti nel file.\
 
-In base alla complessità del branching e alle operazioni eseguite dalle funzioni, il compilatore (o più precisamente, il motore di esecuzione dei comandi) deve allocare una certa quantità di risorse per svolgere tutte le istruzioni durante un singolo _tick_. Il tempo di elaborazione aggiuntivo richiesto per l'esecuzione di un comando o di una funzione è definito _overhead_.
+In base alla complessità del _branching_ e alle operazioni eseguite dalle funzioni, il compilatore (o più precisamente, il motore di esecuzione dei comandi) alloca una certa quantità di risorse per svolgere tutte le istruzioni durante un singolo _tick_.
+Il tempo di elaborazione aggiuntivo richiesto per l'esecuzione di un comando o di una funzione è definito _overhead_.
 
-Ci sono più modi in cui le funzioni possono essere invocate da altri file di un datapack:
+Le funzioni possono essere invocate da altri file di un datapack in più modi:
 
 - tramite comandi: `function namespace:function_name` esegue la funzione immediatamente, mentre `schedule namespace:function_name <delay>` la esegue dopo un intervallo di tempo specificato;
 - da _function tag_: una _function tag_ è una lista in formato #glos.json contenente riferimenti a funzioni. #glos.mc ne fornisce due nelle quali inserire le funzioni da eseguire rispettivamente ogni _game loop_~@tick(`tick.json`)#footnote[Il _game loop_ di #glos.mc viene eseguito 20 volte al secondo; di conseguenza, anche le funzioni incluse nel tag `tick.json` vengono eseguite con la stessa frequenza.], e ogni volta che si ricarica da disco il datapack (`load.json`). Queste due _function tag_ sono riconosciute dal compilatore di #glos.mc solo se nel namespace `minecraft`;
 - altre risorse di un #glos.dp quali ricompense di `Advancement` (obiettivi) e effetti di `Enchantment` (incantesimi).
 
-Le funzioni vengono eseguite durante un _game loop_, completando tutti i comandi che contengono, inclusi quelli invocati altre funzioni.
-Quando un comando `execute` altera il contesto di esecuzione, la modifica non influenza i comandi successivi, ma viene propagata alle funzioni chiamate a partire da quel punto.
+Le funzioni in #glos.mc vengono eseguite all'interno di un game loop, completando tutti i comandi che contengono, comprese eventuali chiamate ad altre funzioni.
+Quando un comando `execute` modifica il contesto di esecuzione (ad esempio cambiando il giocatore o la posizione), questa modifica non influenza i comandi successivi nella funzione corrente, ma si applica alle funzioni chiamate a partire da quel punto.
 
 Le funzioni possono includere linee _macro_: comandi che, preceduti dal carattere `$`, dispongono di una o più sezioni delimitate da `$(...)`, le quali vengono sostituite al momento dell'invocazione con oggetti #glos.nbt specificati nel comando invocante.
 
@@ -297,7 +299,7 @@ Le funzioni possono includere linee _macro_: comandi che, preceduti dal caratter
 ) <esempio_macro>
 Il primo comando di `main.mcfunction` stamperà `my value is bar`, il secondo `my value is 123`.
 
-L'esecuzione dei comandi di una funzione può essere interrotta dal comando `return`. Funzioni che non contengono questo comando possono essere considerate di tipo `void`. Tuttavia il comando return può solamente restituire la parola chiave `fail` o un valore intero fisso.
+L'esecuzione dei comandi di una funzione può essere interrotta dal comando `return`. Funzioni che non contengono questo comando possono essere considerate di tipo `void`. Tuttavia il comando `return` può solamente restituire la parola chiave `fail` per indicare insuccesso o un valore intero fisso.
 
 Una funzione può essere richiamata ricorsivamente, anche modificando il contesto in cui viene eseguita. Questo comporta il rischio di creare chiamate senza fine, qualora la funzione sia invocata senza alcuna condizione di arresto. È quindi responsabilità del programmatore definire i vincoli alla chiamata ricorsiva.
 
@@ -312,7 +314,7 @@ Una funzione può essere richiamata ricorsivamente, anche modificando il contest
     caption: [Esempio di funzione ricorsiva che crea una scia lunga 10 blocchi nella direzione dove il giocatore sta guardando.],
 ) <funzione_ricorsiva>
 
-Ogni volta che viene chiamata, questa funzione istanzia una piccola #glos.tex intangibile e temporanea(_particle_~@particle) alla posizione associata al contesto di esecuzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, ovvero non c'è nessun giocatore nel raggio di 10 blocchi, la funzione non sarà più eseguita.
+Ogni volta che viene chiamata, questa funzione istanzia una piccola #glos.tex intangibile e temporanea (_particle_~@particle) alla posizione associata al contesto di esecuzione. Successivamente controlla se è presente un giocatore nel raggio di 10 blocchi. In caso positivo sposta il contesto di esecuzione avanti di $1/10$ di blocco e si chiama nuovamente la funzione. Quando il sotto-comando `if` fallisce, ovvero non c'è nessun giocatore nel raggio di 10 blocchi, la funzione non sarà più eseguita.
 
 Un linguaggio di programmazione si definisce Turing completo~@turing-complete se soddisfa tre condizioni fondamentali:
 + Presenta rami condizionali: deve poter eseguire istruzioni diverse in base a una condizione logica. Nel caso di #glos.mcf, ciò è realizzabile tramite il sotto-comando `if`.
@@ -326,10 +328,11 @@ In particolare, l'implementazione di funzionalità relativamente semplici richie
 = Problemi Pratici e Limiti Tecnici
 
 Il linguaggio #glos.mcf non è stato originariamente concepito come un linguaggio di programmazione Turing completo.
-Infatti, negli anni antecedenti dell'introduzione dei #glos.dp, il comando `scoreboard` veniva utilizzato secondo l'uso previsto dagli sviluppatori, ossia per monitorare le statistiche dei giocatori, quali il tempo di gioco o il numero di blocchi scavati.
-Gli sviluppatori di #glos.mc osservarono come questo e altri comandi venivano impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, e hanno dunque aggiornato progressivamente il sistema, fino ad arrivare, nel 2017 alla nascita dei #glos.dp.
+Infatti, negli anni antecedenti dell'introduzione dei #glos.dp, il comando `scoreboard` era impiegato in maniera convenzionale per monitorare le statistiche dei giocatori, quali il tempo di gioco o il numero di blocchi scavati.
+Gli sviluppatori di #glos.mc osservarono come questo e altri comandi venivano impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, e hanno dunque aggiornato progressivamente il sistema, fino a giungere, nel 2017 alla nascita dei #glos.dp.
 
-Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono nuove funzionalità o ne aggiornano di già esistenti.
+Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono nuove funzionalità o aggiornano quelle esistenti.
+Tuttavia, questo ambiente presenta ancora diverse limitazioni di natura tecnica, riconducibili al fatto che non era stato originariamente concepito per supportare logiche di programmazione complesse o per essere impiegato in progetti di grandi dimensioni.
 Tuttavia, questo ambiente presenta ancora diverse limitazioni di natura tecnica, riconducibili al fatto che non era stato originariamente concepito per supportare logiche di programmazione complesse o per essere impiegato in progetti di grandi dimensioni.
 
 == Limitazioni di Scoreboard
@@ -338,7 +341,7 @@ Come è stato precedentemente citato, `scoreboard` è usato per eseguire operazi
 Dopo aver creato un _objective_, è necessario impostare le costanti da utilizzare per le eventuali operazioni di moltiplicazione e divisione.
 Inoltre, è ammessa una sola operazione per comando `scoreboard`.
 
-Di seguito viene mostrato come l'espressione `int x = (y*2)/4-2` si calcola in #glos.mcf. Le variabili saranno prefissate da `$`, e le costanti da `#`.
+Di seguito viene mostrato come l'espressione `int x = (y*2)/4-2` si calcola in #glos.mcf. Le variabili sono prefissate da `$`, e le costanti da `#`.
 
 #figure(
     local(
@@ -365,10 +368,10 @@ Di seguito viene mostrato come l'espressione `int x = (y*2)/4-2` si calcola in #
     ),
     caption: [Esempio con $y=10$],
 )<scoreboard_set_const>
-Qualora non fossero stati impostati i valori di `#2` e `#4`, il compilatore li avrebbe valutati con valore 0 e l'espressione non sarebbe stata corretta.
+Qualora non fossero stati impostati i valori di `#2` e `#4`, il compilatore li avrebbe valutati come 0 e il risultato dell'espressione non sarebbe stato corretto.
 
 Si noti come, nell'esempio precedente, le operazioni vengano eseguite sulla variabile $y$, il cui valore risultante viene successivamente assegnato a $x$.
-Di conseguenza, sia `$x` che `$y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove $y$ rimane invariato.
+Di conseguenza, sia `$x` che `$y` conterranno il risultato finale pari a 3. Questo implica che il valore di $y$ viene modificato, a differenza dell'espressione a cui l'esempio si ispira, dove esso rimane invariato.
 Per evitare questo effetto collaterale, è necessario eseguire l'assegnazione $x = y$ prima delle altre operazioni aritmetiche.
 
 #figure(
@@ -401,14 +404,19 @@ La soluzione è quindi semplice, ma mette in evidenza come in questo contesto no
 
 Un ulteriore caso in cui l'ordine di esecuzione delle operazioni e il dominio ristretto agli interi assumono particolare rilevanza riguarda il rischio di errori di arrotondamento nelle operazioni che coinvolgono valori prossimi allo zero.
 
-Si supponga di voler calcolare il $5%$ di 40. In un linguaggio di programmazione di alto livello, entrambe le espressioni `40/100*5` e `40*5/100` restituiscono correttamente il valore 2. Scomponendo queste operazioni in comandi `scoreboard` si ottiene rispettivamente:
+Si supponga di voler calcolare il $5%$ di 40. In un linguaggio di programmazione di alto livello, entrambe le espressioni `40/100*5` e `40*5/100` restituiscono correttamente il valore 2. Scomponendo queste operazioni in comandi `scoreboard` si ottengono rispettivamente i seguenti comandi:
 
 #figure(
-    [```mcfunction
-        scoreboard players operation set $val math 40
-        scoreboard players operation $val math /= #100 math
-        scoreboard players operation $val math *= #5 math
-        ```
+    [
+      #local(
+            skips: ((7, 95),),
+            number-format: numbering.with("1"),
+            ```mcfunction
+            scoreboard players operation set $val math 40
+            scoreboard players operation $val math /= #100 math
+            scoreboard players operation $val math *= #5 math
+            ```,
+        )
         #v(5pt)
         ```mcfunction
         scoreboard players operation set $val math 40
@@ -444,9 +452,9 @@ Occorre inoltre considerare che tali operazioni sono limitate al dominio dei num
     caption: [Algoritmo che approssima la funzione $sin(x)$.],
 )
 
-La scrittura di algoritmi di questo tipo è impegnativa, e spesso richiede di gestire un input moltiplicato per $10^n$ il cui output è un intero dove sia assume che le ultime $n$ cifre siano decimali#footnote[Solitamente $n=3$.]. Inoltre, questo approccio può facilmente provocare problemi di _integer overflow_.
+La scrittura di algoritmi di questo tipo è impegnativa e richiede spesso di gestire un input moltiplicato per $10^n$ con output (nell'esempio, il file `.out` della funzione `math` del #glos.score) di tipo intero le cui ultime $n$ cifre rappresentano la parte decimale del risultato#footnote[Solitamente $n=3$.]. Inoltre, questo approccio può facilmente provocare problemi di _integer overflow_.
 
-In seguito all'introduzione delle _macro_, si è dunque iniziato a utilizzare le _lookup table_. Una _lookup table_ consiste in un _array_ memorizzato in uno #glos.str che contiene tutti gli output di una funzione per un intervallo prefissato di input.
+In seguito all'introduzione delle _macro_, si è diffuso l'utilizzo di _lookup table_. Una _lookup table_ consiste in un _array_ memorizzato in uno #glos.str che contiene tutti gli output di una funzione per un intervallo prefissato di input.
 
 Ipotizziamo mi serva la radice quadrata con precisione decimale di tutti gli interi tra 0 e 100. Si può creare uno #glos.str che contiene i valori $sqrt(i) space forall i in [0,100] inter NN$.
 
@@ -466,22 +474,23 @@ Ipotizziamo mi serva la radice quadrata con precisione decimale di tutti gli int
         ```,
     ),
     caption: [_Lookup table_ per $sqrt(x), "con" 0<=x<=100$.],
-)
+) <ex-8>
 Dunque, data `get storage my_storage sqrt[4]` restituirà il quinto elemento dell'array, ovvero $2.0$, l'equivalente di $sqrt(4)$.
 
-Dato che sono richiesti gli output di decine, se non centinaia di queste funzioni, i comandi per creare le _lookup table_ sono generati con script Python~@python-book, ed eseguiti da #glos.mc solamente quando il #glos.dp è inizializzato (tramite `load.json`). Poiché queste strutture non sono soggette ad operazioni di scrittura, ma solo di lettura, non c'è il rischio che vengano modificate durante la sessione di gioco.
+Poiché sono richiesti gli output per decine, se non centinaia, di valori in input, i comandi per la creazione delle _lookup table_ sono generati mediante script Python~@python-book ed eseguiti dal #glos.mc esclusivamente durante l'inizializzazione del #glos.dp (tramite `load.json`).
+Dal momento che tali strutture sono soggette a sole operazioni di lettura e non di scrittura, non sussiste il rischio di modifiche durante la sessione di gioco.
 
 == Alto Rischio di Conflitti
 
-Nella sezione precedente è stato modificato lo #glos.str `my_storage` per inserirvi un array. Si noti che non è stato specificato alcun #glos.ns, per cui il sistema ha assegnato implicitamente quello predefinito, `minecraft:`.
+In @ex-8 è stato modificato lo #glos.str `my_storage` per inserirvi un array. Si noti che non è stato specificato alcun #glos.ns, per cui il sistema ha assegnato implicitamente quello predefinito, `minecraft:`.
 
-Qualora un mondo contenesse due #glos.dp sviluppati da autori diversi, ed entrambi modificassero `my_storage` senza indicare esplicitamente un #glos.ns, potrebbero verificarsi conflitti.\
+Qualora un mondo contenesse due #glos.dp sviluppati da autori diversi, ed entrambi modificassero `my_storage` senza indicare esplicitamente un #glos.ns, potrebbero verificarsi e sovrascritture di dati.
 
-Un'altra situazione che può generare conflitti si verifica quando due #glos.dp sovrascrivono la stessa risorsa nel #glos.ns `minecraft`. Se entrambi modificano `minecraft/loot_table/blocks/stone.json`, che determina gli oggetti ottenibili da un blocco di pietra, il compilatore utilizzerà il file del #glos.dp caricato per ultimo.
+Un'altra situazione che può risultare conflitti si verifica quando due #glos.dp sovrascrivono la stessa risorsa nel #glos.ns `minecraft`. Se entrambi modificano `minecraft/loot_table/blocks/stone.json`, che determina gli oggetti ottenibili da un blocco di pietra, il compilatore utilizzerà il file del #glos.dp caricato per ultimo, ignorando le funzionalità dell'altro.
 
 Il rischio di sovrascrivere o utilizzare in modo improprio risorse appartenenti ad altri #glos.dp non riguarda solo file che prevedono una _resource location_, ma si estende anche a componenti come #glos.score e #glos.tag.
 
-Nell'esempio seguente vengono presentati due frammenti di codice tratti da #glos.dp sviluppati da autori diversi, aventi il medesimo obiettivo: eseguire una funzione sull'entità chiamante (`@s`) al termine di un determinato intervallo di tempo.
+Nell'esempio seguente vengono presentati due frammenti di codice tratti da #glos.dp sviluppati da autori diversi con il medesimo obiettivo di eseguire una funzione sull'entità chiamante (`@s`) al termine di un determinato intervallo di tempo.
 In entrambi i casi, le funzioni deputate all'aggiornamento del timer vengono eseguite a ogni _tick_, ossia venti volte al secondo.
 
 #figure(
@@ -505,12 +514,11 @@ In entrambi i casi, le funzioni deputate all'aggiornamento del timer vengono ese
     caption: [Due funzioni che aggiornano un timer.],
 )
 
-Le due funzioni modificano il medesimo _fakeplayer_ all'interno della stessa #glos.score. Poiché `timer_a` incrementa `timer` mentre `timer_b` lo decrementa, al termine di un _tick_ il valore rimane invariato.
+Le due funzioni modificano il medesimo _fakeplayer_ all'interno della stessa #glos.score. Poiché `timer_a` incrementa il valore di `timer` mentre `timer_b` lo decrementa, al termine di ogni _tick_ esso risulta invariato.
 Qualora entrambe modificassero `timer` nella stessa direzione, ad esempio incrementandolo, la durata effettiva del timer risulterebbe dimezzata.
 Questo costituisce uno dei motivi per cui il nome di una _scoreboard_ deve essere prefissato con un #glos.ns, ad esempio `a.timer`#footnote[Come separatore si utilizza `.` anziché `:` in quanto quest'ultimo è un carattere ammesso nel nome di una #glos.score.].
 
-Tra le varie condizioni in base alle quali i selettori possono filtrare entità, vi sono i _tag_, stringhe memorizzate in un array nell'#glos.nbt di un'entità.
-
+Tra le varie condizioni in base alle quali i selettori possono filtrare le entità, vi sono i _tag_, stringhe memorizzate in un array nei dati #glos.nbt di un'entità.\
 Dunque, se nell'esempio precedente gli sviluppatori necessitano che la funzione `timer` venga eseguita esclusivamente dalle entità contrassegnate da un determinato _tag_, ad esempio `has_timer`, i comandi per invocare `timer_a` e `timer_b` risulteranno i seguenti:
 
 #figure({
@@ -529,7 +537,7 @@ Dunque, se nell'esempio precedente gli sviluppatori necessitano che la funzione 
     ```]
 })
 
-In entrambi i casi, `@e[tag=has_timer]` seleziona lo stesso insieme di entità. Ciò può risultare problematico se, allo scadere del timer di $b$, vengono eseguiti comandi che determinano comportamenti inaspettati o erronei per le entità del #glos.dp di $a$ (o viceversa).
+In entrambi i casi, `@e[tag=has_timer]` seleziona lo stesso insieme di entità. Ciò può risultare problematico se, allo scadere del timer di $b$, vengono eseguiti comandi che determinano comportamenti inaspettati o erronei per le entità del #glos.dp di $a$ o viceversa.
 
 Dunque, come per i nomi delle #glos.score, è buona norma prefissare i _tag_ con il #glos.ns del proprio progetto.
 
@@ -1616,6 +1624,6 @@ Va tuttavia rilevato che l'utilizzo della libreria richiede un considerevole sfo
 Si riconosce inoltre la possibilità di estendere la libreria con ulteriori metodi di utilità, potenzialmente più specifici ma comunque in grado di ridurre il carico di lavoro per lo sviluppatore.
 Per esempio, potrebbe essere implementato un metodo che, dati uno o più valori costanti in input, generi automaticamente la funzione contenente i comandi #glos.score necessari per l'inizializzazione delle costanti #glos.score.
 
-Oltre alle conoscenze tecniche acquisite, lo sviluppo del progetto in un arco temporale prolungato ha consentito di riconsiderare alcune scelte implementative, andando oltre il semplice obiettivo di produrre software funzionante.
-Si è avuta l'opportunità di ottimizzare porzioni di codice che, pur funzionando correttamente, non rappresentavano la soluzione più efficiente né l'approccio più agevole per l'utente finale.\
-Tale processo di revisione ha favorito lo sviluppo di un'analisi più critica verso la qualità complessiva del software, ponendo particolare attenzione alla manutenibilità del codice e all'esperienza d'uso.
+Oltre alle conoscenze tecniche acquisite, lo sviluppo del progetto su un arco temporale prolungato ha consentito di rivedere, migliorandole, alcune scelte implementative iniziali.
+Ciò ha portato ad ottimizzare alcune porzioni di codice che, pur funzionando correttamente, non rappresentavano la soluzione più efficiente né l'approccio più agevole per l'utente finale.\
+Tale processo di revisione ha favorito lo sviluppo di un'analisi critica della qualità complessiva del software, con particolare attenzione alla manutenibilità del codice e all'esperienza d'uso.
