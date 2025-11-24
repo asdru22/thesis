@@ -29,7 +29,7 @@
         Infine, un grazie di cuore ai miei cari amici Alessio, Daniele, Giovanni, Jacopo e Luca per le tante ore di studio trascorse insieme e per aver reso la mia vita universitaria più leggera.
     ],
     abstract: [
-        La _Domain Specific Language_ (_DSL_) del videogioco svedese Minecraft, #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati #glos.pack, in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e non dispone di costrutti quali variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
+        La _Domain Specific Language_ (_DSL_) del videogioco svedese #glos.mc, #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati #glos.pack, in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e non dispone di costrutti quali variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
 
         Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico che, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf, giunge alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto sfrutta il sistema di tipi di Java per fornire validazione statica, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate in soluzioni alternative.
 
@@ -1017,7 +1017,7 @@ Gli oggetti passati come parametro _variable arguments_ (_varargs_~@varargs, `Ob
 
 === Classi File Astratte
 
-L'interfaccia `FileFactory` è implementata come classe annidata all'interno dell'oggetto astratto #c.pf, il quale rappresenta qualsiasi tipo di file che non contiene suoni o immagini (ovvero file di testo o dati generici).\
+L'interfaccia `FileFactory` è implementata come classe annidata all'interno dell'oggetto astratto #c.pf, il quale rappresenta qualsiasi file di contenuto testuale.\
 Questa _nested class_, chiamata #c.f, dispone di due parametri e ha il compito di istanziare le sottoclassi di #c.pf.
 #figure(
     ```java
@@ -1027,17 +1027,22 @@ Questa _nested class_, chiamata #c.f, dispone di due parametri e ha il compito d
     caption: [Intestazione della classe #c.f per #c.pf],
 )
 `F` è un tipo generico che estende `PlainFile<C>`, rappresenta il tipo di file che la classe istanzierà. Vincolando `F` a `PlainFile<C>`, la #glos.f garantisce che tutti i file creati abbiano un contenuto di tipo `C` e siano sottoclassi di #c.pf.\
-Il contenuto `C` del file è determinato dalle sottoclassi che ereditano da #c.pf. Ciò consente alla #glos.f di operare in modo generico, generando file con contenuti eterogenei senza necessità di duplicare codice.
+Il contenuto `C` del file è determinato dalle sottoclassi che ereditano #c.pf.
+Ciò consente alla #glos.f di operare in modo generico, generando file con contenuti eterogenei senza necessità di duplicare codice.
 
 La #glos.f mantiene un riferimento all'oggetto `Class`~@class parametrizzato con il tipo `F`, corrispondente alla classe degli oggetti da istanziare, utilizzato nel metodo `instantiate()`.
-Questo restituisce l'oggetto da creare dati due parametri: il nome del file da creare, e il suo contenuto (di tipo `Object`, dato che ancora si sta operando in un contesto generico).
+Questa funzione restituisce l'oggetto da creare dati due parametri: il nome del file da creare, e il suo contenuto di tipo `Object`, in quanto si sta ancora operando in un contesto generico.
 
-La funzione esegue una sequenza di operazioni per istanziare l'oggetto.
-Inizialmente, ottiene un riferimento alla classe del contenuto (`StringBuilder.class` o `JsonObject.class`), necessario per individuare il costruttore della classe `F`. Successivamente, recupera il costruttore tramite _reflection_, verificando che la classe `F` disponga di un costruttore con i parametri `String name` e `C content`. Prima di procedere con l'istanziazione, rende accessibile il costruttore, operazione indispensabile per accedere a costruttori privati o protetti. A questo punto, crea un'istanza della classe e la aggiunge al contesto corrente. Infine, restituisce l'oggetto creato.
+Per istanziare l'oggetto, la funzione ottiene inizialmente un riferimento alla classe del contenuto (`StringBuilder.class` o `JsonObject.class`), necessario per individuare il costruttore della classe `F`.
+Successivamente, recupera il costruttore tramite _reflection_, verificando che la classe `F` disponga di un costruttore con i parametri `String name` e `C content`.
+Prima di procedere con l'istanziazione, rende accessibile il costruttore, operazione indispensabile per accedere a costruttori privati o protetti.
+In seguito, crea un'istanza della classe e la aggiunge al contesto corrente.
+Infine, restituisce l'oggetto creato.
 
 Le classi #c.tf e #c.jf estendono #c.af, utilizzando rispettivamente #c.sb~@stringbuilder e #c.jo~@jsonobject come tipo di `content`.
 
-#c.tf rappresenta un file di testo generico, il cui contenuto è gestito tramite un oggetto #c.sb, così da consentire operazioni di concatenazione delle stringhe in modo efficiente. L'unica classe che la estende è `Function`, poiché è l'unico tipo di file nel progetto che prevede la scrittura diretta di testo.
+#c.tf rappresenta un file di testo generico, il cui contenuto è gestito tramite un oggetto #c.sb per consentire la concatenazione efficiente di stringhe.
+L'unica classe che la estende è `Function`, poiché è l'unico tipo di file nel progetto che prevede la scrittura diretta di testo.
 
 #c.jf è invece la classe astratta ereditata da tutti i file #glos.json di un #glos.pack. Il suo contenuto è di tipo #c.jo, affinché si possano gestire e manipolare facilmente dati in formato #glos.json tramite la libreria _GSON_~@gson di Google.\
 La #glos.f di #c.jf eredita quella di #c.pf, aggiungendovi metodi specifici per la creazione di di file #glos.json.
@@ -1049,13 +1054,14 @@ La #glos.f di #c.jf eredita quella di #c.pf, aggiungendovi metodi specifici per 
     ```,
     caption: [Intestazione della classe #c.f per #c.jf.],
 )
-L'estratto di codice riportato definisce la #glos.f incaricata di istanziare esclusivamente classi che estendono #c.jf. Questa classe eredita la factory di #c.pf, specializzandola per gestire contenuti di tipo #c.jo. Inoltre, implementa l'interfaccia `JsonFileFactory`, la quale definisce i metodi di creazione specifici per i file #glos.json, che dunque hanno come parametro #c.jo.\
+L'estratto di codice riportato definisce la #glos.f incaricata di istanziare esclusivamente classi che estendono #c.jf.
+Questa classe eredita la factory di #c.pf, specializzandola per gestire contenuti di tipo #c.jo. Inoltre, implementa l'interfaccia `JsonFileFactory`, la quale definisce i metodi di creazione specifici per i file #glos.json, che dunque hanno come parametro #c.jo.\
 Nella classe #c.jf viene anche eseguito l'#glos.or del metodo `getExtension()` per restituire la stringa `"json"`.
 
 Nonostante il contenuto richiesto dalle classi sopra descritte non sia di tipo `String`, esso viene comunque convertito in stringa prima della scrittura su file.
 
 Prima della scrittura effettiva, ogni file testuale viene sottoposto a un leggero processo di _parsing_.
-Oltre alla già citata sostituzione dei valori segnaposto `%s`, una volta che #c.sb e #c.jo sono stati convertiti in stringhe, il contenuto viene analizzato per individuare pattern specifici.
+Oltre alla già citata sostituzione dei valori segnaposto `%s`, dopo che #c.sb e #c.jo sono stati convertiti in stringhe, il contenuto viene analizzato per individuare pattern specifici.
 La sottostringa `"$ns$"` viene sostituita con il nome effettivo del #glos.ns attivo al momento della costruzione, mentre `"$name$"` viene sostituito con la _resource location_ del file.
 Quest'ultimo risulta particolarmente utile nei casi di dipendenze circolari, in cui può essere richiesto il nome di un oggetto prima che esso sia effettivamente istanziato, dal momento che non è ancora possibile ottenere la sua rappresentazione testuale tramite _casting_ implicito a stringa.
 
@@ -1101,12 +1107,13 @@ Quest'ultimo risulta particolarmente utile nei casi di dipendenze circolari, in 
     caption: [Diagramma del sistema progettato fino a questo punto.],
 )
 
-Nella struttura riportata non sono ancora stati definiti metodi o classi specifiche per l'implementazione di un #glos.pack. Ritengo che questo livello di astrazione sia potenzialmente applicabile anche in altri contesti, in quanto permette di generare in modo sistematico più file a partire da un'unica definizione di riferimento. Questo approccio potrebbe risultare particolarmente utile anche in altre DSL caratterizzate da vincoli strutturali, dove la generazione automatizzata di file correlati è un requisito per la scalabilità e la manutenibilità del codice.\
+Nella struttura riportata non sono ancora stati definiti metodi o classi specifiche per l'implementazione di un #glos.pack. Ritengo che questo livello di astrazione sia potenzialmente applicabile anche in altri contesti, in quanto permette di generare in modo sistematico più file a partire da un'unica definizione di riferimento. Questo approccio potrebbe risultare particolarmente utile anche in altre DSL caratterizzate da vincoli strutturali, dove la generazione automatizzata di file correlati è un requisito per la scalabilità e la manutenibilità del codice.
+
 Di seguito invece si esporranno elementi e funzionalità definite appositamente per lo sviluppo dei #glos.pack.
 
 == Classi Concrete
 
-=== File e Module
+=== File
 
 Le classi astratte #c.dj e #c.aj, sottoclassi di #c.jf, eseguono l'#glos.or del metodo `collectByType()` di #c.fso per specificare se il file rappresentato appartiene rispettivamente alla categoria #glos.dp o #glos.rp.
 
@@ -1122,10 +1129,11 @@ Le classi astratte #c.dj e #c.aj, sottoclassi di #c.jf, eseguono l'#glos.or del 
 
 Queste saranno poi ereditate dalle classi concrete dei file che compongono un #glos.pack.
 
-Unica eccezione è la classe #c.fn. Questa estende direttamente #c.tf, indicando la propria estensione (`.mcfunction`) con #glos.or del metodo `getExtension()`, e anche il proprio tipo come visto nell'esempio sopra con #c.dj.
+Unica eccezione è la classe #c.fn.
+Questa estende direttamente #c.tf, indicando la propria estensione (`.mcfunction`) con #glos.or del metodo `getExtension()`, e tipo tramite #glos.or di `collectByType()` similmente a #c.dj.
 Dal momento che #c.tf non dispone di una #glos.f per file di testo non in formato #glos.json, sarà  la #glos.f di #c.fn stessa a estendere `PlainFile.Factory`, definendo come parametro per il contenuto del file #c.sb, e come oggetto istanziato #c.fn.
 
-Le classi rappresentanti file di alto livello sono dotate di un attributo statico e pubblico di tipo `JsonFileFactory<...>` chiamato `f`, parametrizzato per la classe specifica che istanzia.
+Le classi rappresentanti file di alto livello sono dotate di un attributo statico e pubblico di tipo `JsonFileFactory<...>` chiamato `f`, parametrizzato per la classe specifica che istanzia. Con questo approccio si ha accesso rapido ai _factory methods_ di ogni file, #glos.json e non.
 Queste classi sono 39 in totale, e ognuna corrisponde a un specifico oggetto utile al funzionamento di un #glos.dp o #glos.rp (30 e 9 rispettivamente).
 Poiché ognuna di queste deve disporre di una #glos.f, un costruttore, ed eseguire l'#glos.or del metodo `getFolderName()`, è stata impiegata una libreria per generare il loro codice Java.
 
@@ -1144,7 +1152,7 @@ Così facendo non sarebbe stato necessario creare una classe dedicata per ciascu
 )
 
 Tuttavia è evidente che non risulta comodo per l'utente finale dover specificare tutti questi parametri ogni volta che necessita di utilizzare la #glos.f.\
-Dunque ho scritto una classe di utilità `CodeGen` che sfrutta la libreria _JavaPoet_~@javapoet per creare le classi e i metodi al loro interno. In questo modo per creare un modello si può semplicemente scrivere `Model.f.of(json)`.
+Dunque è stata implementata una classe di utilità `CodeGen` che sfrutta la libreria _JavaPoet_~@javapoet per creare le classi che rappresentano i file di un #glos.pack e i metodi al loro interno. Con queste classi, per creare un modello si può semplicemente scrivere `Model.f.of(json)`.
 
 Classi che rappresentano file binari (immagini, suoni) non ereditano la #c.f di #c.pf, ma usano #glos.f proprie per istanziare #c.t e #c.s.
 
@@ -1152,7 +1160,10 @@ L'oggetto #c.t estende un #c.af che ha come contenuto una #c.bi~@bufferedimage. 
 
 I suoni invece usano come contenuto un array di byte. La loro #glos.f, similmente a quella di #c.t, permette di caricare suoni dalle risorse del progetto (`resources/sound`).
 
-È stata definita una sottoclasse astratta di `Folder`, denominata #c.m, con l'obiettivo di promuovere la modularità del codice attraverso una chiara separazione delle responsabilità e l'aggregazione di contenuti affini. Ad esempio, nel contesto dell'implementazione di una feature $A$, tutte le risorse e i dati ad essa correlati possono essere raggruppati all'interno dello specifico #c.m $A$.
+=== Module
+
+È stata definita una sottoclasse astratta di `Folder`, denominata #c.m, con l'obiettivo di promuovere la modularità del codice attraverso una chiara separazione delle responsabilità e l'aggregazione di contenuti affini.
+Ad esempio, nel contesto dell'implementazione di una feature $A$, tutte le risorse e i dati ad essa correlati possono essere raggruppati all'interno dello specifico #c.m $A$.
 
 La classe dispone di un _entry point_, ovvero una funzione astratta `content()` che verrà sovrascritta da tutte le classi che ereditano #c.m, con lo scopo di fornire un chiaro punto in cui definire la logica interna del modulo.
 
@@ -1161,53 +1172,58 @@ I moduli vengono istanziati tramite il metodo `register(Class<? extends Module>.
 Quando un nuovo modulo viene istanziato, il costruttore imposta la nuova istanza come contesto corrente. Successivamente viene invocato il metodo `content()`, tramite il quale viene eseguito il codice specifico del modulo. Al termine di questa esecuzione, il costruttore ripristina il contesto precedente chiamando il metodo `exit()` dei #c.ci.
 In questo modo si garantisce che l'esecuzione di ciascun modulo avvenga in maniera indipendente, evitando che compili in un contesto non pertinente.
 
-=== Namespace e Project
+=== Namespace
 
 Le classi concrete di file sono raggruppate all'interno di un #c.ns. Analogamente alla classe `Folder`, quest'ultimo gestisce un `Set` di elementi figli e implementa le interfacce #c.b e #c.ci.
-L'implementazione di quest'ultima è necessaria poiché un #c.p può essere composto da molteplici #glos.ns; è pertanto indispensabile tracciare quello corrente destinato ad accogliere i #c.fso appena istanziati.\
-Poiché gli elementi figli di #c.ns possono essere di diversa natura (_data_ o _assets_), è necessario dividerli prima che vengano scritti su file. Questi devono essere indirizzati verso i rispettivi contesti: il #glos.ns di competenza del #glos.dp per la componente dati e quello relativo al #glos.rp per le risorse.
+L'implementazione di quest'ultima è necessaria poiché un #c.p può essere composto da molteplici #glos.ns; è pertanto indispensabile tracciare quello corrente destinato ad accogliere i #c.fso istanziati.\
+Poiché gli elementi figli di #c.ns sono di natura diversa (_data_ o _assets_), è necessario dividerli prima della loro scrittura su file.
+Questi devono essere indirizzati verso i rispettivi contesti: il #glos.ns del #glos.dp per la componente _data_ e quello relativo al #glos.rp per gli _assets_.
 
-La classe presenta una particolarità nel suo metodo `exit()`, usato per segnalare che non si vogliono più creare file su questo #glos.ns.
+La classe presenta una particolarità nel suo metodo `exit()`, usato per indicare quando non si vogliono più creare file su questo #glos.ns.
 Oltre a indicare all'oggetto #c.c di chiamare `pop()` sul suo `stack` interno, viene anche chiamato il metodo `addNamespace()` di #c.p  che verrà mostrato in seguito.
 
-La classe #c.p rappresenta la radice del progetto che verrà creato, e contiene informazioni essenziali per l'esportazione del progetto. Queste verranno impostate dall'utente finale tramite un _builder_.
+=== Project
+
+La classe #c.p rappresenta la radice dell'albero corrispondente all'intero #glos.pack, e contiene informazioni essenziali per l'esportazione del progetto. Queste verranno impostate dall'utente finale tramite un _builder_.
 
 Il _builder pattern_ è un #glos.dep creazionale utilizzato per costruire oggetti complessi progressivamente, separando la logica di costruzione da quella di istanziazione dell'oggetto.
 È particolarmente utile quando il costruttore di un oggetto possiede molti parametri opzionali, come nel caso di #c.p.\
 Tramite la classe `Builder` di #c.p, si possono specificare:
 - nome del mondo, ovvero in quale _save file_ verrà esportato il #glos.dp;
-- nome del progetto;
-- versione del #glos.pack. Questa verrà usata per comporre il nome delle cartelle #glos.dp e #glos.rp esportate, e anche per ottenere il loro rispettivo `pack_format` richiesto;
-- _path_ dell'icona di #glos.dp e #glos.rp, che verrà prelevata dalle risorse;
-- descrizione in formato #glos.json o stringa di #glos.dp e #glos.rp, richiesta dal file `pack.mcmeta` di entrambi.
-- uno o più _build path_, ovvero la cartella radice in cui saranno esportati il #glos.dp e #glos.rp costruiti. In genere questa coinciderà con la cartella globale di minecraft, nella quale sono raccolti tutti i #glos.rp e i _save file_, tra cui quello in cui si vuole esportare il #glos.dp.
+- il nome del progetto;
+- la versione del #glos.pack. Questa verrà usata per comporre il nome delle cartelle #glos.dp e #glos.rp esportate, e anche per ottenere il loro rispettivo `pack_format` richiesto;
+- il _path_ dell'icona di #glos.dp e #glos.rp, che verrà prelevata dalle risorse;
+- la descrizione in formato #glos.json o stringa di #glos.dp e #glos.rp, richiesta dal file `pack.mcmeta` di entrambi.
+- uno o più _build path_, ovvero cartelle radice in cui saranno esportati il #glos.dp e #glos.rp costruiti. In genere questa coinciderà con la cartella globale di #glos.mc, nella quale sono raccolti tutti i #glos.rp e i _save file_, tra cui quello in cui si vuole esportare il #glos.dp.
 
 Dopo aver definito questi valori, il progetto sarà in grado di comporre ogni _path_ cui dovrà esportare i file di #glos.dp e #glos.rp.
 
-Un ulteriore #glos.dep creazionale applicato a #c.p è _singleton_, il cui scopo è garantire che una singola istanza di una classe in tutto il programma e renderla accessibile da qualunque punto del codice. Questo viene implementato tramite una variabile statica e privata di tipo #c.p all'interno della classe stessa. Un riferimento ad essa è ottenuto con il metodo `getInstance()`, che solleva un errore nel caso il progetto non sia ancora stato costruito con il `Builder`.
+Un ulteriore #glos.dep applicato a #c.p è _singleton_, che garantisce l'esistenza di un'unica istanza della classe nell'intero programma, accessibile da qualsiasi punto del codice.
+Questo viene implementato tramite una variabile statica e privata di tipo #c.p all'interno della classe stessa. Un riferimento ad essa è ottenuto con il metodo `getInstance()`, che solleva un errore nel caso il progetto non sia ancora stato costruito con il `Builder`.
 
-#c.p dispone al suo interno di attributi di tipo #c.dp e #c.rp. Questi hanno il compito di contenere i file che saranno scritti su memoria rigida ed estendono la classe astratta #c.gp.\
-#c.gp implementa le interfacce #c.b e `Versionable`. Quest'ultima fornisce i metodi per ottenere i _pack format_ corrispettivi alla versione del progetto.\
-Fornisce inoltre l'attributo `namespaces` di tipo `Map`~@map, nel quale verranno salvati i corrispettivi #c.ns.
-Tramite il suo metodo `makeMcMeta()` viene generata la struttura #glos.json che indicherà al compilatore di #glos.mc il format (_minor_ e _major_) e la descrizione della corrispettiva cartella.\
+La classe #c.p dispone al suo interno di attributi di tipo #c.dp e #c.rp. Questi hanno il compito di contenere i file che saranno scritti su memoria rigida ed estendono la classe astratta #c.gp.\
+Questa implementa le interfacce #c.b e `Versionable`, fornendo così i metodi per ottenere i _pack format_ corrispettivi alla versione del progetto.\
+Dispone inoltre di un attributo `namespaces` di tipo `Map`~@map, nel quale verranno salvati i #c.ns.
+Tramite il metodo `makeMcMeta()` viene generato il file `pack.mcmeta`, obbligatorio per #glos.dp e #glos.rp. Esso comunica a #glos.mc il valore di `pack_format`, dipendente alla versione per la quale è stato sviluppato, oltre alla descrizione del #glos.pack.\
 Il metodo `build()`, è sovrascritto affinché iteri su tutti i valori del dizionario `namespaces`, propagando la costruzione.
 
-Il metodo `addNamespace()`, accennato precedentemente, non aggiunge direttamente il #glos.ns al progetto. Prima divide i #c.fso che contiene tra quelli inerenti alle risorse (_assets_) e quelli relativi alla logica (_data_). Questa suddivisione viene fatta chiamando il metodo precedentemente citato `collectByType()`. Al termine della divisione si avranno due nuovi #glos.ns omonimi, ma con i contenuti divisi per funzionalità.
+Il metodo `addNamespace()`, accennato precedentemente, non aggiunge direttamente il #glos.ns al progetto. Prima divide i #c.fso che contiene tra quelli inerenti alle risorse (_assets_) e quelli relativi alla logica (_data_). Questa suddivisione viene fatta chiamando il metodo polimorfico già citato `collectByType()`. Al termine della divisione si avranno due nuovi #glos.ns omonimi, ma con i contenuti divisi per funzionalità.
 Il #glos.ns che contiene i file di _data_ sarà aggiunto alla lista di #c.ns di `datapack`. Se il #glos.ns contenente gli _assets_ non è vuoto, verrà aggiunto a quelli di `resourcepack`.
 
-L'invocazione del metodo `build()` si propaga a cascata partendo da #c.p verso i campi `datapack` e `resourcepack`, i quali delegano l'operazione ai rispettivi `namespace`. Questi ultimi a loro volta estendono l'esecuzione a tutti gli elementi figli (cartelle e file), garantendo così il completo attraversamento dell'albero.
+L'invocazione del metodo `build()` si propaga a cascata partendo da #c.p verso i campi `datapack` e `resourcepack`, i quali delegano l'operazione ai rispettivi `namespace`.
+Questi a loro volta estendono l'esecuzione a tutti gli elementi figli (cartelle e file), garantendo così il completo attraversamento dell'albero.
 
-Con gli oggetti descritti fin'ora è possibile costruire un #glos.pack a partire da codice Java, tuttavia si possono sfruttare ulteriormente proprietà del linguaggio di programmazione per implementare funzioni di utilità, che semplificano ulteriormente lo sviluppo.
+Con gli oggetti descritti fin'ora è possibile costruire un intero #glos.pack a partire da codice Java, tuttavia si possono sfruttare ulteriormente proprietà del linguaggio di programmazione per implementare funzioni di utilità, che semplificano ulteriormente lo sviluppo.
 
 == Utilità
 
 === Trova o Crea File
 
-Il metodo `find()`, descritto precedentemente ( @find), è impiegato in metodi di utilità che permettono di modificare i contenuti di file, in particolare quelli soggetti a modifiche da più punti del codice.
+Il metodo `find()`, descritto precedentemente (@find), è impiegato in metodi di utilità che permettono di modificare i contenuti di file, in particolare quelli soggetti a modifiche da più punti del codice.
 Ad esempio, i file `lang` dedicati alla localizzazione richiedono un aggiornamento costante per integrare le nuove voci. Similmente, ogni nuovo suono deve essere registrato nel file `sounds.json`.
 Come accennato in precedenza, quando questi file di risorse vengono utilizzati dagli sviluppatori di #glos.mc, non vengono modificati manualmente, ma generati automaticamente tramite codice Java proprietario.
 
-Proprio perché questi file non sono stati concepiti per essere modificati manualmente, sono stati implementati nella classe `Util` metodi dedicati per aggiungere elementi alle risorse in modo programmatico, accessibili da qualunque parte del progetto.\
+Proprio perché questo tipo di risorse non è concepito per essere modificati manualmente, sono stati implementati nella classe `Util` metodi dedicati per aggiungere elementi alle risorse in modo programmatico, accessibili da qualunque parte del progetto.\
 Questo sistema si appoggia ad una funzione che permette di ottenere un riferimento all'oggetto ricercato, o di crearne uno nuovo qualora questo non venga trovato.
 #figure(
     ```java
@@ -1230,9 +1246,11 @@ Questo sistema si appoggia ad una funzione che permette di ottenere un riferimen
     caption: [Metodo che sfrutta la programmazione funzionale per restituire il #c.jf cercato.],
 )
 Il metodo accetta in input il tipo della classe, il nome dell'oggetto ricercato e un `Supplier`~@supplier.
-L'esecuzione avvia uno `Stream`~@stream sugli elementi figli del `namespace` di riferimento, mappando ciascuno di essi tramite l'invocazione di `find()`: tale operazione tenta di individuare l'oggetto nel relativo sotto-albero, generando una sequenza di #c.o che risulteranno vuoti ad eccezione dell'eventuale corrispondenza trovata. La pipeline prosegue scartando gli #c.o vuoti ed estraendo il valori di quello valido. Il flusso termina selezionando il primo risultato tramite `findFirst()`; qualora la ricerca non produca alcun esito, viene invocato il `Supplier` per generare e restituire una nuova istanza.
+L'esecuzione avvia uno `Stream`~@stream sugli elementi figli del #glos.ns, mappando ciascuno di essi tramite l'invocazione di `find()`: tale operazione genera una sequenza di #c.o che viene filtrata per scartare i risultati vuoti.
+La pipeline estrae quindi il valore dell'eventuale corrispondenza, restituendo il primo esito utile tramite `findFirst();` avvolgendolo in un #c.o.
+Qualora la ricerca non produca alcun esito, e dunque l'#c.o è vuoto, viene invocato il `Supplier` per generare e restituire una nuova istanza.
 
-Si garantisce così che il metodo restituisca l'oggetto ricercato o uno nuovo. Il metodo `orElseGet()` di Java rappresenta un'applicazione del #glos.dep _lazy loading_, che differisce dal tradizionale `orElse()` per l'uso di un `Supplier` che viene invocato solo se l'#c.o è vuoto. Questo approccio consente di ritardare la creazione di un oggetto fino al momento in cui è effettivamente necessario, rendendo il sistema leggermente più efficiente in termini di memoria~@lazy-loading@lazy-loading-ex.
+Si garantisce così che il metodo restituisca l'oggetto ricercato o ne crei uno nuovo qualora non venga trovato. Il metodo `orElseGet()` di Java rappresenta un'applicazione del #glos.dep _lazy loading_, che differisce dal tradizionale `orElse()` per l'uso di un `Supplier` che viene invocato solo se l'#c.o è vuoto. Questo approccio consente di ritardare la creazione di un oggetto fino al momento in cui è effettivamente necessario, rendendo il sistema leggermente più efficiente in termini di memoria~@lazy-loading@lazy-loading-ex.
 
 La funzione appena mostrata è applicata in numerosi metodi di utilità per inserire rapidamente elementi in dizionari o liste #glos.json, come si può vedere nel frammento di codice seguente.
 #figure(
@@ -1250,39 +1268,39 @@ La funzione appena mostrata è applicata in numerosi metodi di utilità per inse
     caption: [Applicazione del metodo `getOrCreateJsonFile()`],
 )
 In questo esempio viene aggiunta una nuova traduzione per un determinato #c.l~@locale (lingua). La traduzione è rappresentata da una coppia chiave-valore, in cui la chiave identifica in modo univoco la componente testuale, e il valore ne specifica la traduzione per il #c.l indicato.
-Il metodo ottiene il contenuto JSON del file lang corrispondente al #c.l richiesto. Successivamente vi aggiunge la coppia chiave-valore.
+Il metodo ottiene il contenuto JSON del file `lang` corrispondente al #c.l richiesto. Successivamente vi aggiunge la coppia chiave-valore.
 Nel caso in cui il file non esista ancora (ad esempio, alla prima esecuzione per quel #c.l), esso viene creato tramite la #glos.f, garantendo comunque l'esistenza del file di traduzione prima dell'inserimento dei dati.
 
-Un'altra applicazione simile sono le funzioni `setOnTick()` e `setOnLoad()`, che permettono di aggiungere o un'intera `Function` o una stringa contenenti comandi alla lista di funzioni da eseguire ogni _tick_ o ad ogni caricamento dei file.
-
-#e stato precedentemente menzionato che nel `Builder` di #c.p, in base alla versione specificata, si ottiene il _pack format_ di #glos.dp e #glos.rp.
-Questi valori sono memorizzati in un `Record`~@record chiamato `VersionInfo`.
+Un'altra applicazione simile sono le funzioni `setOnTick()` e `setOnLoad()`, che permettono di aggiungere o un'intera `Function` o una stringa contenente comandi alla lista di funzioni da eseguire ogni _tick_ o ad ogni caricamento dei file.
 
 === Ottenimento Versioni
 
-Quando il `Builder` chiama `VersionUtils.getVersionInfo(String versionKey)`, dove `versionKey` rappresenta il nome della versione (ad esempio `25w05a`), esegue i seguenti passi:
-+ controlla che sia presente nel _path_ del progetto `resources/_generated` il file `versions.json` contenente tutte le versioni e i format associati;
-+ controlla che sia passato più di un giorno dall'ultima volta che è stato scritto `versions.json`;
+Nel `Builder` di #c.p, in base alla versione di gioco specificata, si ottengono i valori del _pack format_ per #glos.dp e #glos.rp.
+Questi sono memorizzati in un `Record`~@record chiamato `VersionInfo`.
+
+Quando il `Builder` chiama `VersionUtils.getVersionInfo(String versionKey)`, dove `versionKey` rappresenta il nome della versione (ad esempio `25w05a`), sono eseguiti i seguenti passi:
++ si controlla che sia presente nel _path_ del progetto `resources/_generated` il file `versions.json` contenente tutte le versioni e i format associati;
++ si controlla che sia passato più di un giorno dall'ultima volta che è stato scritto `versions.json`;
 + Se il file non è presente oppure è passato più di un giorno dall'ultima volta che è stata eseguita la generazione del file, e dunque c'è la possibilità che sia stata pubblicata una nuova versione o _snapshot_, si ricrea il file.
-+ carica il file come #c.jo
-+ qualora `versionKey` coincida con "latest", indicando la necessità di recuperare la revisione più recente, si istanzia un `Iterator`#footnote[L'utilizzo dell'`Iterator` è indispensabile per accedere al primo elemento, poiché l'interfaccia `Set` non supporta l'accesso posizionale diretto (es. `getFirst()`).] sulla collezione di #c.jo. Il primo elemento estratto viene quindi convertito nel `Record` `VersionInfo`.
-+ se `versionKey` corrisponde al nome di una versione, viene restituito l'oggetto `VersionInfo` corrispondente alla chiave richiesta. Questo conterrà il _pack format_ di #glos.dp e #glos.rp.
++ il file viene letto e convertito in #c.jo
++ qualora `versionKey` coincida con "latest", indicando la necessità di recuperare la versione più recente, si istanzia un `Iterator`#footnote[L'utilizzo dell'`Iterator` è indispensabile per accedere al primo elemento, poiché l'interfaccia `Set` non supporta l'accesso posizionale diretto (es. `getFirst()`).] sulla collezione di #c.jo. Il primo elemento estratto viene quindi convertito nel `Record` `VersionInfo`.
++ se `versionKey` corrisponde al nome di una versione, viene restituito l'oggetto `VersionInfo` corrispondente alla chiave richiesta. Questo conterrà i _pack format_ richiesti da #glos.dp e #glos.rp.
 
 La generazione di `versions.json` avviene mediante una chiamata HTTP~@http verso un'API~@api dedicata, la quale restituisce un oggetto #glos.json contenente i dati completi di tutte le versioni disponibili.\
 Queste vengono poi mappate al nome della versione corrispondente e ordinate dalla più recente alla più vecchia. La mappa cosi creata è avvolta in un #c.o. Se quest'ultimo è vuoto verrà sollevato un errore, altrimenti si scriverà la mappa sul file `versions.json`.
 
 === Esportazione in File Compressi
 _Datapack_ e #glos.rp vengono letti ed eseguiti dal compilatore di #glos.mc anche se compressi in archivi `.zip`. Questo formato è particolarmente adatto alla distribuzione, poiché permette di offrire agli utenti due pacchetti leggeri e separati da scaricare.\
-La classe #c.p dispone di un metodo `buildZip()` che, dopo aver ottenuto le cartelle #glos.dp e #glos.rp tramite il metodo `build()`, provvede a comprimerle generando i rispettivi archivi `.zip`. Al termine dell'operazione, le cartelle originali vengono eliminate.
+La classe #c.p dispone di un metodo `buildZip()` che, dopo aver creato le cartelle #glos.dp e #glos.rp di appoggio tramite il metodo `build()`, provvede a comprimerle generando i rispettivi archivi `.zip`. Al termine dell'operazione, queste ultime vengono eliminate.
 
 Il metodo `zipDirectory()` si occupa di comprimere il contenuto di una cartella in un archivio `.zip`.
 Questo esplora tutte le sottocartelle e file presenti nel percorso specificato, aggiungendo ciascun file all'archivio di destinazione.
-Per farlo, utilizza il metodo `Files.walk(folder)`, che genera uno `stream` di tutti i percorsi contenuti nella cartella, escludendo quelli relativi a cartelle. Per ogni file trovato, viene calcolato il percorso relativo rispetto alla cartella base (`basePath`), in modo che all'interno dell'archivio venga mantenuta la stessa struttura del progetto originale.\
-Successivamente, il metodo apre uno `stream` di lettura sul file e crea una nuova _entry_ ZIP, ovvero un elemento che rappresenta un singolo file all'interno dell'archivio.
-L'oggetto `ZipArchiveOutputStream`~@zaos della libreria `commons-compress`~@commons-compress di _Apache_ si occupa di aprire l'_entry_ per consentire la scrittura dei dati relativi al file.
-Il contenuto viene quindi copiato nell'archivio tramite la classe `IOUtils`~@io-utils di _Apache Commons_, dopodiché l'_entry_ viene chiusa per indicare che la scrittura del file è stata completata.
+Per farlo, utilizza il metodo `Files.walk(folder)`, che genera uno `stream` di tutti i percorsi contenuti nella cartella, escludendo quelli relativi a cartelle.
+Per ogni file trovato, viene calcolato il percorso relativo rispetto alla cartella base (`basePath`), in modo che all'interno dell'archivio venga mantenuta la stessa struttura del progetto originale.\
+Per ogni file trovato, il metodo istanzia una nuova _entry_ ZIP, ovvero il contenitore che rappresenta il file all'interno dell'archivio.
+Per riempirla con i dati effettivi, viene aperto uno `stream` di lettura sul file sorgente: il contenuto viene quindi inserito nell'archivio tramite la classe `IOUtils`~@io-utils di _Apache Commons_, dopodiché l'_entry_ viene chiusa per indicare che la scrittura del file è stata completata.
 
-Il metodo `buildZip()` è stato pensato per essere usato in concomitanza con un _workflow_~@workflows di GitHub che, qualora il progetto abbia una _repository_ associata, costruisce le cartelle compresse di #glos.dp e #glos.rp ogni volta che viene creata una nuova _release_~@release. Questi archivi, onde evitare confusione tra le versioni, vengono automaticamente nominati con la versione specificata nel file `pom.xml`~@pom del progetto Java e saranno scaricabili dalla pagina GitHub che contiene gli artefatti associati alla _release_.
+Il metodo `buildZip()` è stato pensato per essere usato in concomitanza con un _workflow_~@workflows di GitHub che, qualora il progetto abbia una _repository_ associata, costruisce le cartelle compresse di #glos.dp e #glos.rp ogni volta che viene creata una nuova _release_~@release. Questi archivi, al fine di evitare confusione tra le versioni, vengono automaticamente nominati con la versione specificata nel file `pom.xml`~@pom del progetto Java e saranno scaricabili dalla pagina GitHub che contiene gli artefatti associati alla _release_.
 
 == Uso working example
 In questa sezione verrà implementato un progetto che utilizza la libreria per modificare un _item_ di #glos.mc. L'obiettivo è fare in modo che, al click con il tasto destro del mouse, l'oggetto consumi uno tra tre diversi tipi di munizioni (anch'esse nuovi _item_), generando un'onda sinusoidale la cui lunghezza varia in base al tipo di munizione utilizzata.
