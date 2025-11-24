@@ -1302,8 +1302,10 @@ Per riempirla con i dati effettivi, viene aperto uno `stream` di lettura sul fil
 
 Il metodo `buildZip()` è stato pensato per essere usato in concomitanza con un _workflow_~@workflows di GitHub che, qualora il progetto abbia una _repository_ associata, costruisce le cartelle compresse di #glos.dp e #glos.rp ogni volta che viene creata una nuova _release_~@release. Questi archivi, al fine di evitare confusione tra le versioni, vengono automaticamente nominati con la versione specificata nel file `pom.xml`~@pom del progetto Java e saranno scaricabili dalla pagina GitHub che contiene gli artefatti associati alla _release_.
 
-== Uso working example
-In questa sezione verrà implementato un progetto che utilizza la libreria per modificare un _item_ di #glos.mc. L'obiettivo è fare in modo che, al click con il tasto destro del mouse, l'oggetto consumi uno tra tre diversi tipi di munizioni (anch'esse nuovi _item_), generando un'onda sinusoidale la cui lunghezza varia in base al tipo di munizione utilizzata.
+== Implementazione del Working Example
+
+In questa sezione verrà mostrato lo sviluppo un progetto che utilizza la libreria per generare un #glos.pack che modifica un _item_ di #glos.mc.
+L'obiettivo è fare in modo che, al click con il tasto destro del mouse, l'oggetto consumi uno tra tre diversi tipi di munizioni (anch'esse nuovi _item_), generando un'onda sinusoidale la cui lunghezza varia in base al tipo di munizione utilizzata.
 
 Viene innanzitutto creato il progetto:
 #figure(```java
@@ -1340,11 +1342,10 @@ Util.addTranslation("item.esempio.%s".formatted(id), en);
 Util.addTranslation(Locale.ITALY, "item.esempio.%s".formatted(id), it);
 ```)
 
-crea i file relativi all'aspetto dell'_item_.
+crea i file relativi all'aspetto visivo dell'_item_.
 
 #figure(
     local(
-        number-format: numbering.with("1"),
         annotations: (
             (
                 start: 1,
@@ -1392,7 +1393,7 @@ crea i file relativi all'aspetto dell'_item_.
         ```,
     ),
 )
-La funzione `makeData()` si occupa di creare la _recipe_, ovvero il file #glos.json che indica come ottenere la munizione e le sue proprietà, tra cui la distanza dell'onda. Oltre alla _recipe_, è creato un _advancement_ che si è soliti usare per rilevare quando un giocatore possiede uno degli ingredienti richiesti per la creazione dell'oggetto, e dunque comunicare che la ricetta è disponibile tramite un messaggio sullo schermo.
+La funzione `makeData()` si occupa di creare la _recipe_, ovvero il file #glos.json che indica gli ingredienti richiesti per creare l'oggetto munizione e le sue proprietà, tra cui la distanza dell'onda. Oltre alla _recipe_, è creato un _advancement_ che si è soliti usare per rilevare quando un giocatore possiede uno degli ingredienti richiesti per la creazione dell'oggetto, e dunque comunicare tramite un messaggio sullo schermo che la ricetta è disponibile.
 
 Il modulo `MostraRaggio` si occupa di aggiungere comportamenti all'oggetto `carrot_on_a_stick`#footnote[`carrot_on_a_stick` è l'unico _item_ che possiede una #glos.score in grado di rilevare quando è cliccato con il tasto destro.], per renderlo in grado di consumare le munizioni sopra create e mostrare l'onda.
 
@@ -1427,7 +1428,7 @@ Util.setOnLoad(Function.f.of("""
   """));
 ```)
 
-Il funzionamento dell'_item_ è implementato con una catena di funzioni annidate. Alla radice c'è una funzione che ogni _tick_ esegue la funzione (@ex-1) che sarà passata come `varargs` della factory, che sostituirà `%s`.
+Il funzionamento dell'_item_ è implementato con una catena di funzioni annidate. Alla radice c'è una funzione che ogni _tick_ esegue la funzione (@ex-1) che sarà passata come `varargs` della factory, la quale sostituirà `%s`.
 
 #figure(
     local(
@@ -1469,7 +1470,7 @@ I seguenti comandi si occupando di controllare se il giocatore possiede _item_ i
     caption: [],
 ) <ex-2>
 
-Questo metodo genera una #c.fn che controlla i 36 _slot_ del giocatore, incaricata di arrestare l'esecuzione al primo _item_ contrassegnato come `ammo`.
+Il metodo seguente genera i comandi per controllare i 36 _slot_ del giocatore, incaricata di arrestare l'esecuzione al primo _item_ contrassegnato come `ammo` e memorizzarlo in uno #glos.str.
 
 #figure(
     ```java
@@ -1486,7 +1487,7 @@ Questo metodo genera una #c.fn che controlla i 36 _slot_ del giocatore, incarica
 ) <ex-3>
 
 Se l'_item_ è stato trovato, vengono eseguiti i seguenti comandi:
-+ @ex-4\-2: salva la distanza associata alla munizione nella glos.score _distance_;
++ @ex-4\-2: salva la distanza associata alla munizione nello _score_ `distance`;
 + @ex-4\-3: viene riprodotto un suono. Tramite il metodo di utilità `addSound()` questo è aggiunto al dizionario di `sounds.json` e `Sound.of()` si occupa di prelevare il file `.ogg` al _path_ indicato;
 + @ex-4\-4: chiama una funzione _macro_ che elimina la munizione trovata dallo _slot_ corrispondente;
 + @ex-4\-5: sposta l'esecuzione della funzione all'altezza degli occhi del giocatore, e invoca @ex-5.
@@ -1510,7 +1511,7 @@ Se l'_item_ è stato trovato, vengono eseguiti i seguenti comandi:
 )<ex-4>
 
 La seguente funzione rappresenta il nucleo della logica ricorsiva per creare l'onda.
-Si decrementa lo _score_ `distance`, e si memorizza l'esito di questa operazione in uno #glos.str. Se ancora non si è raggiunta la distanza massima, ovvero `$ns$.var matches 1..` si sposta l'esecuzione 0.1 blocchi in avanti e si ripete la funzione.\
+Essa decrementa lo _score_ `distance`, e memorizza l'esito di questa operazione in uno #glos.str. Se ancora non si è raggiunta la distanza massima, ovvero `$ns$.var matches 1..` ($"var">=1$) si sposta l'esecuzione 0.1 blocchi in avanti e si ripete la funzione.\
 @ex-5\-4 invoca la funzione @ex-6, passando l'indice dell'iterazione corrente come parametro.
 
 #figure(
@@ -1528,7 +1529,7 @@ Si decrementa lo _score_ `distance`, e si memorizza l'esito di questa operazione
     caption: [],
 ) <ex-5>
 
-Questo comando _macro_ invoca un'altra funzione _macro_, passandole il valore corrispondente a $sin(#raw("amount") times 10)$.
+Questa funzione contiene un solo comando _macro_, che ne invoca un'altra, passandole il valore corrispondente a $sin(#raw("amount") times 10)$.
 
 #figure(
     ```java
@@ -1571,11 +1572,12 @@ Sarà dunque possibile creare una _repository_ e pubblicare una _release_. In se
 
 = Conclusione
 
-Il presente lavoro di tesi ha affrontato le criticità intrinseche allo sviluppo di contenuti per #glos.mc tramite la _Domain Specific Language_ nativa, #glos.mcf.
-L'analisi preliminare ha evidenziato come questo linguaggio, pur consentendo la modularità, imponga severi vincoli strutturali e sintattici: l'assenza di costrutti di programmazione di alto livello, unita alla necessità di definire ogni funzione in un file separato, comporta la produzione di codice prolisso, frammentato e di difficile manutenibilità.
+Il presente lavoro di tesi ha affrontato le criticità relative allo sviluppo di contenuti per #glos.mc attraverso la _Domain Specific Language_ nativa #glos.mcf.
+L'analisi preliminare ha rivelato come questo linguaggio, sebbene dotato di _feature_ affini a quelle dei linguaggi _general purpose_, imponga severi vincoli strutturali e sintattici.
+La mancanza di costrutti ad alto livello, combinata con l'obbligo di separare ogni funzione e risorsa in un file distinto, genera codice prolisso, frammentato e difficilmente manutenibile.
 
 Per superare tali limitazioni, è stata progettata e implementata una libreria Java (_OOPACK_) che introduce un approccio orientato agli oggetti per consentire la meta-programmazione di #glos.pack.
-La soluzione proposta astrae la struttura di #glos.dp e #glos.rp in un albero di oggetti tipizzati, consentendo agli sviluppatori di definire molteplici risorse all'interno di un unico contesto e di sfruttare la sintassi di un linguaggio _general purpose_.
+La soluzione proposta astrae la struttura di #glos.dp e #glos.rp in un albero di oggetti tipizzati, consentendo agli sviluppatori di definire molteplici risorse all'interno di un unico contesto e di sfruttare i costrutti di un linguaggio _general purpose_.
 Attraverso l'automazione della generazione del _boilerplate_ e la validazione a tempo di compilazione, il framework riduce drasticamente la complessità di gestione dei file e aumenta la densità di codice, offrendo un ambiente di sviluppo più robusto e scalabile rispetto agli strumenti tradizionali.
 
 Al fine di misurare concretamente l'efficienza della libreria, è stata sviluppata una classe `Metrics` con il compito di registrare il numero di righe e di file generati.
