@@ -204,7 +204,7 @@ Il comando `scoreboard` permette di creare dizionari di tipo `<Entità, Objectiv
 Su questi valori è possibile eseguire operazioni aritmetiche semplici, quali la somma o la sottrazione di un valore prefissato, oppure calcolare il risultato delle quattro operazioni aritmetiche fondamentali#footnote[Le operazioni aritmetiche fondamentali sono somma, sottrazione, moltiplicazione e divisione.] con altri `objective`.
 Dunque una #glos.score può essere meglio vista come un dizionario `<Entità, <Intero, Condizione>>`.\
 Prima di poter eseguire qualsiasi operazione su di essa, una #glos.score deve essere creata tramite il comando\ `scoreboard objectives add <objective> <criteria>`.\
-Per eseguire operazioni che non dipendono da alcuna entità si usano i cm  osiddetti _fakeplayer_.  Al posto di usare nomi di giocatori o selettori, si prefiggono i nomi con caratteri illegali, quali `$` e `#`. In questo modo ci si assicura che un valore non sia associato ad un vero utente, e quindi sia sempre disponibile.
+Per eseguire operazioni che non dipendono da alcuna entità si usano i cosiddetti _fakeplayer_.  Al posto di usare nomi di giocatori o selettori, si prefiggono i nomi con caratteri illegali, quali `$` e `#`. In questo modo ci si assicura che un valore non sia associato ad un vero utente, e quindi sia sempre disponibile.
 #figure(
     ```mcfunction
     scoreboard objectives add my_scoreboard dummy
@@ -545,7 +545,8 @@ In conclusione, la convenzione vuole che si utilizzino prefissi anche per i nomi
 
 == Assenza di Code Blocks
 
-Nei linguaggi di alto livello quali C o Java, i blocchi di codice che devono essere eseguiti condizionalmente o all'interno di un ciclo vengono racchiusi tra parentesi graffe. In Python, invece, la stessa funzione è ottenuta tramite l'indentazione del codice.
+Nei linguaggi di alto livello quali C o Java, i blocchi di codice che devono essere eseguiti condizionalmente o iterativamente vengono racchiusi tra parentesi graffe.
+In Python, invece, la stessa funzione è ottenuta tramite l'indentazione del codice.
 
 Nelle funzioni #glos.mcf questo costrutto non è supportato. Per eseguire condizionalmente una serie di comandi, è necessario creare un file separato che li contenga, oppure ripetere la medesima condizione su ciascuna riga. Quest'ultima soluzione comporta un maggiore _overhead_, in particolare quando il comando viene eseguito ripetutamente nel corso di più _tick_.
 
@@ -554,7 +555,7 @@ Di seguito viene illustrato un esempio di implementazione di un blocco `if-else`
 #figure(
     local(
         number-format: numbering.with("1"),
-
+        header: [conditional_example.mcfunction],
         ```mcfunction
         execute if entity @s[type=cow] run return run say I'm a cow
         execute if entity @s[type=cat] run return run say I'm a cat
@@ -563,7 +564,11 @@ Di seguito viene illustrato un esempio di implementazione di un blocco `if-else`
     ),
     caption: [Funzione che in base all'entità esecutrice, stampa un messaggio diverso.],
 )
-In questa funzione, i comandi dalla riga 2 in avanti non verranno eseguiti qualora il tipo dell'entità sia `cow`. Se la condizione alla riga 1 risulta falsa, l'esecuzione procede alla riga successiva, dove viene effettuato un nuovo controllo sul tipo dell'entità. Anche in questo caso, qualora la condizione sia soddisfatta, l'esecuzione si interrompe.
+In questa funzione, i comandi dalla riga 2 in avanti non verranno eseguiti qualora il tipo dell'entità sia `cow`.
+Se la condizione alla riga 1 risulta falsa, l'esecuzione procede alla riga successiva, dove viene effettuato un nuovo controllo sul tipo dell'entità. Anche in questo caso, se la condizione è soddisfatta, l'esecuzione si interrompe.
+
+La funzione è sufficientemente intuitiva e simile a costrutti tipici dei linguaggi di programmazione di alto livello.
+
 #figure(
     [```
         switch(entity){
@@ -576,16 +581,16 @@ In questa funzione, i comandi dalla riga 2 in avanti non verranno eseguiti qualo
     caption: [Pseudocodice equivalente alla funzione precedente.],
 )
 
-La funzione è abbastanza intuitiva, e corrisponde a qualcosa che si vedrebbe in un linguaggio di programmazione di alto livello. Ipotizziamo ora che si vogliano eseguire due o più comandi in base all'entità.
+Si ipotizzi ora di voler eseguire due o più comandi in base all'entità selezionata.
 
 #figure(
     local(
         number-format: numbering.with("1"),
         ```mcfunction
-        execute if entity @s[type=cow] run return run say I'm a cow
+        execute if entity @s[type=cow] run say I'm a cow
         execute if entity @s[type=cow] run return run say moo
 
-        execute if entity @s[type=cat] run return run say I'm a cat
+        execute if entity @s[type=cat] run say I'm a cat
         execute if entity @s[type=cat] run return run say meow
 
         say I'm neither a cow or a cat
@@ -594,7 +599,8 @@ La funzione è abbastanza intuitiva, e corrisponde a qualcosa che si vedrebbe in
     caption: [Funzione errata per eseguire più comandi data una certa condizione.],
 )
 
-Ora, se l'entità è di tipo `cow`, il comando alla riga 2 non verrà mai eseguito, anche se la condizione è soddisfatta. Dunque, è necessario creare una funzione che contenga quei due comandi.
+Si noti come la condizione da soddisfare per l'esecuzione dei comandi sia ripetuta, in quanto non è possibile raggrupparli in un blocco di codice. Tale approccio comporta un notevole overhead, specialmente per operazioni di selezione dispendiose quali la deserializzazione di #glos.nbt.
+Dunque si creano funzioni che raggruppano i comandi da eseguire sotto la stessa condizione.
 
 #codly(
     header: [main.mcfunction],
@@ -623,11 +629,12 @@ say meow
 
 Considerando che i #glos.dp si basano sull'esecuzione condizionale di funzioni in base a eventi naturalmente occorrenti nel gioco, sono numerosi i casi in cui ci si trova a creare più file che contengono un numero ridotto, purché significativo, di comandi.
 
-Per quanto riguarda i cicli, come mostrato in @funzione_ricorsiva, l'unico modo per ripetere gli stessi comandi più volte è attraverso la ricorsione. Di conseguenza, ogni volta che è necessario implementare un ciclo, è indispensabile creare almeno una funzione dedicata.
+L'unica strategia per implementare cicli è mostrata in @funzione_ricorsiva, attraverso la ricorsione.
+Di conseguenza, ogni volta che è necessario implementare un ciclo, è indispensabile creare almeno una funzione che si richiama.
 Se è invece richiesto un contatore per tenere traccia dell'iterazione corrente (il classico indice `i` dei cicli `for`), è possibile utilizzare funzioni ricorsive che si richiamano passando come parametro una _macro_, il cui valore viene aggiornato all'interno del corpo della funzione. In alternativa, si possono scrivere esplicitamente i comandi necessari a gestire ciascun valore possibile, in modo analogo a quanto avviene con le _lookup table_.
 
-Un entità giocatore dispone di 36 slot che possono contenere oggetti.
-Ipotizziamo si voglia determinare in quale _slot_ dell'inventario del giocatore si trovi l'oggetto `diamond`.
+Un entità giocatore dispone di 36 _slot_ utilizzati per contenere oggetti.
+Si ipotizzi di voler individuare in quale _slot_ dell'inventario del giocatore si trovi l'oggetto `diamond`.
 Una possibile soluzione consiste nell'utilizzare una funzione che iteri da 0 a 35, dove il parametro della _macro_ indica lo _slot_ da controllare. Tuttavia, questo approccio comporta un _overhead_ maggiore rispetto alla verifica esplicita di ciascuno dei 36 _slot_.
 
 #figure(
@@ -643,41 +650,44 @@ Una possibile soluzione consiste nell'utilizzare una funzione che iteri da 0 a 3
     ),
 )
 
-In questa funzione, la ricerca viene interrotta da `return` appena si trova un diamante, ed è stato provato che abbia un _overhead_ minore della ricorsione. Come nel caso delle _lookup table_, i file che fanno controlli di questo genere sono solitamente creati con script Python.
+In questa funzione, la ricerca viene interrotta da `return` appena si trova un diamante, ed è stato provato che abbia un _overhead_ minore della ricorsione.\
+Come nel caso delle _lookup table_, i file che fanno controlli di questo genere sono solitamente creati con script Python.
 
 Il @esempio_macro illustra come l'impiego delle _macro_ imponga la definizione di una funzione dedicata: tale funzione deve essere in grado di accettare parametri esterni e di sostituirli nei comandi contrassegnati dal simbolo `$`. Si tratta verosimilmente dell'unico caso in cui la creazione di una nuova funzione risulta genuinamente giustificata e non causata da vincoli di #glos.mcf.
 
-Dunque, programmando in #glos.mcf, è richiesto creare una funzione, ovvero un file, ogni volta che si necessita di:Dunque, programmando in #glos.mcf, è richiesto creare una funzione, ovvero un file, ogni volta che si necessita di:
+Dunque, programmando in #glos.mcf, è richiesto creare una funzione, ovvero un file dedicato, ogni volta che si necessita di:
 - un blocco `if-else` che esegua più comandi;
 - un ciclo;
-- definire una funzione _macro_.
+- utilizzare una funzione _macro_.
 
-Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di codice. Tuttavia, ci sono altre problematiche relative alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
+Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di codice.
+Inoltre, si presentano ulteriori problematiche relative alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
 
 == Organizzazione e Complessità della Struttura dei File
-I problemi mostrati fin'ora sono principalmente legati alla sintassi dei comandi e ai limiti delle funzioni, tuttavia non è da trascurare l'organizzazione e la struttura di un progetto.
+Le limitazioni precedentemente illustrate sono inerenti alla sintassi dei comandi e ai limiti delle funzioni; tuttavia, non sono da trascurare le complessità legate all'organizzazione e la struttura di un progetto.
 
 Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`.
 Tuttavia, operare su queste cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra le due. Lavorare direttamente dalla directory radice `.minecraft/` risulta poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
 
-Una possibile soluzione consiste nel creare una directory che contenga sia il #glos.dp sia il #glos.rp e, successivamente, utilizzare _symlink_ o _junction_~@symlink per creare riferimenti dalle rispettive cartelle verso i percorsi in cui il compilatore si aspetta di trovarli.\
+Una possibile soluzione consiste nel creare una directory contenente sia il #glos.dp sia il #glos.rp e, successivamente, utilizzare _symlink_ o _junction_~@symlink per creare riferimenti dalle rispettive cartelle verso i percorsi in cui il compilatore si aspetta di trovarli.\
 I _symlink_ (collegamenti simbolici) e le _junction_ sono riferimenti a file o directory che consentono di accedere a un percorso diverso come se fosse locale, evitando la duplicazione dei contenuti.
 
 Disporre di un'unica cartella radice contenente #glos.dp e #glos.rp semplifica notevolmente la gestione del progetto.
 In particolare, consente di creare una sola _repository_~@repository Git~@git, facilitando così il versionamento del codice, il tracciamento delle modifiche e la collaborazione tra più sviluppatori.\
-Attraverso il sistema delle _release_ di GitHub~@github è possibile ottenere un link diretto a #glos.dp e #glos.rp pubblicati, che può poi essere utilizzato nei principali siti di hosting.
-Queste piattaforme, essendo spesso gestite da piccoli team di sviluppo, tendono ad affidarsi a servizi esterni per la memorizzazione dei file, come GitHub o altri provider.
+Attraverso il sistema delle _release_ di GitHub~@github è possibile ottenere un link diretto al #glos.dp e alla #glos.rp pubblicati, utilizzabile nei principali siti di hosting e condivisione di #glos.pack.
+Tali piattaforme, gestite da piccoli team di sviluppo, tendono ad affidarsi a servizi esterni per l'archiviazione dei file, come appunto GitHub.
 
-Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrato in precedenza, viene presentato un esempio di struttura rappresentante i file necessari per introdurre un nuovo _item_~@item (oggetto).
-Nonostante l'_item_ costituisca una delle funzionalità più semplici da implementare, la sua integrazione richiede comunque un numero non trascurabile di file.
+Ipotizzando di operare in un ambiente di lavoro unificato, come quello illustrato in precedenza, viene presentato un esempio di struttura contenente i file necessari per introdurre un nuovo _item_~@item (oggetto) nel gioco.
+Nonostante l'_item_ costituisca una delle funzionalità più semplici da implementare, la sua integrazione richiede comunque un quantitativo notevole di file.
+
 #figure(
     grid(
         columns: 2,
         gutter: 5em,
         align(left, tree-list[
-            - datapack
+            - _datapack_
                 - data
-                    - my_namespace
+                    - _my_namespace_
                         - recipe
                             - my_item.json
                         - loot_table
@@ -688,9 +698,9 @@ Nonostante l'_item_ costituisca una delle funzionalità più semplici da impleme
                             - on_item_use.mcfunction
         ]),
         align(left, tree-list[
-            - resourcepack
+            - _resourcepack_
                 - assets
-                    - my_namespace
+                    - _my_namespace_
                         - item
                             - my_item.json
                         - models
@@ -710,9 +720,9 @@ Nonostante l'_item_ costituisca una delle funzionalità più semplici da impleme
     caption: [File necessari per implementare un semplice _item_.],
 )
 
-Nella sezione _data_, che determina la logica e i contenuti del gioco, _loot\_table_ e _recipe_ definiscono rispettivamente gli attributi
+Nella sezione _data_, che determina la logica e i contenuti del gioco, `loot_table` e `recipe` definiscono rispettivamente gli attributi
 dell'oggetto e la modalità con cui questo può essere creato.
-L'_advancement_ `use_my_item` è usato per rilevare quando un giocatore usa l'oggetto, chiamando la funzione `on_item_use` che in questo esempio riprodurrà un suono.
+L'_advancement_ `use_my_item` è usato per rilevare quando un giocatore usa l'oggetto, invocando la funzione `on_item_use` che in questo esempio riprodurrà un suono.
 
 I suoni devono essere collocati nella directory _assets_. Affinché possano essere riprodotti, i file audio in formato `.ogg` devono essere registrati nel file `sounds.json`.
 Nella cartella _lang_ sono presenti i file responsabili della gestione delle traduzioni, organizzate come insiemi di coppie chiave-valore.\
@@ -720,7 +730,9 @@ Per definire l'aspetto visivo dell'oggetto, si parte dalla sua _item model defin
 
 Si osserva quindi che, per implementare anche la _feature_ più semplice, è necessario creare sette file e modificarne due. Pur riconoscendo che ciascun file svolge una funzione distinta e che la loro presenza è giustificata, risulterebbe certamente più comodo poter definire questo tipo di risorse _inline_~@inline.
 
-Con il termine _inline_ si intende la definizione e utilizzo una o più risorse direttamente all'interno dello stesso file in cui vengono impiegate. Questa modalità risulterebbe particolarmente vantaggiosa quando un file gestisce contenuti specifici e indipendenti. Ad esempio, nell'aggiunta di un nuovo item, il relativo modello e la #glos.tex non verrebbero mai condivisi con altri oggetti, rendendo superfluo separarli in file distinti.
+Con il termine _inline_ si intende la definizione e utilizzo una o più risorse direttamente all'interno del file in cui vengono impiegate.
+Questa modalità risulterebbe particolarmente vantaggiosa quando un file gestisce contenuti specifici e indipendenti.
+Ad esempio, nell'aggiunta di un nuovo _item_, il relativo modello e la #glos.tex non verrebbero mai condivisi con altri oggetti, rendendo superfluo separarli in file distinti.
 
 Infine, l'elevato numero di file rende l'ambiente di lavoro complesso da navigare. In progetti di grossa portata questo implica, nel lungo periodo, una significativa quantità di tempo dedicata alla ricerca dei singoli file.
 
@@ -728,9 +740,9 @@ Infine, l'elevato numero di file rende l'ambiente di lavoro complesso da navigar
 
 Alla luce delle numerose limitazioni di questo sistema, sono state rapidamente sviluppate soluzioni volte a rendere il processo di sviluppo più efficiente e intuitivo.
 
-In primo luogo, gli stessi sviluppatori di #glos.mc dispongono di strumenti interni che automatizzano la generazione dei file #glos.json necessari al corretto funzionamento di determinate _feature_. Durante lo sviluppo, tali file vengono creati automaticamente tramite codice Java eseguito in parallelo alla scrittura del codice sorgente, evitando così la necessità di definirli manualmente.
+In primo luogo, gli stessi sviluppatori di #glos.mc dispongono di strumenti interni che automatizzano la creazione dei file #glos.json necessari al corretto funzionamento di determinate _feature_. Durante lo sviluppo, tali file vengono generati automaticamente tramite codice Java eseguito in parallelo alla scrittura del codice sorgente, evitando così la necessità di definirli manualmente.
 
-Un esempio lampante è il file `sounds.json`, che registra i suoni e definisce quali file `.ogg` utilizzare. Questo contiene quasi 25.000 righe di oggetti #glos.json, ed è creato e aggiornato tramite software appositi ogni volta che viene inserita una _feature_ che richiede un nuovo suono.
+Un esempio lampante è il file `sounds.json`, il quale registra i suoni e definisce quali file `.ogg` utilizzare. Questo contiene quasi 25.000 righe di oggetti #glos.json, ed è creato e aggiornato tramite software appositi ogni volta che viene inserita una _feature_ che necessita di un nuovo suono.
 
 Tuttavia, questo software non è disponibile al pubblico, e anche se lo fosse, semplificherebbe la creazione solo dei file #glos.json, non di #glos.mcf. Dunque, sviluppatori indipendenti hanno realizzato dei propri precompilatori, progettati per generare automaticamente #glos.dp e #glos.rp con mezzi più pratici e intuitivi.
 
@@ -759,11 +771,11 @@ Questo risulta più articolato rispetto alla sintassi tradizionale `execute as @
 
 == Approccio al Problema
 
-Alla luce del contesto descritto e delle limitazioni degli strumenti esistenti, si è ricercata una soluzione che consentisse di ridurre la complessità d'uso preservando al contempo la completezza delle funzionalità.
-Di seguito verranno illustrate le principali decisioni progettuali e le ragioni che hanno portato alla scelta del linguaggio di sviluppo.
+Alla luce del contesto descritto e delle limitazioni degli strumenti esistenti, si è ricercata una soluzione che consentisse di ridurre la complessità e preservare la completezza delle funzionalità.
+Di seguito sono illustrate le principali decisioni progettuali e le ragioni che hanno portato alla scelta del linguaggio di sviluppo.
 
-Inizialmente si è tentato di progettare un _superset_~@superset di #glos.mcf, ossia un linguaggio che estende quello originale introducendo nuove funzionalità, e mantenendone la compatibilità.
-Tale linguaggio avrebbe consentito di dichiarare e utilizzare elementi multipli (#glos.mcf e #glos.json) all'interno di un unico file, arricchendo inoltre la sintassi dei comandi con zucchero sintattico atto a velocizzare la scrittura delle sezioni più verbose.
+Inizialmente si è tentato di progettare un _superset_~@superset di #glos.mcf, ovvero un linguaggio che estende quello originale introducendo nuove funzionalità, e mantenendone la compatibilità.
+Tale linguaggio avrebbe consentito di dichiarare e utilizzare elementi multipli (#glos.mcf e #glos.json) all'interno di un unico file, arricchendo inoltre la sintassi dei comandi con zucchero sintattico volto a velocizzare la scrittura delle sezioni più verbose.
 
 #figure(
     [```mcf
@@ -777,9 +789,10 @@ Tale linguaggio avrebbe consentito di dichiarare e utilizzare elementi multipli 
     ],
     caption: [Esempio di questo _superset_, caratterizzato da file con l'estensione `.mcf`],
 )
-Eseguendo questo codice, non solo si sarebbe creata la funzione dichiarata all'interno delle parentesi graffe, ma inserito il namespace prima di `var`, e creato il comando che assegna allo _score_ costante `#4` il valore 4.
+Eseguendo questo codice, verrebbe non solo creata la funzione definita all'interno delle parentesi graffe, ma anche inserito il namespace prima di `var` e creato il comando che assegna allo _score_ costante `#4` il valore 4.
 Come è stato mostrato nel @scoreboard_set_const, per eseguire divisioni e moltiplicazioni per valori costanti, è prima necessario definirli in uno _score_.
 Compilando il frammento di codice dell'esempio, si sarebbero ottenuti i seguenti file:
+
 #figure({
     codly(
         header: [load.mcfunction],
@@ -818,10 +831,10 @@ Si è dunque valutato quale linguaggio di programmazione, tra Python e Java, fos
 
 #figure(
     table(
-        align: horizon + left,
+        align: top + left,
         columns: 3,
-        [], [Vantaggi], [Svantaggi],
-        [Python],
+        [], table.cell(align: horizon+center)[*Vantaggi*], table.cell(align: horizon+center)[*Svantaggi*],
+        table.cell(align: horizon+center)[*Python*],
         [
             - Gestione semplice di stringhe (`f-string`~@f-strings) e file JSON;
             - Sintassi concisa;
@@ -833,7 +846,7 @@ Si è dunque valutato quale linguaggio di programmazione, tra Python e Java, fos
             - Prestazioni inferiori in fase di esecuzione.
         ],
 
-        [Java],
+        table.cell(align: horizon+center)[*Java*],
         [
             - Maggiore familiarità con progetti di grandi dimensioni;
             - Completamente orientato agli oggetti;
@@ -853,9 +866,9 @@ Inoltre, il tipaggio statico di Java permette di identificare in fase di svilupp
 
 Il progetto, denominato _Object Oriented Pack_ (OOPACK), è organizzato in 4 sezioni principali.
 / `internal`: Contiene classi astratte e interfacce che riproducono la struttura di un generico _filesystem_. Classi e metodi di questo _package_~@package non saranno mai utilizzate dall'utente finale.
-/ `objects`: Contiene le classi che rappresentano gli oggetti utilizzati nei #glos.dp e #glos.rp.
+/ `objects`: Contiene le classi che rappresentano gli oggetti impiegati da #glos.dp e #glos.rp.
 / `util`: Raccoglie metodi di utilità impiegati sia per il funzionamento del progetto, sia a supporto del programmatore (ponendo attenzione alla visibilità dei singoli metodi).
-/ Radice del progetto: Contiene gli oggetti principali che descrivono struttura di un #glos.pack (`Datapack`,`Resourcepack`,#c.ns,#c.p).
+/ Radice del progetto: Contiene gli oggetti principali che descrivono struttura di un #glos.pack (`Datapack`,`Resourcepack`,#c.ns,#c.p), a disposizione dell'utente finale.
 
 == Classi Astratte e Interfacce
 === Buildable
@@ -867,16 +880,14 @@ public interface Buildable {
     void build(Path parent);
 }
 ```)
-Il parametro `parent` rappresenta un oggetto di tipo `Path`~@path che specifica la directory di destinazione nel file system locale in cui verrà generato il file.
+Il parametro `parent` rappresenta un oggetto di tipo `Path`~@path che specifica la directory di destinazione nel file system locale nella quale verrà generato il file.
 Durante il processo di costruzione del progetto, questo percorso viene progressivamente esteso aggiungendo sottocartelle, fino a individuare la posizione finale del file generato.
 
 L'interfaccia #c.fso estende #c.b con lo scopo di rappresentare file e cartelle del _file system_.
 Essa definisce il contratto `getContent()`, che specifica il contenuto associato all'oggetto.
-A seconda della classe che lo implementa, tale metodo può restituire un tipo di dato specifico nel caso di un file, oppure un insieme di #c.fso qualora si tratti di cartelle o altri contenitori.
+Sfruttando il polimorfismo, tale metodo può restituire il contenuto delle classi che rappresentano file, oppure un insieme di #c.fso per le classi che rappresentano cartelle o altri contenitori.
 
-Questa interfaccia definisce il metodo statico `find()` usato per trovare un `file` all'interno di un #c.fso che soddisfa una certa condizione.
-
-Di seguito viene presentato e descritto il metodo `find()`, definito come metodo statico in #c.fso, il quale favorisce la comunicazione tra #c.fso da qualsiasi punto del progetto.
+Questa interfaccia definisce il metodo statico `find()`, il quale permette di trovare un `file` all'interno di un #c.fso che soddisfa una certa condizione, permettendo la comunicazione tra #c.fso in ogni punto del progetto.
 
 #figure(```java
 static <T extends FileSystemObject> Optional<T> find(
@@ -903,29 +914,33 @@ static <T extends FileSystemObject> Optional<T> find(
     }
 ```) <find>
 
-Questo metodo generico accetta come parametri un #c.fso (senza distinzione tra cartella o file), la classe del tipo ricercato (`clazz`) e un predicato che esprime la condizione da soddisfare.
+Questo metodo generico accetta come parametri un #c.fso (senza distinzione tra cartella o file), la classe del tipo ricercato (`clazz`) e un `Predicate`~@predicate che esprime la condizione da soddisfare.
 
-Il metodo implementa un algoritmo di ricerca ricorsiva in profondità sulla struttura ad albero. Per ogni nodo visitato, verifica innanzitutto se esso è un'istanza del tipo ricercato; in tal caso, valuta il predicato fornito e, se soddisfatto, restituisce un #c.o~@optional contenente l'oggetto. Qualora il nodo corrente non corrisponda al tipo ricercato, il metodo ne recupera il contenuto: se questo è un `Set`~@set, indicando che si tratta di una cartella o una sua sottoclasse, il metodo viene invocato ricorsivamente su ciascun elemento figlio, interrompendo la ricerca non appena viene trovata una corrispondenza. In assenza di risultati, viene restituito un #c.o vuoto.
+Il metodo implementa un algoritmo di ricerca ricorsiva in profondità sulla struttura ad albero
+Per ogni nodo visitato, verifica innanzitutto se esso è un'istanza del tipo ricercato; in tal caso, valuta il predicato fornito e, se soddisfatto, restituisce un #c.o~@optional contenente l'oggetto.
+Qualora il nodo corrente non corrisponda al tipo ricercato, il metodo ne recupera il contenuto: se questo è un `Set`~@set, indicando che si tratta di una cartella o una sua sottoclasse, il metodo viene invocato ricorsivamente su ciascun elemento figlio, interrompendo la ricerca non appena viene trovata una corrispondenza. In assenza di risultati, viene restituito un #c.o vuoto.
 
-#c.fso definisce inoltre il contratto `collectByType(Namespace data, Namespace assets)`, il quale viene sovrascritto dalle classi concrete per specificare se l'oggetto appartiene alla categoria _data_ dei #glos.dp o _assets_ dei #glos.rp.
+L'interfaccia #c.fso definisce inoltre il contratto `collectByType(Namespace data, Namespace assets)`, il quale viene sovrascritto dalle classi concrete per specificare l'appartenenza alla categoria _data_ dei #glos.dp o _assets_ dei #glos.rp.
 
 === AbstractFile e AbstractFolder
 
-Tutti gli oggetti rappresentati file nel progetto, che saranno successivamente scritti in memoria, sono un estensione della classe #c.af.\
-`AbstractFile<T>` è una classe astratta parametrizzata con un tipo generico `T`, che rappresenta il contenuto del file, memorizzato nell'attributo `content`.
-La classe dispone dell'attributo `name`, che specifica il nome del file associato, privo di estensione.
-Possiede inoltre un riferimento al `parent`, ovvero alla sottocartella o cartella delle risorse in cui il file si troverà.
-L'oggetto dispone infine di un riferimento al #glos.ns in cui si trova.\
-`namespace` è formattato per comporre assieme `name` la stringa che corrisponde alla _resource location_ dell'oggetto corrente. Questa logica è implementata nel metodo `toString()`, così che l'istanza possa essere inserita direttamente in altre stringhe restituendo automaticamente il riferimento completo alla risorsa.
+Tutti gli oggetti rappresentati file nel progetto, il cui metodo `build()` scriverà in memoria, sono un estensione della classe #c.af.\
+La classe astratta `AbstractFile<T>` è parametrizzata con un tipo generico `T`, relativo al contenuto del file, memorizzato nell'attributo `content`.
+La classe dispone dell'attributo `name`, nel quale è memorizzato il nome del file associato, privo di estensione.
+Possiede inoltre un riferimento al `parent`, ovvero alla sottocartella o cartella delle risorse in cui il file sarà collocato.
+L'oggetto dispone infine di un riferimento al #glos.ns in cui è contenuto.\
+Il metodo `toString()` combina gli attributi `namespace` e `name` per generare la stringa corrispondente alla _resource location_ dell'oggetto.
+Grazie a questa implementazione, è possibile inserire direttamente la variabile che rappresenta il file all'interno di altre stringhe, e la sua _resource location_ viene individuata tramite _casting_ implicito a stringa.
+
 #figure(```java
 @Override
 public String toString() {
   return String.format("%s:%s", getNamespaceId(), getName());
 }
 ```)
-#c.af, oltre ad implementare #c.fso, implementa le interfacce `PackFolder` ed `Extension`.\
-`PackFolder` fornisce un solo contratto, `getFolderName()` che definisce il nome della cartella in cui sarà collocato.
-`PackFolder` fornisce un unico contratto, `getFolderName()`, che definisce il nome della cartella in cui l'oggetto sarà collocato. Ad esempio, l'oggetto `Function` implementa tale metodo restituendo la stringa `"function"`, poiché tutte le funzioni devono risiedere nella cartella `function`.\
+
+La classe #c.af, oltre ad implementare #c.fso, implementa le interfacce `PackFolder` ed `Extension`.\
+L'interfaccia `PackFolder` fornisce un unico contratto, `getFolderName()`, per definire il nome della cartella in cui l'oggetto sarà collocato. Ad esempio, la classe `Function` implementa tale metodo restituendo la stringa `"function"`, poiché tutte le funzioni devono risiedere nella cartella `function`.\
 Similmente, l'interfaccia `Extension`, mediante il contratto `getExtension()`, consente agli oggetti che estendono #c.af di specificare la propria estensione (`.json`, `.mcfunction`, `.png`).
 
 L'altra classe astratta che implementa #c.fso è #c.afo, parametrizzata con il tipo generico `<T extends FileSystemObject>`. Tale classe mantiene un attributo `children` di tipo `Set<T>`, usato per memorizzare i riferimenti ai nodi figli garantendo l'unicità degli elementi. Il metodo `build()` implementa un attraversamento ricorsivo invocando `build()` su ciascun nodo contenuto in `children`.\
@@ -937,7 +952,9 @@ I suoi `children` saranno dunque #c.fso. Dispone di un metodo `add()` per aggiun
 Questo viene usato dalla logica interna della liberia, ma non è pensato per l'utilizzo dell'utente finale.
 
 Nella prima iterazione del progetto, la creazione di una cartella con dei figli richiedeva l'istanza di un oggetto `Folder` e la successiva invocazione del metodo `add(...)`, passando come parametro uno o più oggetti istanziati tramite l'operatore `new`.\
-Un sistema basato sulla creazione diretta degli oggetti presenta diverse limitazioni. In primo luogo, introduce un forte accoppiamento tra il codice _client_ e le classi concrete: qualsiasi modifica ai costruttori richiederebbe di aggiornare manualmente ogni punto del codice in cui tali oggetti vengono istanziati. Inoltre, l'utilizzo di espressioni come `myFolder.add(new Function(...))` risulta poco pratico per l'utente finale, soprattutto se l'obiettivo è offrire un'interfaccia più semplice e immediata per la creazione dei file.
+Un sistema basato sulla creazione diretta degli oggetti presenta tuttavia diverse limitazioni.
+In primo luogo, introduce un forte accoppiamento tra il codice _client_ e le classi concrete: qualsiasi modifica ai costruttori richiederebbe di aggiornare manualmente ogni punto del codice in cui tali oggetti vengono istanziati.
+Inoltre, l'utilizzo di espressioni come `myFolder.add(new Function(...))` risulta poco pratico per l'utente finale, specialmente considerando l'obiettivo di offrire un'interfaccia più semplice e immediata per la creazione dei file.
 
 Il sistema è stato quindi modificato per appoggiarsi su un oggetto #c.c che rappresenta il _parent_, ovvero la cartella a cui si vogliono aggiungere nodi. La classe #c.c contiene un attributo statico e privato di tipo `Stack<ContextItem>`~@stack, utilizzato per tracciare il livello di _nesting_ delle cartelle. Il metodo `stack.peek()` restituisce il #c.ci in cima allo stack, corrispondente al contesto corrente.
 
@@ -947,21 +964,22 @@ L'interfaccia fornisce inoltre due metodi `default` i quali permettono di inseri
     ```java
     default void enter() {
         Context.enter(this);
-      }
+    }
     default void exit() {
         Context.exit();
-      }
+    }
     ```,
     caption: [Metodi dell'interfaccia #c.ci.],
 )
-Invocando `enter()`, si inserisce l'oggetto che implementa #c.ci in cima allo `stack` del contesto, indicando che è la cartella in cui verranno aggiunti tutti i prossimi #c.fso. Per rimuovere l'oggetto dalla cima dello `stack`, si chiama il metodo `exit()`.\
+Invocando `enter()`, si inserisce l'oggetto che implementa #c.ci in cima allo `stack` del contesto, indicando che i prossimi #c.fso saranno inseriti in esso.
+Per rimuovere l'oggetto dalla cima dello `stack`, si chiama il metodo `exit()`.\
 Con questo sistema, il programmatore può spostarsi tra diversi livelli della struttura del _filesystem_ in modo rapido e controllato, senza dover passare manualmente riferimenti ai vari contenitori.
 
-=== Utilizzo delle Factory
-Il sistema deve garantire che ogni oggetto che estende #c.fso sia collocato nel #c.ci corretto.
+=== Factory
+Il sistema deve garantire ad ogni oggetto che estende #c.fso di essere collocato nel #c.ci corretto.
 Per gestire automaticamente questo aspetto e al tempo stesso evitare la creazione diretta tramite `new`, si ricorre al #glos.dep #glos.f.
 
-Le #glos.f costituiscono un #glos.dep finalizzato a separare la logica di creazione degli oggetti dal codice che li utilizza.
+Le #glos.f costituiscono un #glos.dep creazionale finalizzato a separare la logica di inizializzazione degli oggetti dal codice che li utilizza.
 Anziché istanziare le classi direttamente, il client delega alla #glos.f la creazione dell'oggetto desiderato.
 La #glos.f si occupa di selezionare la classe concreta da istanziare e di determinarne lo stato iniziale.
 Nell'implementazione proposta, la #glos.f gestisce inoltre l'inserimento dell'oggetto appena creato nel contesto in cima allo stack.
@@ -983,7 +1001,18 @@ Tale approccio risulta particolarmente vantaggioso poiché permette di fornire a
 
 L'utente può definire esplicitamente il nome del file oppure affidare alla libreria la generazione di un identificatore automatico. Come avviene nei compilatori convenzionali, i dettagli implementativi del codice generato e la nomenclatura dei file risultano irrilevanti per l'utente, il quale si limita a verificarne il corretto funzionamento senza necessità di ispezionare gli artefatti prodotti.
 
-Se la stringa `name` passata come parametro contiene uno o più caratteri `/`, questi vengono interpretati come separatori di cartelle, creando una gerarchia di sottocartelle.\ Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, dal momento che, quando l'oggetto viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca il riferimento alla sua _resource location_.\
+Qualora la stringa `name` passata come parametro contenga uno o più caratteri `/`, questi saranno interpretati come separatori di cartelle, creando una gerarchia di sottocartelle.\
+Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, poiché quando questo viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisca la sua _resource location_.\
+
+#figure(
+  ```java
+  Namespace namespace = Namespace.of("foo");
+  Function function = Function.f.ofName("bar/baz/my_function","say hello world!");
+  System.out.println(function);
+  ```
+)
+Questo esempio stamperà `foo:bar/baz/my_function`, ovvero la _resource location_ della funzione creata.
+
 Gli oggetti passati come parametro _variable arguments_ (_varargs_~@varargs, `Object... args`) sostituiranno i corrispondenti valori segnaposto (`%s`), interpolando così il contenuto testuale prima che il file venga scritto su disco.
 
 === Classi File Astratte
