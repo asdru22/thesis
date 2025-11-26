@@ -44,7 +44,7 @@
 Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo bizzarre strutture a cubi in un mondo virtuale, si è rivelato presto essere l'ambiente dove per anni ho scritto ed eseguito i miei primi frammenti di codice utilizzando il suo sistema di comandi.\
 Motivato dalla mia acquisita abilità nel saper programmare con questo linguaggio di scripting non convenzionale, ho intrapreso con entusiasmo un percorso di studi in informatica.
 
-Creato nel 2009 dallo svedese Markus Persson e sviluppato nel 2011 dall'azienda Mojang Studios~@mojang #glos.mc è un famoso videogioco tridimensionale appartenente al genere _sandbox_~@sandbox, cioè caratterizzato dall'assenza di una trama predefinita, dove è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
+Creato nel 2009 dallo svedese Markus Persson e sviluppato nel 2011 dall'azienda Mojang Studios~@mojang, #glos.mc è un famoso videogioco tridimensionale appartenente al genere _sandbox_~@sandbox, cioè caratterizzato dall'assenza di una trama predefinita, dove è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
 Il gioco presenta un mondo composto da cubi formati da _voxel_ (controparte tridimensionale del pixel) generati proceduralmente, dove i giocatori possono raccogliere risorse, costruire strutture, creare oggetti e affrontare creature ostili.
 
 #glos.mc è diventato il videogioco più venduto al mondo, perché non è semplicemente un prodotto di intrattenimento, ma un ambiente flessibile, accessibile, continuamente ampliato e sostenuto da una community globale che lo ha trasformato in un fenomeno culturale trasversale.
@@ -333,7 +333,6 @@ Gli sviluppatori di #glos.mc osservarono come questo e altri comandi venivano im
 
 Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono nuove funzionalità o aggiornano quelle esistenti.
 Tuttavia, questo ambiente presenta ancora diverse limitazioni di natura tecnica, riconducibili al fatto che non era stato originariamente concepito per supportare logiche di programmazione complesse o per essere impiegato in progetti di grandi dimensioni.
-Tuttavia, questo ambiente presenta ancora diverse limitazioni di natura tecnica, riconducibili al fatto che non era stato originariamente concepito per supportare logiche di programmazione complesse o per essere impiegato in progetti di grandi dimensioni.
 
 == Limitazioni di Scoreboard
 Come è stato precedentemente citato, `scoreboard` è usato per eseguire operazioni su interi. Tuttavia, questo comando presenta numerosi vincoli.
@@ -484,9 +483,9 @@ Dal momento che tali strutture sono soggette a sole operazioni di lettura e non 
 
 In @ex-8 è stato modificato lo #glos.str `my_storage` per inserirvi un array. Si noti che non è stato specificato alcun #glos.ns, per cui il sistema ha assegnato implicitamente quello predefinito, `minecraft:`.
 
-Qualora un mondo contenesse due #glos.dp sviluppati da autori diversi, ed entrambi modificassero `my_storage` senza indicare esplicitamente un #glos.ns, potrebbero verificarsi e sovrascritture di dati.
+Qualora un mondo contenesse due #glos.dp sviluppati da autori diversi, ed entrambi modificassero `my_storage` senza indicare esplicitamente un #glos.ns, potrebbero verificarsi sovrascritture di dati.
 
-Un'altra situazione che può risultare conflitti si verifica quando due #glos.dp sovrascrivono la stessa risorsa nel #glos.ns `minecraft`. Se entrambi modificano `minecraft/loot_table/blocks/stone.json`, che determina gli oggetti ottenibili da un blocco di pietra, il compilatore utilizzerà il file del #glos.dp caricato per ultimo, ignorando le funzionalità dell'altro.
+Un'altra situazione che può provocare conflitti si verifica quando due #glos.dp sovrascrivono la stessa risorsa nel #glos.ns `minecraft`. Se entrambi modificano `minecraft/loot_table/blocks/stone.json`, che determina gli oggetti ottenibili da un blocco di pietra, il compilatore utilizzerà il file del #glos.dp caricato per ultimo, ignorando le funzionalità dell'altro.
 
 Il rischio di sovrascrivere o utilizzare in modo improprio risorse appartenenti ad altri #glos.dp non riguarda solo file che prevedono una _resource location_, ma si estende anche a componenti come #glos.score e #glos.tag.
 
@@ -664,7 +663,7 @@ Ciò comporta un numero di file sproporzionato rispetto alle effettive righe di 
 Inoltre, si presentano ulteriori problematiche relative alla struttura delle cartelle e dei file nello sviluppo di #glos.dp e #glos.rp.
 
 == Organizzazione e Complessità della Struttura dei File
-Le limitazioni precedentemente illustrate sono inerenti alla sintassi dei comandi e ai limiti delle funzioni; tuttavia, non sono da trascurare le complessità legate all'organizzazione e la struttura di un progetto.
+Le limitazioni precedentemente illustrate sono inerenti alla sintassi dei comandi e ai limiti delle funzioni; tuttavia, non sono da trascurare le complessità legate all'organizzazione e alla struttura di un progetto.
 
 Affinché #glos.dp e #glos.rp vengano riconosciuti dal compilatore, essi devono trovarsi rispettivamente nelle directory `.minecraft/saves/<world_name>/datapacks` e `.minecraft/resourcepacks`.
 Tuttavia, operare su queste cartelle in modo separato può risultare oneroso, considerando l'elevato grado di interdipendenza tra le due. Lavorare direttamente dalla directory radice `.minecraft/` risulta poco pratico, poiché essa contiene un numero considerevole di file e cartelle non pertinenti allo sviluppo del #glos.pack.
@@ -730,7 +729,7 @@ Per definire l'aspetto visivo dell'oggetto, si parte dalla sua _item model defin
 
 Si osserva quindi che, per implementare anche la _feature_ più semplice, è necessario creare sette file e modificarne due. Pur riconoscendo che ciascun file svolge una funzione distinta e che la loro presenza è giustificata, risulterebbe certamente più comodo poter definire questo tipo di risorse _inline_~@inline.
 
-Con il termine _inline_ si intende la definizione e utilizzo una o più risorse direttamente all'interno del file in cui vengono impiegate.
+Con il termine _inline_ si intende la definizione e l'utilizzo una o più risorse direttamente all'interno del file in cui vengono impiegate.
 Questa modalità risulterebbe particolarmente vantaggiosa quando un file gestisce contenuti specifici e indipendenti.
 Ad esempio, nell'aggiunta di un nuovo _item_, il relativo modello e la #glos.tex non verrebbero mai condivisi con altri oggetti, rendendo superfluo separarli in file distinti.
 
@@ -868,7 +867,7 @@ Il progetto, denominato _Object Oriented Pack_ (OOPACK), è organizzato in 4 sez
 / `internal`: Contiene classi astratte e interfacce che riproducono la struttura di un generico _filesystem_. Classi e metodi di questo _package_~@package non saranno mai utilizzate dall'utente finale.
 / `objects`: Contiene le classi che rappresentano gli oggetti impiegati da #glos.dp e #glos.rp.
 / `util`: Raccoglie metodi di utilità impiegati sia per il funzionamento del progetto, sia a supporto del programmatore (ponendo attenzione alla visibilità dei singoli metodi).
-/ Radice del progetto: Contiene gli oggetti principali che descrivono struttura di un #glos.pack (`Datapack`,`Resourcepack`,#c.ns,#c.p), a disposizione dell'utente finale.
+/ Radice del progetto: Contiene gli oggetti principali che descrivono la struttura di un #glos.pack (`Datapack`,`Resourcepack`,#c.ns,#c.p), a disposizione dell'utente finale.
 
 == Classi Astratte e Interfacce
 === Buildable
@@ -924,7 +923,7 @@ L'interfaccia #c.fso definisce inoltre il contratto `collectByType(Namespace dat
 
 === AbstractFile e AbstractFolder
 
-Tutti gli oggetti rappresentati file nel progetto, il cui metodo `build()` scriverà in memoria, sono un estensione della classe #c.af.\
+Tutti gli oggetti rappresentanti file nel progetto, il cui metodo `build()` scriverà in memoria, sono un estensione della classe #c.af.\
 La classe astratta `AbstractFile<T>` è parametrizzata con un tipo generico `T`, relativo al contenuto del file, memorizzato nell'attributo `content`.
 La classe dispone dell'attributo `name`, nel quale è memorizzato il nome del file associato, privo di estensione.
 Possiede inoltre un riferimento al `parent`, ovvero alla sottocartella o cartella delle risorse in cui il file sarà collocato.
@@ -1287,7 +1286,7 @@ Quando il `Builder` chiama `VersionUtils.getVersionInfo(String versionKey)`, dov
 + se `versionKey` corrisponde al nome di una versione, viene restituito l'oggetto `VersionInfo` corrispondente alla chiave richiesta. Questo conterrà i _pack format_ richiesti da #glos.dp e #glos.rp.
 
 La generazione di `versions.json` avviene mediante una chiamata HTTP~@http verso un'API~@api dedicata, la quale restituisce un oggetto #glos.json contenente i dati completi di tutte le versioni disponibili.\
-Queste vengono poi mappate al nome della versione corrispondente e ordinate dalla più recente alla più vecchia. La mappa cosi creata è avvolta in un #c.o. Se quest'ultimo è vuoto verrà sollevato un errore, altrimenti si scriverà la mappa sul file `versions.json`.
+Queste vengono poi mappate al nome della versione corrispondente e ordinate dalla più recente alla più vecchia. La mappa così creata è avvolta in un #c.o. Se quest'ultimo è vuoto verrà sollevato un errore, altrimenti si scriverà la mappa sul file `versions.json`.
 
 === Esportazione in File Compressi
 _Datapack_ e #glos.rp vengono letti ed eseguiti dal compilatore di #glos.mc anche se compressi in archivi `.zip`. Questo formato è particolarmente adatto alla distribuzione, poiché permette di offrire agli utenti due pacchetti leggeri e separati da scaricare.\
@@ -1305,7 +1304,7 @@ Il metodo `buildZip()` è stato pensato per essere usato in concomitanza con un 
 == Implementazione del Working Example
 
 In questa sezione verrà mostrato lo sviluppo un progetto che utilizza la libreria per generare un #glos.pack che modifica un _item_ di #glos.mc.
-L'obiettivo è fare in modo che, al click con il tasto destro del mouse, l'oggetto consumi uno tra tre diversi tipi di munizioni (anch'esse nuovi _item_), generando un'onda sinusoidale la cui lunghezza varia in base al tipo di munizione utilizzata.
+L'obiettivo è fare in modo che, al clic con il tasto destro del mouse, l'oggetto consumi uno tra tre diversi tipi di munizioni (anch'esse nuovi _item_), generando un'onda sinusoidale la cui lunghezza varia in base al tipo di munizione utilizzata.
 
 Viene innanzitutto creato il progetto:
 #figure(```java
@@ -1470,7 +1469,7 @@ I seguenti comandi si occupando di controllare se il giocatore possiede _item_ i
     caption: [],
 ) <ex-2>
 
-Il metodo seguente genera i comandi per controllare i 36 _slot_ del giocatore, incaricata di arrestare l'esecuzione al primo _item_ contrassegnato come `ammo` e memorizzarlo in uno #glos.str.
+Il metodo seguente genera i comandi per controllare i 36 _slot_ del giocatore. L'esecuzione di quest'ultimi viene arrestata appena viene individuato il primo _item_ contrassegnato come `ammo` e memorizzarlo in uno #glos.str.
 
 #figure(
     ```java
