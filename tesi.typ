@@ -29,7 +29,7 @@
         Infine, un grazie di cuore ai miei cari amici Alessio, Daniele, Giovanni, Jacopo e Luca per le tante ore di studio trascorse insieme e per aver reso la mia vita universitaria più leggera.
     ],
     abstract: [
-        La _Domain Specific Language_ (_DSL_) del videogioco svedese #glos.mc, #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati #glos.pack, in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e non dispone di costrutti quali variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
+        Il _Domain Specific Language_ (_DSL_) del videogioco svedese #glos.mc, #glos.mcf, consente la creazione di pacchetti di contenuti modulari, denominati #glos.pack, in grado di modificare o aggiungere meccaniche di gioco. Nonostante il suo ampio utilizzo, questo linguaggio presenta notevoli limitazioni strutturali e sintattiche: ogni funzione deve essere definita in un file separato e non dispone di costrutti quali variabili, istruzioni condizionali e meccanismi di iterazione. Questi vincoli producono codice prolisso e ripetitivo, compromettendo la leggibilità e la manutenibilità nei progetti di ampia scala.
 
         Per superare tali problemi, questa tesi propone una libreria Java sviluppata durante il tirocinio accademico che, a partire da un'analisi approfondita delle carenze e difetti di #glos.mcf, giunge alla formulazione di un'astrazione che rappresenta la struttura di un #glos.pack come un albero di oggetti tipizzati. Sfruttando la sintassi standard di Java e _factory methods_, la libreria consente la generazione programmatica dei #glos.pack, offrendo zucchero sintattico e utilità che semplificano l'accesso ai file di risorse principali. L'approccio proposto sfrutta il sistema di tipi di Java per fornire validazione statica, supporta la definizione di più risorse all'interno di un singolo file sorgente e automatizza la generazione di _boilerplate_, eliminando così la necessità di preprocessori esterni o di sintassi ibride adottate in soluzioni alternative.
 
@@ -51,17 +51,17 @@ Il gioco presenta un mondo composto da cubi formati da _voxel_ (controparte trid
 #figure(image("assets/image.png"), caption: [Un mondo di #glos.mc.])
 
 Fin dalle sue origini, i creatori di #glos.mc hanno messo a disposizione dei giocatori un insieme di comandi~@command che consentiva di aggirare gli ostacoli incontrati nella propria esperienza di gioco.\
-Con il tempo, tale sistema si è evoluto in un articolato linguaggio di configurazione e scripting basato su file testuali, costituendo di fatto una _Domain Specific Language_~@dsl (_DSL_) mediante la quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
+Con il tempo, tale sistema si è evoluto in un articolato linguaggio di configurazione e scripting basato su file testuali, costituendo di fatto un _Domain Specific Language_~@dsl (_DSL_) mediante il quale sviluppatori di terze parti possono modificare numerosi aspetti e comportamenti dell'ambiente di gioco.
 
-Con _Domain Specific Language_ si intende un linguaggio di programmazione progettato per un ambito applicativo specifico, caratterizzato da un livello di astrazione più elevato e una sintassi semplificata rispetto ai linguaggi _general purpose_#footnote[Un linguaggio _general purpose_ (o "a scopo generale"), come Java, C++ o Python, è progettato per risolvere un'ampia varietà di problemi in diversi domini applicativi.]. Le DSL sono sviluppate in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
+Con _Domain Specific Language_ si intende un linguaggio di programmazione progettato per un ambito applicativo specifico, caratterizzato da un livello di astrazione più elevato e una sintassi semplificata rispetto ai linguaggi _general purpose_#footnote[Un linguaggio _general purpose_ (o "a scopo generale"), come Java, C++ o Python, è progettato per risolvere un'ampia varietà di problemi in diversi domini applicativi.]. I DSL sono sviluppati in coordinazione con esperti del campo nel quale verrà utilizzato il linguaggio.
 #quote(
     attribution: [JetBrains],
     block: true,
 )[In many cases, DSLs are intended to be used not by software people, but instead by non-programmers who are fluent in the domain the DSL addresses.]
 
-Questa definizione fornita dagli sviluppatori di JetBrains, azienda olandese specializzata nella creazione di ambienti di sviluppo integrati (_Integrated Development Environments_, IDE), descrive perfettamente chi sono gli utilizzatori della _domain specific language_ di #glos.mc.
+Questa definizione fornita dagli sviluppatori di JetBrains, azienda olandese specializzata nella creazione di ambienti di sviluppo integrati (_Integrated Development Environments_, IDE), descrive perfettamente chi sono gli utilizzatori del _Domain Specific Language_ di #glos.mc.
 
-#glos.mc è sviluppato in Java~@java-book, ma questa DSL, chiamata #glos.mcf~@mc-function, adotta un paradigma completamente diverso.
+#glos.mc è sviluppato in Java~@java-book, ma questo DSL, chiamato #glos.mcf~@mc-function, adotta un paradigma completamente diverso.
 Essa non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente del gioco.
 Le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi testuali, interpretati dal motore interno di #glos.mc (e non dal compilatore Java) ed eseguiti solo al verificarsi di determinate condizioni.
 In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
@@ -71,7 +71,7 @@ Tuttavia, il sistema presenta ancora diverse limitazioni, poiché una parte sost
 Il tirocinio accademico ha avuto come obiettivo la progettazione e realizzazione di un framework che semplifica lo sviluppo e la distribuzione di gruppi di file #glos.mcf e #glos.json tramite un ambiente di sviluppo unificato.
 Tale framework consiste in una libreria Java che permette di definire la gerarchia dei file in un sistema ad albero tramite oggetti.
 Una volta definite tutte le funzionalità, viene eseguito il programma per ottenere una cartella "pacchetto" (#glos.pack) pronta per essere utilizzata.
-In questo modo lo sviluppo del pacchetto risulta più coerente e accessibile, permettendo di integrare _feature_ di Java in questa DSL che facilitano la scrittura e la gestione dei file.
+In questo modo lo sviluppo del pacchetto risulta più coerente e accessibile, permettendo di integrare _feature_ di Java in questo DSL per facilitare la scrittura e la gestione dei file.
 
 Nel capitolo successivo viene presentata la struttura generale del sistema di #glos.pack, descrivendone gli elementi costitutivi e il loro funzionamento. Segue un'analisi sistematica delle principali problematiche e limitazioni tecniche dell'infrastruttura, corredata da una rassegna critica delle più recenti soluzioni proposte. Viene quindi illustrata la progettazione e l'implementazione della libreria sviluppata, accompagnata da un caso d'uso concreto (_working example_) che ne dimostra l'applicazione pratica. Il lavoro si conclude con un'analisi quantitativa e qualitativa dei risultati ottenuti, evidenziando i benefici dell'approccio proposto in termini di riduzione della complessità e miglioramento della manutenibilità del codice.
 
@@ -1106,7 +1106,7 @@ Quest'ultimo risulta particolarmente utile nei casi di dipendenze circolari, in 
     caption: [Diagramma del sistema progettato fino a questo punto.],
 )
 
-Nella struttura riportata non sono ancora stati definiti metodi o classi specifiche per l'implementazione di un #glos.pack. Ritengo che questo livello di astrazione sia potenzialmente applicabile anche in altri contesti, in quanto permette di generare in modo sistematico più file a partire da un'unica definizione di riferimento. Questo approccio potrebbe risultare particolarmente utile anche in altre DSL caratterizzate da vincoli strutturali, dove la generazione automatizzata di file correlati è un requisito per la scalabilità e la manutenibilità del codice.
+Nella struttura riportata non sono ancora stati definiti metodi o classi specifiche per l'implementazione di un #glos.pack. Ritengo che questo livello di astrazione sia potenzialmente applicabile anche in altri contesti, in quanto permette di generare in modo sistematico più file a partire da un'unica definizione di riferimento. Questo approccio potrebbe risultare particolarmente utile anche in altri DSL caratterizzati da vincoli strutturali, dove la generazione automatizzata di file correlati è un requisito per la scalabilità e la manutenibilità del codice.
 
 Di seguito invece si esporranno elementi e funzionalità definite appositamente per lo sviluppo dei #glos.pack.
 
@@ -1571,7 +1571,7 @@ myProject.buildZip();
 
 = Conclusione
 
-Il presente lavoro di tesi ha affrontato le criticità relative allo sviluppo di contenuti per #glos.mc attraverso la _Domain Specific Language_ nativa #glos.mcf.
+Il presente lavoro di tesi ha affrontato le criticità relative allo sviluppo di contenuti per #glos.mc attraverso il _Domain Specific Language_ nativo #glos.mcf.
 L'analisi preliminare ha rivelato come questo linguaggio, sebbene dotato di _feature_ affini a quelle dei linguaggi _general purpose_, imponga severi vincoli strutturali e sintattici.
 La mancanza di costrutti ad alto livello, combinata con l'obbligo di separare ogni funzione e risorsa in un file distinto, genera codice prolisso, frammentato e difficilmente manutenibile.
 
