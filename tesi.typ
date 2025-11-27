@@ -15,7 +15,7 @@
     professors: (
         "Prof. Luca Padovani",
     ),
-    department: "dipartimento di scienza e ingegneria",
+    department: "dipartimento di informatica\n-\n scienza e ingegneria",
     course: "Corso di Laurea in Informatica per il Management",
     session: "Dicembre",
     academic_year: "2024/2025",
@@ -329,7 +329,7 @@ In particolare, l'implementazione di funzionalità relativamente semplici richie
 
 Il linguaggio #glos.mcf non è stato originariamente concepito come un linguaggio di programmazione Turing completo.
 Infatti, negli anni antecedenti all'introduzione dei #glos.dp, il comando `scoreboard` era impiegato in maniera convenzionale per monitorare le statistiche dei giocatori, quali il tempo di gioco o il numero di blocchi scavati.
-Gli sviluppatori di #glos.mc osservarono come questo e altri comandi venivano impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, e hanno dunque aggiornato progressivamente il sistema, fino a giungere, nel 2017 alla nascita dei #glos.dp.
+Gli sviluppatori di #glos.mc osservarono come questo e altri comandi venivano impiegati dalla comunità per creare nuove meccaniche e giochi rudimentali, e hanno dunque aggiornato progressivamente il sistema, fino a giungere, nel 2017, alla nascita dei #glos.dp.
 
 Ancora oggi l'ecosistema dei #glos.dp è in costante evoluzione, con _snapshot_ che introducono nuove funzionalità o aggiornano quelle esistenti.
 Tuttavia, questo ambiente presenta ancora diverse limitazioni di natura tecnica, riconducibili al fatto che non era stato originariamente concepito per supportare logiche di programmazione complesse o per essere impiegato in progetti di grandi dimensioni.
@@ -455,7 +455,7 @@ La scrittura di algoritmi di questo tipo è impegnativa e richiede spesso di ges
 
 In seguito all'introduzione delle _macro_, si è diffuso l'utilizzo di _lookup table_. Una _lookup table_ consiste in un _array_ memorizzato in uno #glos.str che contiene tutti gli output di una funzione per un intervallo prefissato di input.
 
-Si ipotizzi sia richiesta la radice quadrata con precisione decimale di tutti gli interi tra 0 e 100. Si può creare uno #glos.str che contiene i valori $sqrt(i) space forall i in [0,100] inter NN$.
+Si ipotizzi sia richiesta la radice quadrata con precisione decimale di tutti gli interi tra 0 e 100. Si può creare uno #glos.str che contenga i valori $sqrt(i) space forall i in [0,100] inter NN$.
 
 #figure(
     local(
@@ -751,7 +751,7 @@ Questo precompilatore, come molti altri, presenta due criticità principali:
 - Elevata barriera d'ingresso: solo gli sviluppatori con una buona padronanza di Python sono in grado di sfruttarne appieno le potenzialità;
 - Assenza di documentazione: la mancanza di una guida ufficiale rende il suo utilizzo accessibile quasi esclusivamente a chi è in grado di comprendere direttamente il codice sorgente di _beet_.
 
-Altri precompilatori forniscono un'interfaccia più intuitiva e un utilizzo più immediato al costo di  completezza delle funzionalità, limitandosi dunque a produrre solo una parte delle componenti che costituiscono l'ecosistema dei #glos.pack.
+Altri precompilatori forniscono un'interfaccia più intuitiva e un utilizzo più immediato al costo della completezza delle funzionalità, limitandosi dunque a produrre solo una parte delle componenti che costituiscono l'ecosistema dei #glos.pack.
 Spesso, inoltre, la sintassi di questi linguaggi risulta più verbosa rispetto a quella dei comandi originali, poiché essi offrono esclusivamente un approccio programmatico alla composizione dei comandi senza portare ad alcun incremento nella loro velocità di scrittura.
 
 #figure(
@@ -1030,7 +1030,7 @@ Il contenuto `C` del file è determinato dalle sottoclassi che ereditano #c.pf.
 Ciò consente alla #glos.f di operare in modo generico, generando file con contenuti eterogenei senza necessità di duplicare codice.
 
 La #glos.f mantiene un riferimento all'oggetto `Class`~@class parametrizzato con il tipo `F`, corrispondente alla classe degli oggetti da istanziare, utilizzato nel metodo `instantiate()`.
-Questa funzione restituisce l'oggetto da creare dati due parametri: il nome del file da creare, e il suo contenuto di tipo `Object`, in quanto si sta ancora operando in un contesto generico.
+Questa funzione restituisce l'oggetto da creare dati due parametri: il nome del file da creare e il suo contenuto di tipo `Object`, in quanto si sta ancora operando in un contesto generico.
 
 Per istanziare l'oggetto, la funzione ottiene inizialmente un riferimento alla classe del contenuto (`StringBuilder.class` o `JsonObject.class`), necessario per individuare il costruttore della classe `F`.
 Successivamente, recupera il costruttore tramite _reflection_, verificando che la classe `F` disponga di un costruttore con i parametri `String name` e `C content`.
@@ -1582,7 +1582,7 @@ Attraverso l'automazione della generazione del _boilerplate_ e la validazione a 
 Al fine di misurare concretamente l'efficienza della libreria, è stata sviluppata una classe `Metrics` con il compito di registrare il numero di righe e di file generati.
 Eseguendo il progetto Java associato al _working example_, si nota che il numero di file prodotti è 31, con un totale di 307 righe di codice.
 
-Il codice sorgente dispone invece dei seguenti file Java#footnote[I valori riportati sono arrotondati al multiplo di dieci inferiore, al fine di escludere eventuali righe vuote o commenti.]:
+Il codice sorgente del progetto è invece strutturato nei seguenti file Java#footnote[I valori riportati sono arrotondati al multiplo di dieci inferiore, al fine di escludere eventuali righe vuote o commenti.]:
 #figure(table(
     columns: (1fr,) * 2,
     [*Classe*], [*Righe di codice*],
@@ -1658,17 +1658,16 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
     caption: [Numero di righe e file richiesti a confronto.],
 )
 
-Si può osservare come la linea blu relativa ai progetti sviluppati con la libreria presenti una pendenza maggiore, evidenziando come il singolo file contenga molte più righe di codice.
+Si può osservare come la linea blu relativa ai progetti sviluppati con la libreria presenti una pendenza maggiore a dimostrazione di un'elevata densità di contenuti per singolo file sorgente.
 
 Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale in cui è necessario implementare metodi specifici per il progetto in questione, diventa immediato sfruttare la libreria per automatizzare la creazione di file con contenuti affini.
 
-Se si considera la distanza come il vantaggio tratto dall'utilizzo della libreria, è evidente che automatizzare lo sviluppo sia vantaggioso per i progetti di scala maggiore.
-#let pit(p1x, p2x, p1y, p2y) = $sqrt((p1x+p2x)^2+(p1y+p2y)^2)$
-Per un progetto piccolo come $P_1$, $d_1=pit(3, 31, 220, 307)=528$.\
-Per $P_2$ invece, $d_2=pit(9, 37, 1360, 2451)=3818$.
+Interpretando la distanza tra il punto di partenza (sorgente) e quello di arrivo (output) come una stima del carico di lavoro automatizzato dalla libreria, è evidente che automatizzare lo sviluppo sia vantaggioso per i progetti di scala maggiore.
+#let dist(p1x, p2x, p1y, p2y) = $sqrt((p1x-p2x)^2+(p1y-p2y)^2)$
+Per il progetto minore $P_1$, la distanza è $d_1=dist(3, 31,220, 307)=91,4$. Per il progetto maggiore $P_2$, tale valore sale a $d_2=dist( 9,137, 1360, 2451)=1098,5$.
 
-Se si misura la densità di codice per file come il rapporto tra righe totali e file totali, si vedrà che $p(P_1)=73.7$ e $p(P_2)=151.1$.
-Quindi, un raddoppio della densità del codice implica che il beneficio dell'automazione aumenta di oltre 7 volte. Si può dunque affermare che l'efficienza della libreria cresce in modo non lineare con la dimensione del progetto.
+Se si misura la densità di codice del singolo progetto, denominata $p$, come il rapporto tra le sue righe totali e file totali, si vedrà che $p(P_1)=73,7$ e $p(P_2)=151,1$.\
+Confrontando le densità di codice $p$, si nota che a fronte di un raddoppio della densità nel progetto più grande ($p(P_2) approx 2 dot p(P_1)$), il beneficio dell'automazione $d$ cresce di un fattore 12 ($d_2/d_1 approx 12$). Ciò suggerisce che l'efficienza della libreria non scala linearmente, ma aumenta in modo significativo all'aumentare della complessità del progetto, ammortizzando rapidamente il costo iniziale di configurazione.
 
 Va tuttavia rilevato che l'utilizzo della libreria richiede un considerevole sforzo cognitivo, dovuto alla necessità di operare simultaneamente con due linguaggi diversi per sfruttarne appieno le potenzialità.
 
