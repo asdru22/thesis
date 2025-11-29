@@ -321,3 +321,8 @@ pom:
     type: web
     title: pom.xml
     url: https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#What_is_a_POM.3F
+
+metaprogrammazione:
+  type: web
+  title: meta-programmazione
+  url: https://maddevs.io/glossary/metaprogramming/

@@ -407,7 +407,7 @@ Si supponga di voler calcolare il $5%$ di 40. In un linguaggio di programmazione
 
 #figure(
     [
-      #local(
+        #local(
             skips: ((7, 95),),
             number-format: numbering.with("1"),
             ```mcfunction
@@ -832,8 +832,8 @@ Si è dunque valutato quale linguaggio di programmazione, tra Python e Java, fos
     table(
         align: top + left,
         columns: 3,
-        [], table.cell(align: horizon+center)[*Vantaggi*], table.cell(align: horizon+center)[*Svantaggi*],
-        table.cell(align: horizon+center)[*Python*],
+        [], table.cell(align: horizon + center)[*Vantaggi*], table.cell(align: horizon + center)[*Svantaggi*],
+        table.cell(align: horizon + center)[*Python*],
         [
             - Gestione semplice di stringhe (`f-string`~@f-strings) e file JSON;
             - Sintassi concisa;
@@ -845,7 +845,7 @@ Si è dunque valutato quale linguaggio di programmazione, tra Python e Java, fos
             - Prestazioni inferiori in fase di esecuzione.
         ],
 
-        table.cell(align: horizon+center)[*Java*],
+        table.cell(align: horizon + center)[*Java*],
         [
             - Maggiore familiarità con progetti di grandi dimensioni;
             - Completamente orientato agli oggetti;
@@ -1004,11 +1004,11 @@ Qualora la stringa `name` passata come parametro contenga uno o più caratteri `
 Il nome assegnato all'oggetto non influisce sul funzionamento della libreria, poiché quando questo viene utilizzato in un contesto testuale, la chiamata implicita al metodo `toString()` restituisce la sua _resource location_.\
 
 #figure(
-  ```java
-  Namespace namespace = Namespace.of("foo");
-  Function function = Function.f.ofName("bar/baz/my_function","say hello world!");
-  System.out.println(function);
-  ```
+    ```java
+    Namespace namespace = Namespace.of("foo");
+    Function function = Function.f.ofName("bar/baz/my_function","say hello world!");
+    System.out.println(function);
+    ```,
 )
 Questo esempio stamperà `foo:bar/baz/my_function`, ovvero la _resource location_ della funzione creata.
 
@@ -1576,6 +1576,9 @@ L'analisi preliminare ha rivelato come questo linguaggio, sebbene dotato di _fea
 La mancanza di costrutti ad alto livello, combinata con l'obbligo di separare ogni funzione e risorsa in un file distinto, genera codice prolisso, frammentato e difficilmente manutenibile.
 
 Per superare tali limitazioni, è stata progettata e implementata una libreria Java (_OOPACK_) che introduce un approccio orientato agli oggetti per consentire la meta-programmazione di #glos.pack.
+
+La meta-programmazione è un paradigma che abilita un software di operare su programmi o linguaggi trattandoli come dati. Ciò rende possibile la loro manipolazione o generazione in maniera dinamica o in fase di compilazione~@metaprogrammazione.
+
 La soluzione proposta astrae la struttura di #glos.dp e #glos.rp in un albero di oggetti tipizzati, consentendo agli sviluppatori di definire molteplici risorse all'interno di un unico contesto e di sfruttare i costrutti di un linguaggio _general purpose_.
 Attraverso l'automazione della generazione del _boilerplate_ e la validazione a tempo di compilazione, il framework riduce drasticamente la complessità di gestione dei file e aumenta la densità di codice, offrendo un ambiente di sviluppo più robusto e scalabile rispetto agli strumenti tradizionali.
 
@@ -1658,13 +1661,16 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
     caption: [Numero di righe e file richiesti a confronto.],
 )
 
+Calcolando il rapporto tra le componenti dell'asse delle ascisse, ovvero il numero dei file impiegati, per $P_1$ si nota che $31/3=10,3$: ogni file sorgente genera dunque circa 10,3 file di output. Eseguendo la medesima operazione per $P_2$ si ottiene invece $137/9 = 15,2$. Da questi dati si deduce che la libreria è dotata di "economie di scala positive": maggiore è la portata del progetto, più elevata è la quantità di file gestita automaticamente per ogni singola unità di codice scritta dallo sviluppatore.
+
+
 Si può osservare come la linea blu relativa ai progetti sviluppati con la libreria presenti una pendenza maggiore a dimostrazione di un'elevata densità di contenuti per singolo file sorgente.
 
 Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale in cui è necessario implementare metodi specifici per il progetto in questione, diventa immediato sfruttare la libreria per automatizzare la creazione di file con contenuti affini.
 
 Interpretando la distanza tra il punto di partenza (sorgente) e quello di arrivo (output) come una stima del carico di lavoro automatizzato dalla libreria, è evidente che automatizzare lo sviluppo sia vantaggioso per i progetti di scala maggiore.
 #let dist(p1x, p2x, p1y, p2y) = $sqrt((p1x-p2x)^2+(p1y-p2y)^2)$
-Per il progetto minore $P_1$, la distanza è $d_1=dist(3, 31,220, 307)=91,4$. Per il progetto maggiore $P_2$, tale valore sale a $d_2=dist( 9,137, 1360, 2451)=1098,5$.
+Per il progetto minore $P_1$, la distanza è $d_1=dist(3, 31, 220, 307)=91,4$. Per il progetto maggiore $P_2$, tale valore sale a $d_2=dist(9, 137, 1360, 2451)=1098,5$.
 
 Se si misura la densità di codice del singolo progetto, denominata $p$, come il rapporto tra le sue righe totali e file totali, si vedrà che $p(P_1)=73,7$ e $p(P_2)=151,1$.\
 Confrontando le densità di codice $p$, si nota che a fronte di un raddoppio della densità nel progetto più grande ($p(P_2) approx 2 dot p(P_1)$), il beneficio dell'automazione $d$ cresce di un fattore 12 ($d_2/d_1 approx 12$). Ciò suggerisce che l'efficienza della libreria non scala linearmente, ma aumenta in modo significativo all'aumentare della complessità del progetto, ammortizzando rapidamente il costo iniziale di configurazione.
