@@ -1663,7 +1663,6 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
 
 Calcolando il rapporto tra le componenti dell'asse delle ascisse, ovvero il numero dei file impiegati, per $P_1$ si nota che $31/3=10,3$: ogni file sorgente genera dunque circa 10,3 file di output. Eseguendo la medesima operazione per $P_2$ si ottiene invece $137/9 = 15,2$. Da questi dati si deduce che la libreria è dotata di "economie di scala positive": maggiore è la portata del progetto, più elevata è la quantità di file gestita automaticamente per ogni singola unità di codice scritta dallo sviluppatore.
 
-
 Si può osservare come la linea blu relativa ai progetti sviluppati con la libreria presenti una pendenza maggiore a dimostrazione di un'elevata densità di contenuti per singolo file sorgente.
 
 Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale in cui è necessario implementare metodi specifici per il progetto in questione, diventa immediato sfruttare la libreria per automatizzare la creazione di file con contenuti affini.
@@ -1675,10 +1674,10 @@ Per il progetto minore $P_1$, la distanza è $d_1=dist(3, 31, 220, 307)=91,4$. P
 Se si misura la densità di codice del singolo progetto, denominata $p$, come il rapporto tra le sue righe totali e file totali, si vedrà che $p(P_1)=73,7$ e $p(P_2)=151,1$.\
 Confrontando le densità di codice $p$, si nota che a fronte di un raddoppio della densità nel progetto più grande ($p(P_2) approx 2 dot p(P_1)$), il beneficio dell'automazione $d$ cresce di un fattore 12 ($d_2/d_1 approx 12$). Ciò suggerisce che l'efficienza della libreria non scala linearmente, ma aumenta in modo significativo all'aumentare della complessità del progetto, ammortizzando rapidamente il costo iniziale di configurazione.
 
-Va tuttavia rilevato che l'utilizzo della libreria richiede un considerevole sforzo cognitivo, dovuto alla necessità di operare simultaneamente con due linguaggi diversi per sfruttarne appieno le potenzialità.
+Va tuttavia rilevato che l'utilizzo della libreria richiede un considerevole sforzo cognitivo, dovuto alla necessità di operare simultaneamente con due linguaggi diversi per sfruttare appieno le potenzialità di entrambi.
 
 Si riconosce inoltre la possibilità di estendere la libreria con ulteriori metodi di utilità, potenzialmente più specifici ma comunque in grado di ridurre il carico di lavoro per lo sviluppatore.
-Per esempio, potrebbe essere implementato un metodo che, dati uno o più valori costanti in input, generi automaticamente la funzione contenente i comandi #glos.score necessari per l'inizializzazione delle costanti #glos.score.
+Per esempio, si potrebbe implementare un metodo che, dati uno o più valori costanti in input, crei la funzione contenente i comandi `scoreboard` con il compito di inizializzare i valori delle costanti #glos.score.
 
 Oltre alle conoscenze tecniche acquisite, lo sviluppo del progetto su un arco temporale prolungato ha consentito di rivedere, migliorandole, alcune scelte implementative iniziali.
 Ciò ha portato ad ottimizzare alcune porzioni di codice che, pur funzionando correttamente, non rappresentavano la soluzione più efficiente né l'approccio più agevole per l'utente finale.\
