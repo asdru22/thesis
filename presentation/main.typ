@@ -111,11 +111,13 @@
         - *Builder:* Configurazione flessibile del progetto
 
     - *Sistema basato su interfacce:*
-       - `Buildable`#sym.arrow oggetto costruibile
-      - `FileSystemObject`#sym.arrow l'oggetto ha dei contenuti
-      - `PackFolder`#sym.arrow per indicare se l'oggetto è di tipo _data_ o _resource_
-      - `Extension`#sym.arrow per indicare l'estensione del file
+        - `Buildable` #sym.arrow oggetto costruibile
+        - `FileSystemObject` #sym.arrow l'oggetto ha dei contenuti
+        - `PackFolder` #sym.arrow per indicare se l'oggetto è di tipo _data_ o _resource_
+        - `Extension` #sym.arrow per indicare l'estensione del file
+
     #pagebreak()
+
     #place[Rappresentazione delle classi\ astratte del progetto.]
     #place(dy: -75pt, figure(
         scale(55%, diagram(
@@ -175,6 +177,31 @@
 
 #slide[
     = Working Example
+    - *Obiettivo*: modificare un oggetto renderlo in grado di produrre un onda sinusoidale la cui distanza dipende dalla munizione.
+    #figure(
+        cetz.canvas({
+            plot.plot(size: (25, 3), x-tick-step: 30, axis-style: "school-book", y-tick-step: 1, {
+                plot.add(domain: (0, 360), samples: 200, it => calc.sin(it / 10))
+            })
+        }),
+    )
+
+    Metodo scritto per facilitare la creazione di boilerplate per le munizioni.
+    ```java
+    make("blue_ammo", "Munizione Blu", "Blue Ammo", "diamond",20);
+    ```
+    Generazione e inizializzazione della _lookup table_ richiesta:
+    #block(stroke: 1pt + gray, inset: 4pt, figure(```java
+    private void makeSinLookup() {
+        StringBuilder sin = new StringBuilder("data modify storage esempio:storage sin set value [");
+        for (int i = 0; i <= 360; i++) {
+            sin.append("{value:").append(Math.sin(Math.toRadians(i * 10))).append("},");
+        }
+        sin.append("]");
+        Util.setOnLoad(Function.f.of(sin.toString()));
+    }
+    ```))
+
 ]
 
 #slide[

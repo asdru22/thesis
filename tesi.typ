@@ -869,6 +869,10 @@ Il progetto, denominato _Object Oriented Pack_ (OOPACK), è organizzato in 4 sez
 / `util`: Raccoglie metodi di utilità impiegati sia per il funzionamento del progetto, sia a supporto del programmatore (ponendo attenzione alla visibilità dei singoli metodi).
 / Radice del progetto: Contiene gli oggetti principali che descrivono la struttura di un #glos.pack (`Datapack`,`Resourcepack`,#c.ns,#c.p), a disposizione dell'utente finale.
 
+Questa libreria si occupa di generare #glos.pack, e dunque non interviene direttamente sul codice sorgente Java di #glos.mc per introdurre comportamenti dinamici.
+Tuttavia consentirà di facilitare la creazione di molteplici componenti statiche che, selezionate tramite comandi o altri elementi di un #glos.dp, emulano un funzionamento dinamico.
+Un esempio emblematico è rappresentato dalle _lookup table_: i valori non vengono calcolati a runtime, bensì pre-generati a compile time per essere recuperati successivamente.
+
 == Classi Astratte e Interfacce
 === Buildable
 L'obiettivo della libreria sviluppata è delegare la creazione dei file che compongono un #glos.pack al metodo `build()`, della classe di più alto livello, #c.p.
@@ -885,6 +889,8 @@ Durante il processo di costruzione del progetto, questo percorso viene progressi
 L'interfaccia #c.fso estende #c.b con lo scopo di rappresentare file e cartelle del _file system_.
 Essa definisce il contratto `getContent()`, che specifica il contenuto associato all'oggetto.
 Sfruttando il polimorfismo, tale metodo può restituire il contenuto delle classi che rappresentano file, oppure un insieme di #c.fso per le classi che rappresentano cartelle o altri contenitori.
+
+L'interfaccia #c.fso implementa il _design pattern_ strutturale _composite_. Questa architettura permette di organizzare gli oggetti in strutture ad albero, garantendo una gestione uniforme sia per le singole istanze che per le loro aggregazioni.
 
 Questa interfaccia definisce il metodo statico `find()`, il quale permette di trovare un `file` all'interno di un #c.fso che soddisfa una certa condizione, permettendo la comunicazione tra #c.fso in ogni punto del progetto.
 
@@ -920,6 +926,8 @@ Per ogni nodo visitato, verifica innanzitutto se esso è un'istanza del tipo ric
 Qualora il nodo corrente non corrisponda al tipo ricercato, il metodo ne recupera il contenuto: se questo è un `Set`~@set, indicando che si tratta di una cartella o una sua sottoclasse, il metodo viene invocato ricorsivamente su ciascun elemento figlio, interrompendo la ricerca non appena viene trovata una corrispondenza. In assenza di risultati, viene restituito un #c.o vuoto.
 
 L'interfaccia #c.fso definisce inoltre il contratto `collectByType(Namespace data, Namespace assets)`, il quale viene sovrascritto dalle classi concrete per specificare l'appartenenza alla categoria _data_ dei #glos.dp o _assets_ delle #glos.rp.
+
+Questo è un esempio di utilizzo del _design pattern_ comportamentale _strategy_. Esso permette di definire una famiglia di algoritmi, incapsularli e renderli intercambiabili. In questo caso viene applicato per separare automaticamente le risorse sfruttano il polimorfismo.
 
 === AbstractFile e AbstractFolder
 
