@@ -136,7 +136,10 @@
     }
 
     set page(margin: 2.5cm)
-    show link: underline
+    show link : it=> {
+      set text(fill:blue)
+      underline(it)
+    }
 
     set par(justify: true, leading: leading)
 

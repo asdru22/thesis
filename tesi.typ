@@ -77,16 +77,19 @@ In questo modo lo sviluppo del pacchetto risulta più coerente e accessibile, pe
 
 Nel capitolo successivo viene presentata la struttura generale del sistema di #glos.pack, descrivendone gli elementi costitutivi e il loro funzionamento. Segue un'analisi sistematica delle principali problematiche e limitazioni tecniche dell'infrastruttura, corredata da una rassegna critica delle più recenti soluzioni proposte. Viene quindi illustrata la progettazione e l'implementazione della libreria sviluppata, accompagnata da un caso d'uso concreto (_working example_) che ne dimostra l'applicazione pratica. Il lavoro si conclude con un'analisi quantitativa e qualitativa dei risultati ottenuti, evidenziando i benefici dell'approccio proposto in termini di riduzione della complessità e miglioramento della manutenibilità del codice.
 
+Il codice sorgente della libreria è reperibile al seguente link: #link("https://github.com/asdru22/OOPack").
+
 = Struttura e Funzionalità di un Pack
 
 == Cos'è un Pack
-Un #glos.pack è costituito da due cartelle: #glos.dp e #glos.rp.
+Un #glos.pack rappresenta l'intero progetto di sviluppo: esso agisce come contenitore logico per le due componenti fondamentali, #glos.dp e #glos.rp, che pur rimanendo cartelle distinte costituiscono un'unica unità funzionale.
 Un #glos.dp può essere paragonato alla cartella `java` di un progetto Java: esso contiene la parte che detta la logica dell'applicazione tramite file #glos.json e #glos.mcf.\
 
 I progetti Java sono dotati di una cartella `resources`~@java-resource. Similmente, #glos.mc impiega la cartella #glos.rp~@resourcepack per dichiarare le risorse da utilizzare.
 Essa contiene principalmente font, modelli 3D, #glos.tex~@game-texture, traduzioni e suoni.\
 Con l'eccezione di #glos.tex e suoni, i quali richiedono l'estensione `png`~@png e `ogg`~@ogg rispettivamente, tutti gli altri file sono in formato #glos.json.\
-I #glos.rp sono stati concepiti e rilasciati prima dei #glos.dp, con lo scopo di dare ai giocatori la possibilità di sovrascrivere le #glos.tex e altri _asset_~@assets del videogioco per renderle più affini ai propri gusti. Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare i #glos.rp per definire le risorse che il loro progetto avrebbe impiegato.
+I #glos.rp sono stati concepiti e rilasciati prima dei #glos.dp, con lo scopo di dare ai giocatori la possibilità di sovrascrivere le #glos.tex e altri _asset_~@assets del videogioco per renderle più affini ai propri gusti.
+Gli sviluppatori di #glos.dp hanno poi iniziato ad utilizzare i #glos.rp per definire le risorse che il loro progetto avrebbe impiegato.
 
 I #glos.rp hanno portata globale e vengono applicati a tutti i _save file_, ovvero su ogni mondo creato. Le cartelle #glos.dp, invece, devono essere collocate nella directory `datapack` dei mondi nei quali si desidera utilizzarle.\
 Pertanto, partendo dalla cartella radice di #glos.mc (`.minecraft/`), i #glos.rp si trovano nella directory `.minecraft/resourcepacks`, mentre i #glos.dp sono collocati in `.minecraft/saves/<world name>/datapacks`.\
@@ -716,7 +719,7 @@ Nonostante l'_item_ costituisca una delle funzionalità più semplici da impleme
         columns: 2,
         gutter: 5em,
         align(left, tree-list[
-            - _datapack_
+            - #glos.dp
                 - data
                     - _my_namespace_
                         - recipe
@@ -729,7 +732,7 @@ Nonostante l'_item_ costituisca una delle funzionalità più semplici da impleme
                             - on_item_use.mcfunction
         ]),
         align(left, tree-list[
-            - _resourcepack_
+            - #glos.rp
                 - assets
                     - _my_namespace_
                         - item
@@ -965,7 +968,7 @@ Il metodo implementa un algoritmo di ricerca ricorsiva in profondità sulla stru
 Per ogni nodo visitato, verifica innanzitutto se esso è un'istanza del tipo ricercato; in tal caso, valuta il predicato fornito e, se soddisfatto, restituisce un #c.o~@optional contenente l'oggetto.
 Qualora il nodo corrente non corrisponda al tipo ricercato, il metodo ne recupera il contenuto: se questo è un `Set`~@set, indicando che si tratta di una cartella o una sua sottoclasse, il metodo viene invocato ricorsivamente su ciascun elemento figlio, interrompendo la ricerca non appena viene trovata una corrispondenza. In assenza di risultati, viene restituito un #c.o vuoto.
 
-L'interfaccia #c.fso definisce inoltre il contratto `collectByType(Namespace data, Namespace assets)`, il quale viene sovrascritto dalle classi concrete per specificare l'appartenenza alla categoria _data_ dei #glos.dp o _assets_ delle #glos.rp.
+L'interfaccia #c.fso definisce inoltre il contratto `collectByType(Namespace data, Namespace assets)`, il quale viene sovrascritto dalle classi concrete per specificare l'appartenenza alla categoria _data_ dei #glos.dp o _assets_ dei #glos.rp.
 
 Questo è un esempio di utilizzo del _design pattern_ comportamentale _strategy_. Esso permette di definire una famiglia di algoritmi, incapsularli e renderli intercambiabili. In questo caso viene applicato per separare automaticamente le risorse sfruttando il polimorfismo.
 
@@ -1246,7 +1249,7 @@ Tramite la classe `Builder` di #c.p, si possono specificare:
 - la versione del #glos.pack. Questa verrà usata per comporre il nome delle cartelle #glos.dp e #glos.rp esportate, e anche per ottenere il loro rispettivo `pack_format` richiesto;
 - il _path_ dell'icona di #glos.dp e #glos.rp, che verrà prelevata dalle risorse;
 - la descrizione in formato #glos.json o stringa di #glos.dp e #glos.rp, richiesta dal file `pack.mcmeta` di entrambi.
-- uno o più _build path_, ovvero cartelle radice in cui saranno esportati il #glos.dp e #glos.rp costruiti. In genere questa coinciderà con la cartella globale di #glos.mc, nella quale sono raccolte tutte le #glos.rp e i _save file_, tra cui quello in cui si vuole esportare il #glos.dp.
+- uno o più _build path_, ovvero cartelle radice in cui saranno esportati il #glos.dp e #glos.rp costruiti. In genere questa coinciderà con la cartella globale di #glos.mc, nella quale sono raccolti tutti i #glos.rp e i _save file_, tra cui quello in cui si vuole esportare il #glos.dp.
 
 Dopo aver definito questi valori, il progetto sarà in grado di comporre ogni _path_ cui dovrà esportare i file di #glos.dp e #glos.rp.
 
