@@ -358,3 +358,7 @@ reflection:
   title: reflection
   url: https://www.oracle.com/technical-resources/articles/java/javareflection.html
 
+brigadier:
+  type: web
+  title: Brigadier
+  url: https://github.com/Mojang/brigadier

@@ -54,9 +54,9 @@
 ]
 
 #slide[
-    = Limiti di _mcfunction_
+    = Carenze e problemi di _mcfunction_
 
-    - *Mancanza di strutture avanzate:*
+    - *Assenza di strutture avanzate:*
         - Nessuna variabile o struttura dati complessa
         - Solo operazioni su interi
     - *Frammentazione del codice:*
@@ -177,7 +177,7 @@
 
 #slide[
     = Working Example
-    - *Obiettivo*: modificare un oggetto renderlo in grado di produrre un onda sinusoidale la cui distanza dipende dalla munizione.
+    - *Obiettivo*: modificare un oggetto renderlo in grado di produrre un onda sinusoidale la cui distanza varia in base alla munizione consumata.
     #figure(
         cetz.canvas({
             plot.plot(size: (25, 3), x-tick-step: 30, axis-style: "school-book", y-tick-step: 1, {
@@ -186,16 +186,34 @@
         }),
     )
 
+    - Sono state implementati 3 tipi di munizione
+
+    #pagebreak()
+
     Metodo scritto per facilitare la creazione di boilerplate per le munizioni.
+
     ```java
     make("blue_ammo", "Munizione Blu", "Blue Ammo", "diamond",20);
     ```
-    Generazione e inizializzazione della _lookup table_ richiesta:
+    - *Genera*:
+        - Item Model Definition
+        - Modello 3D
+        - Texture
+        - Ricetta
+        - Advancement
+    - Aggiunge traduzione in italiano e inglese.
+
+
+    #pagebreak()
+
+    *Scrittura* e inizializzazione della _lookup table_ richiesta:
     #block(stroke: 1pt + gray, inset: 4pt, figure(```java
     private void makeSinLookup() {
         StringBuilder sin = new StringBuilder("data modify storage esempio:storage sin set value [");
         for (int i = 0; i <= 360; i++) {
-            sin.append("{value:").append(Math.sin(Math.toRadians(i * 10))).append("},");
+            sin.append("{value:")
+               .append(Math.sin(Math.toRadians(i * 10)))
+               .append("},");
         }
         sin.append("]");
         Util.setOnLoad(Function.f.of(sin.toString()));

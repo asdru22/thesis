@@ -1734,6 +1734,10 @@ Si riconosce inoltre la possibilità di estendere la libreria con ulteriori meto
 Per esempio, si potrebbe implementare un metodo che, dati uno o più valori costanti in input, crei la funzione contenente i comandi `scoreboard` con il compito di inizializzare i valori delle costanti #glos.score.
 Un'altra possibile implementazione riguarda la generazione automatizzata di _lookup table_: un metodo dedicato potrebbe ricevere in input una funzione lambda e utilizzarne i valori di ritorno per costruire il comando di inizializzazione della struttura dati.
 
-Oltre alle competenze tecniche acquisite, la durata prolungata dello sviluppo ha offerto l'opportunità di riconsiderare e affinare l'architettura iniziale.
+Un'evoluzione sostanziale della libreria consiste nell'integrazione di _Brigadier_~@brigadier
+Nonostante offra una solida struttura per la validazione dei comandi a compile-time, la sua implementazione presenta una criticità: necessita di un _command source_ contenente l'intera gerarchia dei comandi e le permutazioni dei loro parametri.
+Questi dati non sono attualmente di pubblico dominio, e l'intera struttura dovrebbe essere ricreata manualmente.
+
+Oltre alle competenze ~ acquisite, la durata prolungata dello sviluppo ha offerto l'opportunità di riconsiderare e affinare l'architettura iniziale.
 #e stato possibile intervenire su porzioni di codice formalmente corrette ma subottimali, migliorandone le performance e l'utilizzo per l'utente finale.
 Questa revisione costante ha consolidato un approccio critico all'ingegneria del software, valorizzando aspetti quali la manutenibilità del codice e la _user experience_.
