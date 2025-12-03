@@ -41,12 +41,10 @@
     locale: "it",
     bibliography_file: "bib.yaml",
 )
-
+~@minecraft
 = Introduzione
-Se non fosse per il videogioco #glos.mc~@minecraft, non sarei qui ora. Quello che per me nel 2014 era un modo di esprimere la mia creatività costruendo bizzarre strutture a cubi in un mondo virtuale, si è rivelato presto essere l'ambiente dove per anni ho scritto ed eseguito i miei primi frammenti di codice utilizzando il suo sistema di comandi.\
-Motivato dalla mia acquisita abilità nel saper programmare con questo linguaggio di scripting non convenzionale, ho intrapreso con entusiasmo un percorso di studi in informatica.
 
-Creato nel 2009 dallo svedese Markus Persson e sviluppato nel 2011 dall'azienda Mojang Studios~@mojang, #glos.mc è un famoso videogioco tridimensionale appartenente al genere _sandbox_~@sandbox, cioè caratterizzato dall'assenza di una trama predefinita, dove è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
+Creato nel 2009 dallo svedese Markus Persson e sviluppato nel 2011 dall'azienda Mojang Studios~@mojang, #glos.mc~@minecraft è un famoso videogioco tridimensionale appartenente al genere _sandbox_~@sandbox, cioè caratterizzato dall'assenza di una trama predefinita, dove è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
 Il gioco presenta un mondo composto da cubi formati da _voxel_ (controparte tridimensionale del pixel) generati proceduralmente, dove i giocatori possono raccogliere risorse, costruire strutture, creare oggetti e affrontare creature ostili.
 
 #glos.mc è diventato il videogioco più venduto al mondo, perché non è semplicemente un prodotto di intrattenimento, ma un ambiente flessibile, accessibile, continuamente ampliato e sostenuto da una community globale che lo ha trasformato in un fenomeno culturale trasversale.
@@ -66,7 +64,7 @@ Questa definizione fornita dagli sviluppatori di JetBrains, azienda olandese spe
 #glos.mc è sviluppato in Java~@java-book, ma questo DSL, chiamato #glos.mcf~@mc-function, adotta un paradigma completamente diverso.
 Esso non consente di introdurre nuovi comportamenti intervenendo direttamente sul codice sorgente del gioco.
 Le funzionalità aggiuntive vengono invece definite attraverso gruppi di comandi testuali, interpretati dal motore interno di #glos.mc (e non dal compilatore Java) ed eseguiti solo al verificarsi di determinate condizioni.
-In questo modo l'utente percepisce tali funzionalità come parte integrante dei contenuti originali del gioco.
+In questo modo tali funzionalità appaiono all'utente come parte integrante dei contenuti originali del gioco.
 Negli ultimi anni, grazie all'introduzione e all'evoluzione di file in formato #glos.json~@json in grado di modificare componenti precedentemente inaccessibili, è progressivamente diventato possibile creare esperienze di gioco sempre più complesse e originali.
 Tuttavia, il sistema presenta ancora diverse limitazioni, poiché una parte sostanziale della logica continua a essere implementata attraverso i file #glos.mcf, meno versatili e potenti rispetto a codice Java.
 
@@ -81,7 +79,7 @@ Il codice sorgente della libreria è reperibile al seguente link: #link("https:/
 
 = Struttura e Funzionalità di un Pack
 
-== Cos'è un Pack
+== Definizione di un Pack
 Un #glos.pack rappresenta l'intero progetto di sviluppo: esso agisce come contenitore logico per le due componenti fondamentali, #glos.dp e #glos.rp, che pur rimanendo cartelle distinte costituiscono un'unica unità funzionale.
 Un #glos.dp può essere paragonato alla cartella `java` di un progetto Java: esso contiene la parte che detta la logica dell'applicazione tramite file #glos.json e #glos.mcf.\
 
@@ -164,7 +162,7 @@ Rispetto a un _path_ completo, la _resource location_ omette la cartella funzion
 Ad esempio, per riferirsi alla ricetta situata in `foo/recipe/my_item.json`, si utilizza la _resource location_ `foo:my_item`, dove `foo` è il #glos.ns e `my_item` è l'identificatore della risorsa.
 La cartella `recipe`, che indica la tipologia della risorsa, non compare nella _resource location_ poiché il compilatore determina automaticamente il tipo di risorsa in base al contesto d'uso. Se la _resource location_ viene letta in un contesto che richiede una ricetta, il compilatore cercherà il file nella cartella `recipe`; se invece il contesto richiede una funzione, cercherà nella cartella `function`.
 
-== I Comandi
+== Il Sistema dei Comandi
 
 Prima di analizzare i comandi, è necessario definire gli elementi basilari su cui operano.
 
@@ -206,7 +204,7 @@ Un comando è un'istruzione testuale che #glos.mc interpreta per eseguire una sp
     ```,
     caption: [Esempio di comando che tra tutte le entità (`@e`), stampa quelle di tipo giocatore.],
 )
-Nonostante il sistema dei comandi sia privo delle funzionalità tipiche dei linguaggi di programmazione di alto livello, quali cicli `for` e `while`, strutture dati complesse o variabili generiche, esso fornisce comunque strumenti che consentono di emulare alcuni di questi comportamenti in forma limitata.\
+Nonostante il sistema dei comandi sia privo delle funzionalità tipiche dei linguaggi di programmazione di alto livello, quali cicli `for` e `while`, strutture dati complesse o variabili generiche, esso fornisce comunque strumenti che consentono di simulare alcuni di questi comportamenti in forma limitata.\
 Di seguito verranno illustrati i comandi che più si avvicinano a concetti tipici di programmazione.
 === Scoreboard
 Il comando `scoreboard`~@scoreboard permette di creare dizionari di tipo `<Entità, Objective>`.
@@ -274,11 +272,11 @@ Questo comando sta definendo quattro istruzioni da svolgere:
 + controlla se nella posizione del contesto di esecuzione corrente, il blocco sottostante sia di tipo `stone`.
 Al termine dell'esecuzione, lo _score_ `on_stone` di ogni entità sarà 1 se posizionata su un blocco di pietra, 0 altrimenti.
 
-== Funzioni
+== Le Funzioni in Minecraft
 Le funzioni sono insiemi di comandi raggruppati all'interno di un file #glos.mcf. Una funzione non può esistere se non in un file con estensione `.mcfunction`.
 A differenza di quanto il nome possa suggerire, esse non prevedono valori di input o di output, ma contengono uno o più comandi eseguiti secondo l'ordine in cui sono scritti nel file.
 
-Le funzioni in #glos.mc vengono eseguite all'interno di un _game loop_ (o _tick_ = $1/20$ di secondo ), completando tutti i comandi che contengono, comprese eventuali chiamate ad altre funzioni.
+Le funzioni in #glos.mc vengono eseguite all'interno di un _game loop_ (o _tick_ = $1/20$ di secondo), completando tutti i comandi che contengono, comprese eventuali chiamate ad altre funzioni.
 In base alla complessità del _branching_ e alle operazioni eseguite dalle funzioni, il compilatore (o più precisamente, il motore di esecuzione dei comandi) alloca una certa quantità di risorse per svolgere tutte le istruzioni durante un singolo _tick_.
 Il tempo di elaborazione aggiuntivo richiesto per l'esecuzione di un comando o di una funzione è definito _overhead_.
 
@@ -804,7 +802,7 @@ Questo risulta più articolato rispetto alla sintassi tradizionale `execute as @
 
 = Progettazione della Libreria
 
-== Approccio al Problema
+== Metodologia e Scelte Progettuali
 
 Alla luce del contesto descritto e delle limitazioni degli strumenti esistenti, si è ricercata una soluzione che consentisse di ridurre la complessità e preservare la completezza delle funzionalità.
 Di seguito sono illustrate le principali decisioni progettuali e le ragioni che hanno portato alla scelta del linguaggio di sviluppo.
@@ -1180,7 +1178,7 @@ Le classi astratte #c.dj e #c.aj, sottoclassi di #c.jf, eseguono l'#glos.or del 
 
 Queste saranno poi ereditate dalle classi concrete dei file che compongono un #glos.pack.
 
-Unica eccezione è la classe #c.fn.
+L'unica eccezione è la classe #c.fn.
 Questa estende direttamente #c.tf, indicando la propria estensione (`.mcfunction`) con #glos.or del metodo `getExtension()`, e il tipo tramite #glos.or di `collectByType()` similmente a #c.dj.
 Dal momento che #c.tf non dispone di una #glos.f per file di testo non in formato #glos.json, sarà  la #glos.f di #c.fn stessa a estendere `PlainFile.Factory`, definendo come parametro per il contenuto del file #c.sb, e come oggetto istanziato #c.fn.
 
@@ -1188,7 +1186,7 @@ Le classi rappresentanti file di alto livello sono dotate di un attributo static
 Queste classi sono 39 in totale, e ognuna corrisponde a uno specifico oggetto utile al funzionamento di un #glos.dp o #glos.rp (30 e 9 rispettivamente).
 Poiché ognuna di queste deve disporre di una #glos.f, un costruttore, ed eseguire l'#glos.or del metodo `getFolderName()`, è stata impiegata una libreria per generare il loro codice Java.
 
-Un possibile soluzione alternativa avrebbe previsto l'implementazione di un unico metodo statico generico all'interno di `JsonFile.Factory`, strutturato per accettare come argomenti il tipo della classe da istanziare e la relativa directory di riferimento.
+Una possibile soluzione alternativa avrebbe previsto l'implementazione di un unico metodo statico generico all'interno di `JsonFile.Factory`, strutturato per accettare come argomenti il tipo della classe da istanziare e la relativa directory di riferimento.
 Con questo approccio non sarebbe stato necessario creare una classe dedicata per ciascun tipo di file, ma sarebbe risultato sufficiente invocare direttamente la funzione `create()` per generare l'istanza desiderata.
 #figure(
     ```java
@@ -1235,7 +1233,7 @@ Poiché gli elementi figli di #c.ns sono di natura diversa (_data_ o _assets_), 
 Questi devono essere indirizzati verso i rispettivi contesti: il #glos.ns del #glos.dp per la componente _data_ e quello relativo ai #glos.rp per gli _assets_.
 
 La classe presenta una particolarità nel suo metodo `exit()`, usato per indicare quando non si vogliono più creare file su questo #glos.ns.
-Oltre a indicare all'oggetto #c.c di chiamare `pop()` sul suo `stack` interno, viene anche chiamato il metodo `addNamespace()` di #c.p  che verrà mostrato in seguito.
+Oltre a indicare all'oggetto #c.c di chiamare `pop()` sul suo `stack` interno, viene anche chiamato il metodo `addNamespace()` di #c.p che verrà mostrato in seguito.
 
 === Project
 
@@ -1272,7 +1270,7 @@ Con gli oggetti descritti fino ad ora è possibile costruire un intero #glos.pac
 
 == Utilità
 
-=== Trova o Crea File
+=== Meccanismo di Ricerca e Creazione Dinamica dei File
 
 Il metodo `find()`, descritto precedentemente (@find), è impiegato in metodi di utilità che permettono di modificare i contenuti di file, in particolare quelli soggetti a modifiche da più punti del codice.
 Ad esempio, i file `lang` dedicati alla localizzazione richiedono un aggiornamento costante per integrare le nuove voci. Similmente, ogni nuovo suono deve essere registrato nel file `sounds.json`.
@@ -1328,7 +1326,7 @@ Nel caso in cui il file non esista ancora (ad esempio, alla prima esecuzione per
 
 Un'altra applicazione simile sono le funzioni `setOnTick()` e `setOnLoad()`, che permettono di aggiungere o un'intera `Function` o una stringa contenente comandi alla lista di funzioni da eseguire ogni _tick_ o ad ogni caricamento dei file.
 
-=== Ottenimento Versioni
+=== Sistema di Recupero delle Versioni
 
 Nel `Builder` di #c.p, in base alla versione di gioco specificata, si ottengono i valori del _pack format_ per #glos.dp e #glos.rp.
 Questi sono memorizzati in un `Record`~@record chiamato `VersionInfo`.
@@ -1344,7 +1342,8 @@ Quando il `Builder` esegue `VersionUtils.getVersionInfo(String versionKey)`, dov
 La generazione di `versions.json` avviene mediante una chiamata HTTP~@http verso un'API~@api dedicata, la quale restituisce un oggetto #glos.json contenente i dati completi di tutte le versioni disponibili.\
 Queste vengono poi mappate al nome della versione corrispondente e ordinate dalla più recente alla più vecchia. La mappa così creata è avvolta in un #c.o. Se quest'ultimo è vuoto verrà sollevato un errore, altrimenti si scriverà la mappa sul file `versions.json`.
 
-=== Esportazione in File Compressi
+=== Sistema di Compressione e Distribuzione
+
 _Datapack_ e #glos.rp vengono letti ed eseguiti dal compilatore di #glos.mc anche se compressi in archivi `.zip`. Questo formato è particolarmente adatto alla distribuzione, poiché permette di offrire agli utenti due pacchetti leggeri e separati da scaricare.\
 La classe #c.p dispone di un metodo `buildZip()` che, dopo aver creato delle cartelle #glos.dp e #glos.rp temporanee tramite il metodo `build()`, provvede a comprimerle generando i rispettivi archivi `.zip`. Al termine dell'operazione, le cartelle temporanee vengono eliminate.
 
@@ -1584,7 +1583,7 @@ Essa decrementa lo _score_ `distance`, e memorizza l'esito di questa operazione 
     caption: [],
 ) <ex-5>
 
-Questa funzione contiene un solo comando _macro_, che invoca un ulteriore funzione _macro_, passandole il valore corrispondente a $sin(#raw("amount") times 10)$.
+Questa funzione contiene un solo comando _macro_, che invoca un'ulteriore funzione _macro_, passandole il valore corrispondente a $sin(#raw("amount") times 10)$.
 
 #figure(
     ```java
@@ -1628,13 +1627,13 @@ myProject.buildZip();
 = Conclusione
 
 Il presente lavoro di tesi ha affrontato le criticità relative allo sviluppo di contenuti per #glos.mc attraverso il _Domain Specific Language_ nativo #glos.mcf.
-L'analisi preliminare ha rivelato come questo linguaggio, sebbene dotato di _feature_ affini a quelle dei linguaggi _general purpose_, imponga severi vincoli strutturali e sintattici.
+L'analisi preliminare ha rivelato come questo linguaggio, nonostante sia dotato di _feature_ affini a quelle dei linguaggi _general purpose_, imponga severi vincoli strutturali e sintattici.
 La mancanza di costrutti ad alto livello, combinata con l'obbligo di separare ogni funzione e risorsa in un file distinto, genera codice prolisso, frammentato e difficilmente manutenibile.
 
 Per superare tali limitazioni, è stata progettata e implementata una libreria Java (_OOPACK_) che introduce un approccio orientato agli oggetti per consentire la meta-programmazione di #glos.pack.
 
 La soluzione proposta astrae la struttura di #glos.dp e #glos.rp in un albero di oggetti tipizzati, consentendo agli sviluppatori di definire molteplici risorse all'interno di un unico contesto e di sfruttare i costrutti di un linguaggio _general purpose_.
-Permettendo di automatizzare la scrittura di _boilerplate_ e fornendo validazione a tempo di compilazione, il framework riduce drasticamente la complessità di gestione dei file e aumenta la densità di codice, offrendo un ambiente di sviluppo più robusto e scalabile rispetto agli strumenti tradizionali.
+Con l'automazione della scrittura di _boilerplate_ e fornendo validazione a tempo di compilazione, il framework riduce drasticamente la complessità di gestione dei file e aumenta la densità di codice, offrendo un ambiente di sviluppo più robusto e scalabile rispetto agli strumenti tradizionali.
 
 Al fine di misurare concretamente l'efficienza della libreria, è stata sviluppata una classe `Metrics` con il compito di registrare il numero di righe e di file generati.
 Eseguendo il progetto Java associato al _working example_, si nota che il numero di file prodotti è 31, con un totale di 307 righe di codice.
@@ -1715,24 +1714,26 @@ Il seguente grafico mette in relazione il numero di righe e file prodotti per il
     caption: [Numero di righe e file richiesti a confronto.],
 )
 
-Calcolando il rapporto tra le componenti dell'asse delle ascisse, ovvero il numero dei file impiegati, per $P_1$ si nota che $31/3=10,3$: ogni file sorgente genera dunque circa 10,3 file di output. Eseguendo la medesima operazione per $P_2$ si ottiene invece $137/9 = 15,2$. Da questi dati si deduce che la libreria è dotata di "economie di scala positive": maggiore è la portata del progetto, più elevata è la quantità di file gestita automaticamente per ogni singola unità di codice scritta dallo sviluppatore.\
+Calcolando il rapporto tra le componenti dell'asse delle ascisse, ovvero il numero dei file impiegati, per $P_1$ si nota che $31/3=10,3$: ogni file sorgente genera dunque circa 10,3 file di output.
+Eseguendo la medesima operazione per $P_2$ si ottiene invece $137/9 = 15,2$. Da questi dati si deduce che la libreria è dotata di "economie di scala positive": maggiore è la portata del progetto, più elevata è la quantità di file gestita automaticamente per ogni singola unità di codice scritta dallo sviluppatore.\
 Si può osservare, inoltre, come la linea blu relativa ai progetti sviluppati con la libreria presenti una pendenza maggiore, a dimostrazione di un'elevata densità di contenuti per singolo file sorgente.
 
-Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala ($P_2$): una volta superata la fase iniziale in cui è necessario implementare metodi specifici per il progetto in questione, diventa immediato sfruttare la libreria per automatizzare la creazione di file con contenuti affini.
+Il vantaggio di utilizzare la libreria risulta particolarmente evidente nei progetti di ampia scala quali $P_2$: una volta superata la fase iniziale in cui è necessario implementare metodi specifici per il progetto da sviluppare, diventa immediato sfruttare la libreria per automatizzare la creazione di file con contenuti affini.
 
 Interpretando la distanza tra il punto di partenza (sorgente) e quello di arrivo (output) come una stima del carico di lavoro automatizzato dalla libreria, è evidente che automatizzare lo sviluppo sia vantaggioso per i progetti di scala maggiore.
 #let dist(p1x, p2x, p1y, p2y) = $sqrt((p1x-p2x)^2+(p1y-p2y)^2)$
 Per il progetto minore $P_1$, la distanza è $d_1=dist(3, 31, 220, 307)=91,4$. Per il progetto maggiore $P_2$, tale valore sale a $d_2=dist(9, 137, 1360, 2451)=1098,5$.
 
 Se si misura la densità di codice del singolo progetto, denominata $p$, come il rapporto tra le sue righe totali e file totali, si vedrà che $p(P_1)=73,7$ e $p(P_2)=151,1$.\
-Confrontando le densità di codice $p$, si nota che a fronte di un raddoppio della densità nel progetto più grande ($p(P_2) approx 2 dot p(P_1)$), il beneficio dell'automazione $d$ cresce di un fattore 12 ($d_2/d_1 approx 12$). Ciò suggerisce che l'efficienza della libreria non scala linearmente, ma aumenta in modo significativo all'aumentare della complessità del progetto, ammortizzando rapidamente il costo iniziale di configurazione.
+Confrontando le densità di codice $p$, si nota che con un raddoppio della densità nel progetto più grande ($p(P_2) approx 2 dot p(P_1)$), il beneficio dell'automazione $d$ cresce di un fattore 12 ($d_2/d_1 approx 12$).
+Ciò suggerisce che l'efficienza della libreria non scala linearmente, ma aumenta in modo significativo all'aumentare della complessità del progetto, ammortizzando rapidamente il costo iniziale di configurazione.
 
-Va tuttavia rilevato che l'utilizzo della libreria richiede un considerevole sforzo cognitivo, dovuto alla necessità di operare simultaneamente con due linguaggi diversi per sfruttare appieno le potenzialità di entrambi.
+Va tuttavia evidenziato che l'utilizzo della libreria richiede un considerevole sforzo cognitivo, dovuto alla necessità di operare simultaneamente con due linguaggi diversi per sfruttare appieno le potenzialità di entrambi.
 
 Si riconosce inoltre la possibilità di estendere la libreria con ulteriori metodi di utilità, potenzialmente più specifici ma comunque in grado di ridurre il carico di lavoro per lo sviluppatore.
 Per esempio, si potrebbe implementare un metodo che, dati uno o più valori costanti in input, crei la funzione contenente i comandi `scoreboard` con il compito di inizializzare i valori delle costanti #glos.score.
 Un'altra possibile implementazione riguarda la generazione automatizzata di _lookup table_: un metodo dedicato potrebbe ricevere in input una funzione lambda e utilizzarne i valori di ritorno per costruire il comando di inizializzazione della struttura dati.
 
-Oltre al bagaglio tecnico maturato, la durata prolungata dello sviluppo ha offerto l'opportunità di riconsiderare e affinare l'architettura iniziale.
-Si è intervenuti su porzioni di codice formalmente corrette ma subottimali, migliorandone le performance e l'utilizzo per l'utente finale.
+Oltre alle competenze tecniche acquisite, la durata prolungata dello sviluppo ha offerto l'opportunità di riconsiderare e affinare l'architettura iniziale.
+#e stato possibile intervenire su porzioni di codice formalmente corrette ma subottimali, migliorandone le performance e l'utilizzo per l'utente finale.
 Questa revisione costante ha consolidato un approccio critico all'ingegneria del software, valorizzando aspetti quali la manutenibilità del codice e la _user experience_.
