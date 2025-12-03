@@ -326,3 +326,35 @@ metaprogrammazione:
   type: web
   title: meta-programmazione
   url: https://maddevs.io/glossary/metaprogramming/
+
+scoreboard:
+  type: web
+  title: comando scoreboard
+  url: https://minecraft.wiki/w/Scoreboard
+
+
+data:
+  type: web
+  title: comando data
+  url: https://minecraft.wiki/w/Commands/data
+
+execute:
+  type: web
+  title: comando execute
+  url: https://minecraft.wiki/w/Commands/execute
+
+function:
+  type: web
+  title: comando function
+  url: https://minecraft.wiki/w/Commands/function
+
+schedule:
+  type: web
+  title: comando schedule
+  url: https://minecraft.wiki/w/Commands/schedule
+
+reflection:
+  type: web
+  title: reflection
+  url: https://www.oracle.com/technical-resources/articles/java/javareflection.html
+

@@ -161,7 +161,7 @@
         align(
             horizon,
             {
-                heading(level: 1, i18n.at(locale).abstract)
+                heading(level: 1, [Abstract])
                 text(abstract)
             },
         )
