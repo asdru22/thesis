@@ -41,7 +41,7 @@
     locale: "it",
     bibliography_file: "bib.yaml",
 )
-~@minecraft
+#set raw(syntaxes: "Java.sublime-syntax")
 = Introduzione
 
 Creato nel 2009 dallo svedese Markus Persson e sviluppato nel 2011 dall'azienda Mojang Studios~@mojang, #glos.mc~@minecraft è un famoso videogioco tridimensionale appartenente al genere _sandbox_~@sandbox, cioè caratterizzato dall'assenza di una trama predefinita, dove è il giocatore stesso a costruire liberamente la propria esperienza e gli obiettivi da perseguire.\
@@ -77,7 +77,7 @@ Nel capitolo successivo viene presentata la struttura generale del sistema di #g
 
 Il codice sorgente della libreria è reperibile al seguente link: #link("https://github.com/asdru22/OOPack").
 
-= Struttura e Funzionalità di un Pack
+= Componenti e Funzionalità di un Pack
 
 == Definizione di un Pack
 Un #glos.pack rappresenta l'intero progetto di sviluppo: esso agisce come contenitore logico per le due componenti fondamentali, #glos.dp e #glos.rp, che pur rimanendo cartelle distinte costituiscono un'unica unità funzionale.
@@ -510,7 +510,7 @@ Dunque, data `get storage my_storage sqrt[4]` restituirà il quinto elemento del
 Poiché sono richiesti gli output per decine, se non centinaia, di valori in input, i comandi per la creazione delle _lookup table_ sono generati mediante script Python~@python-book ed eseguiti dal compilatore di #glos.mc esclusivamente durante l'inizializzazione del #glos.dp (tramite `load.json`).
 Dal momento che tali strutture sono soggette a sole operazioni di lettura e non di scrittura, non si presenta il rischio di modifiche durante la sessione di gioco.
 
-== Alto Rischio di Conflitti
+== Elevato Rischio di Conflitti
 
 In @ex-8 è stato modificato lo #glos.str `my_storage` per inserirvi un #glos.a. Si noti che non è stato specificato alcun #glos.ns, per cui il sistema ha assegnato implicitamente quello predefinito, `minecraft`.
 
@@ -1268,7 +1268,7 @@ Questi a loro volta estendono l'esecuzione a tutti gli elementi figli (cartelle 
 
 Con gli oggetti descritti fino ad ora è possibile costruire un intero #glos.pack a partire da codice Java, tuttavia si possono sfruttare ulteriormente proprietà del linguaggio di programmazione per implementare funzioni di utilità, al fine di agevolare lo sviluppo.
 
-== Utilità
+== Metodi di Utilità
 
 === Meccanismo di Ricerca e Creazione Dinamica dei File
 
@@ -1466,7 +1466,9 @@ Questa memorizza i risultati della funzione seno per gli angoli da $0degree$ a $
 private void makeSinLookup() {
     StringBuilder sin = new StringBuilder("data modify storage esempio:storage sin set value [");
     for (int i = 0; i <= 360; i++) {
-        sin.append("{value:").append(Math.sin(Math.toRadians(i * 10))).append("},");
+        sin.append("{value:")
+            .append(Math.sin(Math.toRadians(i * 10)))
+            .append("},");
     }
     sin.append("]");
     Util.setOnLoad(Function.f.of(sin.toString()));
