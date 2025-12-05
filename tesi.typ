@@ -22,7 +22,6 @@
     dedication: [
         Desidero innanzitutto ringraziare il Prof. Padovani dell'_Alma Mater Studiorum_ Università di Bologna per la disponibilità e il prezioso supporto durante questo percorso, e per avermi dato l'opportunità di approfondire e lavorare con tecnologie di mio particolare interesse.
 
-
         Ringrazio la mia famiglia per avermi sempre incoraggiato e sostenuto durante tutto il mio percorso formativo.
         Un ringraziamento speciale va a mia zia Lalli, che mi ha accolto in casa sua per tre anni, offrendomi un ambiente sereno in cui potermi dedicare agli studi.
 
